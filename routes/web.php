@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ChamadoController;
+use App\Http\Controllers\GestorController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartamentoController;
 use App\Http\Controllers\FuncionarioController;
@@ -34,11 +35,14 @@ Route::middleware(['auth', 'role:admin,gestor'])->group(function () {
     Route::get('/responsabilidades/{responsabilidade}/pdf', [ResponsabilidadeController::class, 'gerarPdf'])
         ->name('responsabilidades.pdf');
 
-    // Ações de status dos chamados (apenas Admin)
+    // Ações e gestão exclusivas do Admin
     Route::middleware('role:admin')->group(function () {
         Route::patch('/chamados/{chamado}/aprovar', [ChamadoController::class, 'aprovar'])->name('chamados.aprovar');
         Route::patch('/chamados/{chamado}/negar', [ChamadoController::class, 'negar'])->name('chamados.negar');
         Route::patch('/chamados/{chamado}/entregar', [ChamadoController::class, 'entregar'])->name('chamados.entregar');
+        Route::resource('gestores', GestorController::class)
+            ->parameters(['gestores' => 'gestor'])
+            ->except(['show']);
     });
 });
 

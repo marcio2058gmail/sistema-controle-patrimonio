@@ -21,9 +21,15 @@
                     </x-nav-link>
 
                     @if(auth()->user()->isAdminOrGestor())
+                    @if(auth()->user()->isAdmin())
                         <x-nav-link :href="route('patrimonios.index')" :active="request()->routeIs('patrimonios.*')">
                             Patrimônios
                         </x-nav-link>
+                    @elseif(auth()->user()->isGestor())
+                        <x-nav-link :href="route('patrimonios.index')" :active="request()->routeIs('patrimonios.*')">
+                            Patrimônios Disponíveis
+                        </x-nav-link>
+                    @endif
 
                         <x-nav-link :href="route('funcionarios.index')" :active="request()->routeIs('funcionarios.*')">
                             Funcionários
@@ -36,6 +42,12 @@
                         <x-nav-link :href="route('responsabilidades.index')" :active="request()->routeIs('responsabilidades.*')">
                             Responsabilidades
                         </x-nav-link>
+
+                        @if(auth()->user()->isAdmin())
+                            <x-nav-link :href="route('gestores.index')" :active="request()->routeIs('gestores.*')">
+                                Gestores
+                            </x-nav-link>
+                        @endif
                     @endif
                 </div>
             </div>
@@ -96,9 +108,15 @@
             </x-responsive-nav-link>
 
             @if(auth()->user()->isAdminOrGestor())
-                <x-responsive-nav-link :href="route('patrimonios.index')" :active="request()->routeIs('patrimonios.*')">
-                    Patrimônios
-                </x-responsive-nav-link>
+                @if(auth()->user()->isAdmin())
+                    <x-responsive-nav-link :href="route('patrimonios.index')" :active="request()->routeIs('patrimonios.*')">
+                        Patrimônios
+                    </x-responsive-nav-link>
+                @elseif(auth()->user()->isGestor())
+                    <x-responsive-nav-link :href="route('patrimonios.index')" :active="request()->routeIs('patrimonios.*')">
+                        Patrimônios Disponíveis
+                    </x-responsive-nav-link>
+                @endif
 
                 <x-responsive-nav-link :href="route('funcionarios.index')" :active="request()->routeIs('funcionarios.*')">
                     Funcionários
@@ -111,6 +129,12 @@
                 <x-responsive-nav-link :href="route('responsabilidades.index')" :active="request()->routeIs('responsabilidades.*')">
                     Responsabilidades
                 </x-responsive-nav-link>
+
+                @if(auth()->user()->isAdmin())
+                    <x-responsive-nav-link :href="route('gestores.index')" :active="request()->routeIs('gestores.*')">
+                        Gestores
+                    </x-responsive-nav-link>
+                @endif
             @endif
         </div>
 

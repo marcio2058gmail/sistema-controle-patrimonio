@@ -15,6 +15,11 @@ class PasswordController extends Controller
      */
     public function update(Request $request): RedirectResponse
     {
+        // Se nenhum campo de senha foi preenchido, ignora
+        if (! $request->filled('current_password') && ! $request->filled('password')) {
+            return back();
+        }
+
         $validated = $request->validateWithBag('updatePassword', [
             'current_password' => ['required', 'current_password'],
             'password' => ['required', Password::defaults(), 'confirmed'],
