@@ -42,13 +42,13 @@
     <table class="info">
         <tr>
             <td class="label">Nome</td>
-            <td>{{ $responsibility->funcionario->nome }}</td>
+            <td>{{ $responsibility->employee->nome }}</td>
             <td class="label">Cargo</td>
-            <td>{{ $responsibility->funcionario->cargo ?? '—' }}</td>
+            <td>{{ $responsibility->employee->cargo ?? '—' }}</td>
         </tr>
         <tr>
             <td class="label">E-mail</td>
-            <td colspan="3">{{ $responsibility->funcionario->email }}</td>
+            <td colspan="3">{{ $responsibility->employee->email }}</td>
         </tr>
     </table>
 
@@ -56,7 +56,7 @@
     <table class="info">
         <tr>
             <td class="label">Código</td>
-            <td>{{ $responsibility->patrimonio->codigo_patrimonio }}</td>
+            <td>{{ $responsibility->asset->codigo_patrimonio }}</td>
             <td class="label">Status</td>
             <td>
                 @if(! $responsibility->data_devolucao)
@@ -68,13 +68,13 @@
         </tr>
         <tr>
             <td class="label">Descrição</td>
-            <td colspan="3">{{ $responsibility->patrimonio->descricao }}</td>
+            <td colspan="3">{{ $responsibility->asset->descricao }}</td>
         </tr>
         <tr>
             <td class="label">Modelo</td>
-            <td>{{ $responsibility->patrimonio->modelo ?? '—' }}</td>
+            <td>{{ $responsibility->asset->modelo ?? '—' }}</td>
             <td class="label">Número de Série</td>
-            <td>{{ $responsibility->patrimonio->numero_serie ?? '—' }}</td>
+            <td>{{ $responsibility->asset->numero_serie ?? '—' }}</td>
         </tr>
     </table>
 
@@ -99,7 +99,7 @@
         <div class="assinatura-bloco">
             <div class="assinatura-linha"></div>
             <div class="assinatura-nome">
-                {{ $responsibility->funcionario->nome }}<br>
+                {{ $responsibility->employee->nome }}<br>
                 <span style="color:#888">Responsável pelo Bem</span>
             </div>
         </div>

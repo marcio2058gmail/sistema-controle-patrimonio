@@ -34,7 +34,7 @@
                         <x-input-label for="cargo" value="Cargo" />
                         <x-text-input id="cargo" name="cargo" type="text"
                             class="mt-1 block w-full"
-                            :value="old('cargo', $manager->funcionario?->cargo ?? 'Gestor')" placeholder="Gestor" />
+                            :value="old('cargo', $manager->employee?->cargo ?? 'Gestor')" placeholder="Gestor" />
                         <x-input-error :messages="$errors->get('cargo')" class="mt-1" />
                     </div>
 
@@ -46,7 +46,7 @@
                             <option value="">Sem departamento</option>
                             @foreach($departments as $dep)
                                 @php
-                                    $selected = old('departamento_id', $manager->funcionario?->departamento_id) == $dep->id;
+                                    $selected = old('departamento_id', $manager->employee?->departamento_id) == $dep->id;
                                 @endphp
                                 <option value="{{ $dep->id }}" {{ $selected ? 'selected' : '' }}>
                                     {{ $dep->nome }}

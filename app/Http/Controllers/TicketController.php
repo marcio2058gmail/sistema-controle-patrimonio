@@ -104,7 +104,7 @@ class TicketController extends Controller
             $ticket->assets()->sync($patrimonioIds);
         }
 
-        return redirect()->route('chamados.index')
+        return redirect()->route('tickets.index')
             ->with('sucesso', 'Chamado aberto com sucesso.');
     }
 

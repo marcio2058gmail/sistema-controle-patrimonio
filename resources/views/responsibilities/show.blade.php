@@ -26,19 +26,19 @@
                 <dl class="grid grid-cols-2 gap-4 text-sm">
                     <div>
                         <dt class="text-gray-500">Funcionário</dt>
-                        <dd class="font-medium text-gray-800 dark:text-gray-200">{{ $responsibility->funcionario->nome }}</dd>
+                        <dd class="font-medium text-gray-800 dark:text-gray-200">{{ $responsibility->employee->nome }}</dd>
                     </div>
                     <div>
                         <dt class="text-gray-500">Cargo</dt>
-                        <dd class="text-gray-800 dark:text-gray-200">{{ $responsibility->funcionario->cargo ?? '—' }}</dd>
+                        <dd class="text-gray-800 dark:text-gray-200">{{ $responsibility->employee->cargo ?? '—' }}</dd>
                     </div>
                     <div>
                         <dt class="text-gray-500">Patrimônio</dt>
-                        <dd class="font-mono font-medium text-gray-800 dark:text-gray-200">{{ $responsibility->patrimonio->codigo_patrimonio }}</dd>
+                        <dd class="font-mono font-medium text-gray-800 dark:text-gray-200">{{ $responsibility->asset->codigo_patrimonio }}</dd>
                     </div>
                     <div>
                         <dt class="text-gray-500">Descrição</dt>
-                        <dd class="text-gray-800 dark:text-gray-200">{{ $responsibility->patrimonio->descricao }}</dd>
+                        <dd class="text-gray-800 dark:text-gray-200">{{ $responsibility->asset->descricao }}</dd>
                     </div>
                     <div>
                         <dt class="text-gray-500">Data de Entrega</dt>

@@ -28,8 +28,8 @@
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                         @forelse($responsibilities as $r)
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-750">
-                            <td class="px-6 py-3 text-gray-800 dark:text-gray-200">{{ $r->funcionario->nome }}</td>
-                            <td class="px-6 py-3 font-mono text-gray-600 dark:text-gray-400">{{ $r->patrimonio->codigo_patrimonio }}</td>
+                            <td class="px-6 py-3 text-gray-800 dark:text-gray-200">{{ $r->employee->nome }}</td>
+                            <td class="px-6 py-3 font-mono text-gray-600 dark:text-gray-400">{{ $r->asset->codigo_patrimonio }}</td>
                             <td class="px-6 py-3 text-gray-500">{{ $r->data_entrega->format('d/m/Y') }}</td>
                             <td class="px-6 py-3 text-gray-500">
                                 @if($r->data_devolucao)

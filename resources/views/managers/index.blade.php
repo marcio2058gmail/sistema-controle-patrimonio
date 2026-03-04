@@ -34,13 +34,13 @@
                                 {{ $manager->email }}
                             </td>
                             <td class="px-6 py-3 text-gray-500 dark:text-gray-400">
-                                {{ $manager->funcionario?->cargo ?? '—' }}
+                                {{ $manager->employee?->cargo ?? '—' }}
                             </td>
                             <td class="px-6 py-3">
-                                @if($manager->funcionario?->departamento)
-                                    <a href="{{ route('departments.show', $manager->funcionario->departamento) }}"
+                                @if($manager->employee?->department)
+                                    <a href="{{ route('departments.show', $manager->employee->department) }}"
                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200 hover:underline">
-                                        {{ $manager->funcionario->departamento->nome }}
+                                        {{ $manager->employee->department->nome }}
                                     </a>
                                 @else
                                     <span class="text-xs text-gray-400">Sem departamento</span>

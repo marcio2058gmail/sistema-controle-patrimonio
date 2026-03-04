@@ -44,12 +44,12 @@
                         @forelse($tickets as $ticket)
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-750">
                             <td class="px-6 py-3 text-gray-500">{{ $ticket->id }}</td>
-                            <td class="px-6 py-3 text-gray-800 dark:text-gray-200">{{ $ticket->funcionario?->nome ?? '—' }}</td>
+                            <td class="px-6 py-3 text-gray-800 dark:text-gray-200">{{ $ticket->employee?->nome ?? '—' }}</td>
                             <td class="px-6 py-3 font-mono text-gray-500 text-xs">
-                                @if($ticket->patrimonios->isEmpty())
+                                @if($ticket->assets->isEmpty())
                                     <span class="text-gray-400">—</span>
                                 @else
-                                    {{ $ticket->patrimonios->pluck('codigo_patrimonio')->implode(', ') }}
+                                    {{ $ticket->assets->pluck('codigo_patrimonio')->implode(', ') }}
                                 @endif
                             </td>
                             <td class="px-6 py-3 text-gray-600 dark:text-gray-400 max-w-xs truncate">{{ Str::limit($ticket->descricao, 60) }}</td>

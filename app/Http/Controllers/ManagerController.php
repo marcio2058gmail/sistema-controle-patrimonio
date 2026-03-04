@@ -18,7 +18,7 @@ class ManagerController extends Controller
     public function index(): View
     {
         $managers = User::where('role', 'manager')
-            ->with('funcionario.departamento')
+            ->with('employee.department')
             ->orderBy('name')
             ->paginate(15);
 
@@ -52,7 +52,7 @@ class ManagerController extends Controller
             ]);
         });
 
-        return redirect()->route('gestores.index')
+        return redirect()->route('managers.index')
             ->with('sucesso', 'Gestor criado com sucesso.');
     }
 
@@ -60,7 +60,7 @@ class ManagerController extends Controller
     {
         abort_if($manager->role !== 'manager', 404);
 
-        $manager->load('funcionario.departamento');
+        $manager->load('employee.department');
         $departments = Department::orderBy('nome')->get();
 
         return view('managers.edit', compact('manager', 'departments'));
@@ -100,7 +100,7 @@ class ManagerController extends Controller
             }
         });
 
-        return redirect()->route('gestores.index')
+        return redirect()->route('managers.index')
             ->with('sucesso', 'Gestor atualizado com sucesso.');
     }
 
@@ -114,7 +114,7 @@ class ManagerController extends Controller
             $manager->delete();
         });
 
-        return redirect()->route('gestores.index')
+        return redirect()->route('managers.index')
             ->with('sucesso', 'Gestor removido com sucesso.');
     }
 }

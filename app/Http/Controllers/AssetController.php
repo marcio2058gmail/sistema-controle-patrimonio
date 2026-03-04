@@ -38,13 +38,13 @@ class AssetController extends Controller
         abort_unless($request->user()->isAdmin(), 403);
         Asset::create($request->validated());
 
-        return redirect()->route('patrimonios.index')
+        return redirect()->route('assets.index')
             ->with('sucesso', 'Patrimônio cadastrado com sucesso.');
     }
 
     public function show(Asset $asset): View
     {
-        $asset->load(['responsabilidades.funcionario', 'chamados.funcionario']);
+        $asset->load(['responsibilities.employee', 'tickets.employee']);
         return view('assets.show', compact('asset'));
     }
 
@@ -60,7 +60,7 @@ class AssetController extends Controller
         abort_unless($request->user()->isAdmin(), 403);
         $asset->update($request->validated());
 
-        return redirect()->route('patrimonios.index')
+        return redirect()->route('assets.index')
             ->with('sucesso', 'Patrimônio atualizado com sucesso.');
     }
 
@@ -69,7 +69,7 @@ class AssetController extends Controller
         abort_unless($request->user()->isAdmin(), 403);
         $asset->delete();
 
-        return redirect()->route('patrimonios.index')
+        return redirect()->route('assets.index')
             ->with('sucesso', 'Patrimônio removido com sucesso.');
     }
 }

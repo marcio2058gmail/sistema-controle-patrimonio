@@ -29,7 +29,7 @@
             </div>
 
             {{-- Responsabilidades --}}
-            @if($asset->responsabilidades->isNotEmpty())
+            @if($asset->responsibilities->isNotEmpty())
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                     <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Histórico de Responsabilidades</h3>
@@ -44,9 +44,9 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                        @foreach($asset->responsabilidades as $r)
+                        @foreach($asset->responsibilities as $r)
                         <tr>
-                            <td class="px-6 py-3">{{ $r->funcionario->nome }}</td>
+                            <td class="px-6 py-3">{{ $r->employee->nome }}</td>
                             <td class="px-6 py-3">{{ $r->data_entrega->format('d/m/Y') }}</td>
                             <td class="px-6 py-3">{{ $r->data_devolucao?->format('d/m/Y') ?? 'Ativo' }}</td>
                             <td class="px-6 py-3">{{ $r->assinado ? 'Sim' : 'Não' }}</td>

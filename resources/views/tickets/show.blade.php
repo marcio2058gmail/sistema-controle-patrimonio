@@ -13,7 +13,7 @@
                 <dl class="grid grid-cols-2 gap-4 text-sm">
                     <div>
                         <dt class="text-gray-500">Funcionário</dt>
-                        <dd class="font-medium text-gray-800 dark:text-gray-200">{{ $ticket->funcionario?->nome ?? '—' }}</dd>
+                        <dd class="font-medium text-gray-800 dark:text-gray-200">{{ $ticket->employee?->nome ?? '—' }}</dd>
                     </div>
                     <div>
                         <dt class="text-gray-500">Status</dt>
@@ -22,11 +22,11 @@
                     <div>
                         <dt class="text-gray-500">Patrimônio(s)</dt>
                         <dd class="mt-1 text-gray-800 dark:text-gray-200">
-                            @if($ticket->patrimonios->isEmpty())
+                            @if($ticket->assets->isEmpty())
                                 <span class="text-gray-400">—</span>
                             @else
                                 <ul class="space-y-1">
-                                    @foreach($ticket->patrimonios as $asset)
+                                    @foreach($ticket->assets as $asset)
                                     <li class="flex items-center gap-2 text-sm">
                                         <span class="font-mono font-medium">{{ $asset->codigo_patrimonio }}</span>
                                         <span class="text-gray-500">— {{ $asset->descricao }}</span>

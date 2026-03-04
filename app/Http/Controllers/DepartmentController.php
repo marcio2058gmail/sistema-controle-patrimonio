@@ -34,14 +34,14 @@ class DepartmentController extends Controller
 
         Department::create($request->validated());
 
-        return redirect()->route('departamentos.index')
+        return redirect()->route('departments.index')
             ->with('sucesso', 'Departamento criado com sucesso.');
     }
 
     public function show(Department $department): View
     {
         $department->load([
-            'funcionarios.responsabilidades' => fn ($q) => $q->whereNull('data_devolucao')->with('asset'),
+            'employees.responsibilities' => fn ($q) => $q->whereNull('data_devolucao')->with('asset'),
         ]);
 
         // Estatísticas do departamento
@@ -76,7 +76,7 @@ class DepartmentController extends Controller
 
         $department->update($request->validated());
 
-        return redirect()->route('departamentos.index')
+        return redirect()->route('departments.index')
             ->with('sucesso', 'Departamento atualizado com sucesso.');
     }
 
@@ -88,7 +88,7 @@ class DepartmentController extends Controller
         $department->employees()->update(['departamento_id' => null]);
         $department->delete();
 
-        return redirect()->route('departamentos.index')
+        return redirect()->route('departments.index')
             ->with('sucesso', 'Departamento excluído. Funcionários desvinculados.');
     }
 }

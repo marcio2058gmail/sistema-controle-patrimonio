@@ -27,7 +27,7 @@ class EmployeeController extends Controller
     {
         Employee::create($request->validated());
 
-        return redirect()->route('funcionarios.index')
+        return redirect()->route('employees.index')
             ->with('sucesso', 'Funcionário cadastrado com sucesso.');
     }
 
@@ -47,7 +47,7 @@ class EmployeeController extends Controller
     {
         $employee->update($request->validated());
 
-        return redirect()->route('funcionarios.index')
+        return redirect()->route('employees.index')
             ->with('sucesso', 'Funcionário atualizado com sucesso.');
     }
 
@@ -55,7 +55,7 @@ class EmployeeController extends Controller
     {
         $employee->delete();
 
-        return redirect()->route('funcionarios.index')
+        return redirect()->route('employees.index')
             ->with('sucesso', 'Funcionário removido com sucesso.');
     }
 }

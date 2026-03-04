@@ -38,7 +38,7 @@ class ResponsibilityController extends Controller
         // Marcar patrimônio como em uso
         $responsibility->asset->update(['status' => Asset::STATUS_EM_USO]);
 
-        return redirect()->route('responsabilidades.index')
+        return redirect()->route('responsibilities.index')
             ->with('sucesso', 'Responsabilidade registrada com sucesso.');
     }
 
@@ -63,7 +63,7 @@ class ResponsibilityController extends Controller
             $responsibility->asset->update(['status' => Asset::STATUS_DISPONIVEL]);
         }
 
-        return redirect()->route('responsabilidades.index')
+        return redirect()->route('responsibilities.index')
             ->with('sucesso', 'Responsabilidade atualizada com sucesso.');
     }
 
@@ -71,7 +71,7 @@ class ResponsibilityController extends Controller
     {
         $responsibility->delete();
 
-        return redirect()->route('responsabilidades.index')
+        return redirect()->route('responsibilities.index')
             ->with('sucesso', 'Responsabilidade removida.');
     }
 
@@ -79,7 +79,7 @@ class ResponsibilityController extends Controller
     {
         $responsibility->load(['employee', 'asset']);
 
-        $pdf = Pdf::loadView('responsabilidades.pdf', compact('responsibility'))
+        $pdf = Pdf::loadView('responsibilities.pdf', compact('responsibility'))
             ->setPaper('a4', 'portrait');
 
         $nomeArquivo = "termo-responsabilidade-{$responsibility->id}.pdf";
