@@ -2,10 +2,12 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Departamentos</h2>
+            @if(auth()->user()->isAdmin())
             <a href="{{ route('departamentos.create') }}"
                class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg">
                 + Novo Departamento
             </a>
+            @endif
         </div>
     </x-slot>
 
@@ -39,12 +41,14 @@
                             </td>
                             <td class="px-6 py-3 text-right space-x-3">
                                 <a href="{{ route('departamentos.show', $departamento) }}" class="text-blue-600 hover:underline text-xs">Ver</a>
+                                @if(auth()->user()->isAdmin())
                                 <a href="{{ route('departamentos.edit', $departamento) }}" class="text-indigo-600 hover:underline text-xs">Editar</a>
                                 <form action="{{ route('departamentos.destroy', $departamento) }}" method="POST" class="inline"
                                       onsubmit="return confirm('Excluir o departamento {{ $departamento->nome }}? Os funcionários serão desvinculados.')">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="text-red-600 hover:underline text-xs">Excluir</button>
                                 </form>
+                                @endif
                             </td>
                         </tr>
                         @empty

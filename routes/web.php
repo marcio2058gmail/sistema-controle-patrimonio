@@ -28,7 +28,7 @@ Route::middleware('auth')->group(function () {
 
 // Rotas para Admin e Gestor
 Route::middleware(['auth', 'role:admin,gestor'])->group(function () {
-    Route::resource('departamentos', DepartamentoController::class);
+    Route::resource('departamentos', DepartamentoController::class)->only(['index', 'show']);
     Route::resource('patrimonios', PatrimonioController::class);
     Route::resource('funcionarios', FuncionarioController::class);
     Route::resource('responsabilidades', ResponsabilidadeController::class);
@@ -37,6 +37,7 @@ Route::middleware(['auth', 'role:admin,gestor'])->group(function () {
 
     // Ações e gestão exclusivas do Admin
     Route::middleware('role:admin')->group(function () {
+        Route::resource('departamentos', DepartamentoController::class)->except(['index', 'show']);
         Route::patch('/chamados/{chamado}/aprovar', [ChamadoController::class, 'aprovar'])->name('chamados.aprovar');
         Route::patch('/chamados/{chamado}/negar', [ChamadoController::class, 'negar'])->name('chamados.negar');
         Route::patch('/chamados/{chamado}/entregar', [ChamadoController::class, 'entregar'])->name('chamados.entregar');

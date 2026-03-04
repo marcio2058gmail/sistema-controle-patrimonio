@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateDepartamentoRequest;
 use App\Models\Departamento;
 use App\Models\Responsabilidade;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class DepartamentoController extends Controller
@@ -20,13 +21,17 @@ class DepartamentoController extends Controller
         return view('departamentos.index', compact('departamentos'));
     }
 
-    public function create(): View
+    public function create(Request $request): View
     {
+        abort_unless($request->user()->isAdmin(), 403);
+
         return view('departamentos.create');
     }
 
     public function store(StoreDepartamentoRequest $request): RedirectResponse
     {
+        abort_unless($request->user()->isAdmin(), 403);
+
         Departamento::create($request->validated());
 
         return redirect()->route('departamentos.index')
@@ -58,21 +63,27 @@ class DepartamentoController extends Controller
         ));
     }
 
-    public function edit(Departamento $departamento): View
+    public function edit(Request $request, Departamento $departamento): View
     {
+        abort_unless($request->user()->isAdmin(), 403);
+
         return view('departamentos.edit', compact('departamento'));
     }
 
     public function update(UpdateDepartamentoRequest $request, Departamento $departamento): RedirectResponse
     {
+        abort_unless($request->user()->isAdmin(), 403);
+
         $departamento->update($request->validated());
 
         return redirect()->route('departamentos.index')
             ->with('sucesso', 'Departamento atualizado com sucesso.');
     }
 
-    public function destroy(Departamento $departamento): RedirectResponse
+    public function destroy(Request $request, Departamento $departamento): RedirectResponse
     {
+        abort_unless($request->user()->isAdmin(), 403);
+
         // Desvincula funcionários antes de excluir (nullOnDelete já cuida no DB, mas garantimos)
         $departamento->funcionarios()->update(['departamento_id' => null]);
         $departamento->delete();

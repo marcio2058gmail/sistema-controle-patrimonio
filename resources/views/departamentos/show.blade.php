@@ -4,10 +4,12 @@
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 Departamento: {{ $departamento->nome }}
             </h2>
+            @if(auth()->user()->isAdmin())
             <a href="{{ route('departamentos.edit', $departamento) }}"
                class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg">
                 Editar
             </a>
+            @endif
         </div>
     </x-slot>
 
