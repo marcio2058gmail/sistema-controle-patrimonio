@@ -170,27 +170,6 @@
                 </button>
             </form>
 
-            {{-- Credenciais de exemplo (apenas em dev) --}}
-            @if(app()->isLocal() || app()->environment('local'))
-            <div class="mt-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-xl border border-dashed border-gray-200 dark:border-gray-700">
-                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Acesso de demonstração</p>
-                <div class="space-y-1.5 text-xs text-gray-500 dark:text-gray-400">
-                    <div class="flex justify-between">
-                        <span class="font-medium text-indigo-600">Admin</span>
-                        <span>admin@patrimonio.test / password</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="font-medium text-teal-600">Gestor</span>
-                        <span>gestor@patrimonio.test / password</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="font-medium text-gray-500">Funcionário</span>
-                        <span>ana.silva@empresa.test / password</span>
-                    </div>
-                </div>
-            </div>
-            @endif
-
         </div>
     </div>
 
