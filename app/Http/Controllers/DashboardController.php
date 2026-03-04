@@ -39,14 +39,14 @@ class DashboardController extends Controller
 
             // Breakdown por departamento
             $departmentStats = Department::withCount('employees')
-                ->with('funcionarios:id,departamento_id')
+                ->with('employees:id,departamento_id')
                 ->orderBy('nome')
                 ->get()
                 ->map(function ($dept) {
                     $ids = $dept->employees->pluck('id');
                     return [
                         'department'       => $dept,
-                        'total_funcionarios' => $dept->funcionarios_count,
+                        'total_funcionarios' => $dept->employees_count,
                         'patrimonios_em_uso' => $ids->isEmpty() ? 0 :
                             Responsibility::whereIn('funcionario_id', $ids)
                                 ->whereNull('data_devolucao')
