@@ -36,6 +36,28 @@ class DashboardController extends Controller
             $totalChamadosAbertos    = Chamado::where('status', Chamado::STATUS_ABERTO)->count();
             $totalResponsabilidades  = Responsabilidade::whereNull('data_devolucao')->count();
             $patrimoniosSemResponsavel = Patrimonio::where('status', Patrimonio::STATUS_DISPONIVEL)->count();
+
+            // Breakdown por departamento
+            $departamentosStats = Departamento::withCount('funcionarios')
+                ->with('funcionarios:id,departamento_id')
+                ->orderBy('nome')
+                ->get()
+                ->map(function ($dept) {
+                    $ids = $dept->funcionarios->pluck('id');
+                    return [
+                        'departamento'       => $dept,
+                        'total_funcionarios' => $dept->funcionarios_count,
+                        'patrimonios_em_uso' => $ids->isEmpty() ? 0 :
+                            Responsabilidade::whereIn('funcionario_id', $ids)
+                                ->whereNull('data_devolucao')
+                                ->distinct('patrimonio_id')
+                                ->count('patrimonio_id'),
+                        'chamados_abertos'   => $ids->isEmpty() ? 0 :
+                            Chamado::where('status', Chamado::STATUS_ABERTO)
+                                ->whereIn('funcionario_id', $ids)
+                                ->count(),
+                    ];
+                });
         } elseif ($user->isGestor() && $deptId) {
             $idsNoDept = Funcionario::where('departamento_id', $deptId)->pluck('id');
 
@@ -48,6 +70,7 @@ class DashboardController extends Controller
             $totalResponsabilidades  = Responsabilidade::whereNull('data_devolucao')
                                            ->whereIn('funcionario_id', $idsNoDept)->count();
             $patrimoniosSemResponsavel = null; // não se aplica na visão do departamento
+            $departamentosStats = collect();
         } else {
             // funcionário — só os próprios dados
             $idsFunc = $funcionario ? [$funcionario->id] : [];
@@ -61,6 +84,7 @@ class DashboardController extends Controller
             $totalResponsabilidades  = Responsabilidade::whereNull('data_devolucao')
                                            ->whereIn('funcionario_id', $idsFunc)->count();
             $patrimoniosSemResponsavel = null;
+            $departamentosStats = collect();
         }
 
         // -------------------------------------------------------
@@ -149,6 +173,7 @@ class DashboardController extends Controller
             'ultimosChamados',
             'patrimoniosSemResponsavel',
             'departamento',
+            'departamentosStats',
         ));
     }
 }

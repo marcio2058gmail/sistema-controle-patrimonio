@@ -118,6 +118,52 @@
             </div>
             @endif
 
+            {{-- Tabela: Breakdown por departamento (admin) --}}
+            @if(auth()->user()->isAdmin() && $departamentosStats->isNotEmpty())
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                    <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Visão por Departamento</h3>
+                    <a href="{{ route('departamentos.index') }}" class="text-xs text-blue-600 hover:underline">Gerenciar</a>
+                </div>
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
+                    <thead class="bg-gray-50 dark:bg-gray-700">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Departamento</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Funcionários</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Patrimônios em Uso</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Chamados Abertos</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                        @foreach($departamentosStats as $stat)
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-750">
+                            <td class="px-6 py-3 font-medium text-gray-800 dark:text-gray-200">
+                                <a href="{{ route('departamentos.show', $stat['departamento']) }}" class="hover:text-blue-600 hover:underline">
+                                    {{ $stat['departamento']->nome }}
+                                </a>
+                            </td>
+                            <td class="px-6 py-3 text-center text-gray-600 dark:text-gray-400">
+                                {{ $stat['total_funcionarios'] }}
+                            </td>
+                            <td class="px-6 py-3 text-center text-gray-600 dark:text-gray-400">
+                                {{ $stat['patrimonios_em_uso'] }}
+                            </td>
+                            <td class="px-6 py-3 text-center">
+                                @if($stat['chamados_abertos'] > 0)
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                                        {{ $stat['chamados_abertos'] }}
+                                    </span>
+                                @else
+                                    <span class="text-gray-400">—</span>
+                                @endif
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            @endif
+
         </div>
     </div>
 
