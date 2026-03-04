@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Departamento extends Model
+{
     protected $fillable = [
         'nome',
         'descricao',
