@@ -1,7 +1,13 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            Dashboard — Controle Patrimonial
+            @if(auth()->user()->isAdmin())
+                Dashboard — Controle Patrimonial
+            @elseif(auth()->user()->isGestor() && $departamento)
+                Dashboard — {{ $departamento->nome }}
+            @else
+                Meu Painel
+            @endif
         </h2>
     </x-slot>
 
@@ -9,7 +15,9 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
 
             {{-- Cards de KPI --}}
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="grid grid-cols-2 {{ auth()->user()->isAdmin() ? 'md:grid-cols-4' : 'md:grid-cols-3' }} gap-4">
+
+                @if(auth()->user()->isAdmin())
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5 flex flex-col gap-1">
                     <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Patrimônios</span>
                     <span class="text-3xl font-bold text-gray-800 dark:text-gray-100">{{ $totalPatrimonios }}</span>
@@ -19,20 +27,48 @@
                     <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Funcionários</span>
                     <span class="text-3xl font-bold text-gray-800 dark:text-gray-100">{{ $totalFuncionarios }}</span>
                 </div>
+
+                @elseif(auth()->user()->isGestor())
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5 flex flex-col gap-1">
+                    <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Patrimônios em Uso</span>
+                    <span class="text-3xl font-bold text-gray-800 dark:text-gray-100">{{ $totalPatrimonios }}</span>
+                    <span class="text-xs text-gray-400">no departamento</span>
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5 flex flex-col gap-1">
+                    <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Funcionários</span>
+                    <span class="text-3xl font-bold text-gray-800 dark:text-gray-100">{{ $totalFuncionarios }}</span>
+                    <span class="text-xs text-gray-400">no departamento</span>
+                </div>
+
+                @else
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5 flex flex-col gap-1">
+                    <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Patrimônios Sob Guarda</span>
+                    <span class="text-3xl font-bold text-gray-800 dark:text-gray-100">{{ $totalPatrimonios }}</span>
+                </div>
+                @endif
+
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5 flex flex-col gap-1">
                     <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Chamados Abertos</span>
                     <span class="text-3xl font-bold text-yellow-500">{{ $totalChamadosAbertos }}</span>
+                    @if(! auth()->user()->isAdmin())
+                        <span class="text-xs text-gray-400">em aberto</span>
+                    @endif
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5 flex flex-col gap-1">
                     <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Atribuições Ativas</span>
                     <span class="text-3xl font-bold text-blue-500">{{ $totalResponsabilidades }}</span>
+                    @if(auth()->user()->isGestor())
+                        <span class="text-xs text-gray-400">no departamento</span>
+                    @endif
                 </div>
             </div>
 
             {{-- Gráficos --}}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
-                    <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Patrimônios por Status</h3>
+                    <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">
+                        {{ auth()->user()->isAdmin() ? 'Patrimônios por Status' : 'Patrimônios em Uso — por Status' }}
+                    </h3>
                     <canvas id="chartPatrimonios" height="200"></canvas>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
@@ -45,7 +81,12 @@
             @if($ultimosChamados->isNotEmpty())
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-                    <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Chamados Abertos Recentes</h3>
+                    <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                        Chamados Abertos Recentes
+                        @if(auth()->user()->isGestor() && $departamento)
+                            <span class="font-normal text-gray-400">— {{ $departamento->nome }}</span>
+                        @endif
+                    </h3>
                     <a href="{{ route('chamados.index') }}" class="text-xs text-blue-600 hover:underline">Ver todos</a>
                 </div>
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
