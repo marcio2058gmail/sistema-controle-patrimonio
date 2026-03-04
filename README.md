@@ -1,59 +1,120 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sistema de Controle Patrimonial
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sistema web para gestão de patrimônio organizacional — cadastro de bens, atribuição a funcionários via Termos de Responsabilidade e fluxo completo de chamados de solicitação.
 
-## About Laravel
+## Stack Tecnológica
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+| Camada | Tecnologia |
+|---|---|
+| Back-end | Laravel 12 / PHP 8.2 |
+| Front-end | Blade + Tailwind CSS v4 + Alpine.js |
+| Build | Vite |
+| Banco de Dados | MySQL |
+| Autenticação | Laravel Breeze (sessão) |
+| PDF | barryvdh/laravel-dompdf v3.1 |
+| Gráficos | Chart.js v4.4 (CDN) |
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Funcionalidades
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Dashboard** — KPIs em tempo real (patrimônios, funcionários, chamados abertos, responsabilidades ativas) e gráficos Chart.js de evolução mensal
+- **Patrimônios** — CRUD completo com controle de status (`disponivel`, `em_uso`, `manutencao`)
+- **Funcionários** — Cadastro vinculado à conta de usuário do sistema
+- **Chamados** — Fluxo de solicitação → aprovação/negação → entrega; ao entregar, cria automaticamente um Termo de Responsabilidade
+- **Termos de Responsabilidade** — Registro de vínculo patrimônio ↔ funcionário com geração de PDF
+- **Controle de Acesso por Papel** — três níveis: `admin`, `gestor`, `funcionario`
 
-## Learning Laravel
+## Papéis de Acesso
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+| Papel | Permissões |
+|---|---|
+| `admin` | Acesso total: CRUD de todos os módulos, aprovar/negar chamados |
+| `gestor` | Igual ao admin, exceto gerenciamento de usuários |
+| `funcionario` | Visualizar patrimônios, abrir e acompanhar próprios chamados |
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Instalação
 
-## Laravel Sponsors
+### Pré-requisitos
+- PHP 8.2+
+- Composer
+- Node.js 20+ / npm
+- MySQL 8+
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Passos
 
-### Premium Partners
+```bash
+# 1. Clonar o repositório
+git clone <url-do-repositorio> controle-patrimonio
+cd controle-patrimonio
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+# 2. Instalar dependências PHP
+composer install
 
-## Contributing
+# 3. Instalar dependências JS e compilar assets
+npm install && npm run build
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# 4. Configurar ambiente
+cp .env.example .env
+php artisan key:generate
 
-## Code of Conduct
+# 5. Configurar banco de dados no .env
+# DB_CONNECTION=mysql
+# DB_HOST=127.0.0.1
+# DB_PORT=3306
+# DB_DATABASE=controle_patrimonio
+# DB_USERNAME=seu_usuario
+# DB_PASSWORD=sua_senha
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# 6. Executar migrations e seeders
+php artisan migrate --seed
+```
 
-## Security Vulnerabilities
+## Credenciais de Teste (Seeders)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+| Papel | E-mail | Senha |
+|---|---|---|
+| Admin | admin@patrimonio.test | password |
+| Gestor | gestor@patrimonio.test | password |
+| Funcionário | ana.silva@empresa.test | password |
 
-## License
+> Os seeders criam 1 admin, 1 gestor e 10 funcionários com patrimônios e chamados de exemplo.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Estrutura de Diretórios Relevante
+
+```
+app/
+├── Http/
+│   ├── Controllers/          # Dashboard, Patrimonio, Funcionario, Chamado, Responsabilidade
+│   ├── Middleware/
+│   │   └── RoleMiddleware.php
+│   └── Requests/             # 8 Form Requests (Store/Update por módulo)
+└── Models/                   # User, Patrimonio, Funcionario, Chamado, Responsabilidade
+
+resources/views/
+├── dashboard.blade.php
+├── patrimonios/              # index, create, edit, show
+├── funcionarios/             # index, create, edit, show
+├── chamados/                 # index, create, show
+└── responsabilidades/        # index, create, edit, show, pdf
+
+database/
+├── migrations/               # 8 migrations (incl. role, patrimonio_id, user_id)
+└── seeders/                  # 5 seeders orquestrados pelo DatabaseSeeder
+```
+
+## Executar em Desenvolvimento
+
+```bash
+# Terminal 1 — servidor PHP
+php artisan serve
+
+# Terminal 2 — compilação contínua de assets
+npm run dev
+```
+
+## Documentação Detalhada
+
+Consulte [DOCUMENTATION.md](DOCUMENTATION.md) para detalhes sobre arquitetura, rotas, modelos e fluxos de negócio.
+
+## Licença
+
+Software proprietário. Todos os direitos reservados.
