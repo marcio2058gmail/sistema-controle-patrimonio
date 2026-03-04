@@ -103,9 +103,9 @@
                         @foreach($latestTickets as $ticket)
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-750">
                             <td class="px-6 py-3 text-gray-600 dark:text-gray-400">{{ $ticket->id }}</td>
-                            <td class="px-6 py-3 text-gray-800 dark:text-gray-200">{{ $ticket->funcionario?->nome ?? '—' }}</td>
+                            <td class="px-6 py-3 text-gray-800 dark:text-gray-200">{{ $ticket->employee?->nome ?? '—' }}</td>
                             <td class="px-6 py-3 text-gray-600 dark:text-gray-400 font-mono text-xs">
-                                {{ $ticket->patrimonios->pluck('codigo_patrimonio')->implode(', ') ?: '—' }}
+                                {{ $ticket->assets->pluck('codigo_patrimonio')->implode(', ') ?: '—' }}
                             </td>
                             <td class="px-6 py-3 text-gray-500 dark:text-gray-400">{{ $ticket->created_at->format('d/m/Y') }}</td>
                             <td class="px-6 py-3 text-right">
