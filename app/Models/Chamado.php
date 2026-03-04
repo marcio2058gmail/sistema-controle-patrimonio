@@ -4,12 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Chamado extends Model
 {
     protected $fillable = [
         'funcionario_id',
-        'patrimonio_id',
         'descricao',
         'status',
     ];
@@ -45,8 +45,9 @@ class Chamado extends Model
         return $this->belongsTo(Funcionario::class);
     }
 
-    public function patrimonio(): BelongsTo
+    public function patrimonios(): BelongsToMany
     {
-        return $this->belongsTo(Patrimonio::class);
+        return $this->belongsToMany(Patrimonio::class, 'chamado_patrimonio')
+            ->withTimestamps();
     }
 }

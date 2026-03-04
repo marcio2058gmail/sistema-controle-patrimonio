@@ -45,7 +45,13 @@
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-750">
                             <td class="px-6 py-3 text-gray-500">{{ $chamado->id }}</td>
                             <td class="px-6 py-3 text-gray-800 dark:text-gray-200">{{ $chamado->funcionario?->nome ?? '—' }}</td>
-                            <td class="px-6 py-3 font-mono text-gray-500">{{ $chamado->patrimonio?->codigo_patrimonio ?? '—' }}</td>
+                            <td class="px-6 py-3 font-mono text-gray-500 text-xs">
+                                @if($chamado->patrimonios->isEmpty())
+                                    <span class="text-gray-400">—</span>
+                                @else
+                                    {{ $chamado->patrimonios->pluck('codigo_patrimonio')->implode(', ') }}
+                                @endif
+                            </td>
                             <td class="px-6 py-3 text-gray-600 dark:text-gray-400 max-w-xs truncate">{{ Str::limit($chamado->descricao, 60) }}</td>
                             <td class="px-6 py-3"><x-status-badge :status="$chamado->status" type="chamado" /></td>
                             <td class="px-6 py-3 text-gray-500">{{ $chamado->created_at->format('d/m/Y') }}</td>

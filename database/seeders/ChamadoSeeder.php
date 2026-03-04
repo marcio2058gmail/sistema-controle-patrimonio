@@ -79,15 +79,20 @@ class ChamadoSeeder extends Seeder
 
         foreach ($chamados as $index => $data) {
             $funcionario = $funcionarios[$index % $funcionarios->count()];
-            $patrimonio  = rand(0, 1) ? $patrimonios[$index % $patrimonios->count()] : null;
 
-            Chamado::create([
+            $chamado = Chamado::create([
                 'funcionario_id' => $funcionario->id,
-                'patrimonio_id'  => $patrimonio?->id,
                 'descricao'      => $data['descricao'],
                 'status'         => $data['status'],
                 'created_at'     => now()->subDays(rand(0, 60)),
             ]);
+
+            // Associa 0, 1 ou 2 patrimônios aleatórios ao chamado
+            $qtd = rand(0, 2);
+            if ($qtd > 0 && $patrimonios->count() > 0) {
+                $ids = $patrimonios->random(min($qtd, $patrimonios->count()))->pluck('id')->toArray();
+                $chamado->patrimonios()->sync($ids);
+            }
         }
     }
 }

@@ -14,16 +14,17 @@ class StoreChamadoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'descricao'     => ['required', 'string', 'min:10', 'max:1000'],
-            'patrimonio_id' => ['nullable', 'exists:patrimonios,id'],
+            'descricao'       => ['required', 'string', 'min:10', 'max:1000'],
+            'patrimonio_ids'  => ['nullable', 'array'],
+            'patrimonio_ids.*'=> ['exists:patrimonios,id'],
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'descricao'     => 'descrição',
-            'patrimonio_id' => 'patrimônio',
+            'descricao'      => 'descrição',
+            'patrimonio_ids' => 'patrimônios',
         ];
     }
 }

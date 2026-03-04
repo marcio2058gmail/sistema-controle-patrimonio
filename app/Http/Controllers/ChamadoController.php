@@ -15,7 +15,7 @@ class ChamadoController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = Chamado::with(['funcionario', 'patrimonio'])->latest();
+        $query = Chamado::with(['funcionario', 'patrimonios'])->latest();
 
         // Funcionário só vê seus próprios chamados
         if ($request->user()->isFuncionario()) {
@@ -48,6 +48,8 @@ class ChamadoController extends Controller
     public function store(StoreChamadoRequest $request): RedirectResponse
     {
         $data = $request->validated();
+        $patrimonioIds = $data['patrimonio_ids'] ?? [];
+        unset($data['patrimonio_ids']);
 
         // Vincula automaticamente ao funcionário do usuário logado, se existir
         if ($request->user()->isFuncionario()) {
@@ -58,7 +60,11 @@ class ChamadoController extends Controller
             $data['funcionario_id'] = $funcionario->id;
         }
 
-        Chamado::create($data);
+        $chamado = Chamado::create($data);
+
+        if (! empty($patrimonioIds)) {
+            $chamado->patrimonios()->sync($patrimonioIds);
+        }
 
         return redirect()->route('chamados.index')
             ->with('sucesso', 'Chamado aberto com sucesso.');
@@ -66,7 +72,7 @@ class ChamadoController extends Controller
 
     public function show(Chamado $chamado): View
     {
-        $chamado->load(['funcionario', 'patrimonio']);
+        $chamado->load(['funcionario', 'patrimonios']);
         return view('chamados.show', compact('chamado'));
     }
 
@@ -98,32 +104,29 @@ class ChamadoController extends Controller
             return back()->withErrors(['status' => 'Apenas chamados aprovados podem ser marcados como entregues.']);
         }
 
-        if (! $chamado->patrimonio_id) {
-            return back()->withErrors(['patrimonio_id' => 'O chamado precisa ter um patrimônio vinculado para entrega.']);
+        $patrimonios = $chamado->patrimonios()->where('status', Patrimonio::STATUS_DISPONIVEL)->get();
+
+        if ($patrimonios->isEmpty()) {
+            return back()->withErrors(['status' => 'O chamado não possui patrimônios disponíveis para entrega.']);
         }
 
-        $patrimonio = $chamado->patrimonio;
+        foreach ($patrimonios as $patrimonio) {
+            // Cria responsabilidade para cada patrimônio
+            Responsabilidade::create([
+                'funcionario_id'         => $chamado->funcionario_id,
+                'patrimonio_id'          => $patrimonio->id,
+                'data_entrega'           => now()->toDateString(),
+                'termo_responsabilidade' => "Termo gerado automaticamente na entrega do chamado #{$chamado->id}. " .
+                    "O funcionário {$chamado->funcionario->nome} recebe o patrimônio " .
+                    "{$patrimonio->codigo_patrimonio} — {$patrimonio->descricao}.",
+                'assinado'               => false,
+            ]);
 
-        if ($patrimonio->status !== Patrimonio::STATUS_DISPONIVEL) {
-            return back()->withErrors(['status' => 'O patrimônio não está disponível para entrega.']);
+            $patrimonio->update(['status' => Patrimonio::STATUS_EM_USO]);
         }
 
-        // Cria responsabilidade automaticamente
-        Responsabilidade::create([
-            'funcionario_id'         => $chamado->funcionario_id,
-            'patrimonio_id'          => $chamado->patrimonio_id,
-            'data_entrega'           => now()->toDateString(),
-            'termo_responsabilidade' => "Termo gerado automaticamente na entrega do chamado #{$chamado->id}. " .
-                "O funcionário {$chamado->funcionario->nome} recebe o patrimônio " .
-                "{$patrimonio->codigo_patrimonio} — {$patrimonio->descricao}.",
-            'assinado'               => false,
-        ]);
-
-        // Atualiza status do patrimônio e do chamado
-        $patrimonio->update(['status' => Patrimonio::STATUS_EM_USO]);
         $chamado->update(['status' => Chamado::STATUS_ENTREGUE]);
 
-        return redirect()->route('chamados.show', $chamado)
-            ->with('sucesso', 'Patrimônio entregue e termo de responsabilidade criado.');
+        return back()->with('sucesso', 'Entrega registrada e termos de responsabilidade gerados.');
     }
 }

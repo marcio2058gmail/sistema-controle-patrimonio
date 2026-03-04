@@ -20,11 +20,20 @@
                         <dd class="mt-0.5"><x-status-badge :status="$chamado->status" type="chamado" /></dd>
                     </div>
                     <div>
-                        <dt class="text-gray-500">Patrimônio</dt>
-                        <dd class="text-gray-800 dark:text-gray-200 font-mono">
-                            {{ $chamado->patrimonio?->codigo_patrimonio ?? '—' }}
-                            @if($chamado->patrimonio)
-                                <span class="text-gray-500 font-sans">— {{ $chamado->patrimonio->descricao }}</span>
+                        <dt class="text-gray-500">Patrimônio(s)</dt>
+                        <dd class="mt-1 text-gray-800 dark:text-gray-200">
+                            @if($chamado->patrimonios->isEmpty())
+                                <span class="text-gray-400">—</span>
+                            @else
+                                <ul class="space-y-1">
+                                    @foreach($chamado->patrimonios as $patrimonio)
+                                    <li class="flex items-center gap-2 text-sm">
+                                        <span class="font-mono font-medium">{{ $patrimonio->codigo_patrimonio }}</span>
+                                        <span class="text-gray-500">— {{ $patrimonio->descricao }}</span>
+                                        <x-status-badge :status="$patrimonio->status" type="patrimonio" />
+                                    </li>
+                                    @endforeach
+                                </ul>
                             @endif
                         </dd>
                     </div>

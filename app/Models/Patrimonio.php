@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Patrimonio extends Model
@@ -65,8 +66,9 @@ class Patrimonio extends Model
             ->first();
     }
 
-    public function chamados(): HasMany
+    public function chamados(): BelongsToMany
     {
-        return $this->hasMany(Chamado::class);
+        return $this->belongsToMany(Chamado::class, 'chamado_patrimonio')
+            ->withTimestamps();
     }
 }
