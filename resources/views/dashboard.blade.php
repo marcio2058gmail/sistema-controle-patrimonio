@@ -138,8 +138,8 @@
                         @foreach($departmentStats as $stat)
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-750">
                             <td class="px-6 py-3 font-medium text-gray-800 dark:text-gray-200">
-                                <a href="{{ route('departments.show', $stat['departamento']) }}" class="hover:text-blue-600 hover:underline">
-                                    {{ $stat['departamento']->nome }}
+                                <a href="{{ route('departments.show', $stat['department']) }}" class="hover:text-blue-600 hover:underline">
+                                    {{ $stat['department']->nome }}
                                 </a>
                             </td>
                             <td class="px-6 py-3 text-center text-gray-600 dark:text-gray-400">
