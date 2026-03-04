@@ -3,6 +3,12 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Database\Seeders\UserSeeder;
+use Database\Seeders\DepartamentoSeeder;
+use Database\Seeders\FuncionarioSeeder;
+use Database\Seeders\PatrimonioSeeder;
+use Database\Seeders\ChamadoSeeder;
+use Database\Seeders\ResponsabilidadeSeeder;
 
 class DatabaseSeeder extends Seeder
 {

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
@@ -10,7 +11,7 @@ return new class extends Migration
     {
         // Migrar dados existentes de patrimonio_id para a tabela pivot antes de remover a coluna
         if (Schema::hasColumn('chamados', 'patrimonio_id')) {
-            $chamados = \DB::table('chamados')->whereNotNull('patrimonio_id')->get();
+            $chamados = DB::table('chamados')->whereNotNull('patrimonio_id')->get();
 
             Schema::create('chamado_patrimonio', function (Blueprint $table) {
                 $table->id();
@@ -22,7 +23,7 @@ return new class extends Migration
             });
 
             foreach ($chamados as $chamado) {
-                \DB::table('chamado_patrimonio')->insert([
+                DB::table('chamado_patrimonio')->insert([
                     'chamado_id'    => $chamado->id,
                     'patrimonio_id' => $chamado->patrimonio_id,
                     'created_at'    => now(),
@@ -54,9 +55,9 @@ return new class extends Migration
         });
 
         // Restaurar dados da pivot para a coluna
-        $pivot = \DB::table('chamado_patrimonio')->get();
+        $pivot = DB::table('chamado_patrimonio')->get();
         foreach ($pivot as $row) {
-            \DB::table('chamados')
+            DB::table('chamados')
                 ->where('id', $row->chamado_id)
                 ->update(['patrimonio_id' => $row->patrimonio_id]);
         }
