@@ -29,6 +29,10 @@
                             Funcionários
                         </x-nav-link>
 
+                        <x-nav-link :href="route('departamentos.index')" :active="request()->routeIs('departamentos.*')">
+                            Departamentos
+                        </x-nav-link>
+
                         <x-nav-link :href="route('responsabilidades.index')" :active="request()->routeIs('responsabilidades.*')">
                             Responsabilidades
                         </x-nav-link>
@@ -98,6 +102,10 @@
 
                 <x-responsive-nav-link :href="route('funcionarios.index')" :active="request()->routeIs('funcionarios.*')">
                     Funcionários
+                </x-responsive-nav-link>
+
+                <x-responsive-nav-link :href="route('departamentos.index')" :active="request()->routeIs('departamentos.*')">
+                    Departamentos
                 </x-responsive-nav-link>
 
                 <x-responsive-nav-link :href="route('responsabilidades.index')" :active="request()->routeIs('responsabilidades.*')">

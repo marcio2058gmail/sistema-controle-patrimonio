@@ -20,6 +20,7 @@
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nome</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">E-mail</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cargo</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Departamento</th>
                             <th class="px-6 py-3"></th>
                         </tr>
                     </thead>
@@ -29,6 +30,15 @@
                             <td class="px-6 py-3 font-medium text-gray-800 dark:text-gray-200">{{ $funcionario->nome }}</td>
                             <td class="px-6 py-3 text-gray-500">{{ $funcionario->email }}</td>
                             <td class="px-6 py-3 text-gray-500">{{ $funcionario->cargo ?? '—' }}</td>
+                            <td class="px-6 py-3 text-gray-500">
+                                @if($funcionario->departamento)
+                                    <a href="{{ route('departamentos.show', $funcionario->departamento) }}" class="text-indigo-600 hover:underline text-xs">
+                                        {{ $funcionario->departamento->nome }}
+                                    </a>
+                                @else
+                                    <span class="text-gray-400">—</span>
+                                @endif
+                            </td>
                             <td class="px-6 py-3 text-right space-x-3">
                                 <a href="{{ route('funcionarios.show', $funcionario) }}" class="text-blue-600 hover:underline text-xs">Ver</a>
                                 <a href="{{ route('funcionarios.edit', $funcionario) }}" class="text-indigo-600 hover:underline text-xs">Editar</a>
@@ -41,7 +51,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="4" class="px-6 py-10 text-center text-gray-400">Nenhum funcionário cadastrado.</td>
+                            <td colspan="5" class="px-6 py-10 text-center text-gray-400">Nenhum funcionário cadastrado.</td>
                         </tr>
                         @endforelse
                     </tbody>

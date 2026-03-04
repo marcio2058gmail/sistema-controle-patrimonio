@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreFuncionarioRequest;
 use App\Http\Requests\UpdateFuncionarioRequest;
+use App\Models\Departamento;
 use App\Models\Funcionario;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -12,13 +13,14 @@ class FuncionarioController extends Controller
 {
     public function index(): View
     {
-        $funcionarios = Funcionario::latest()->paginate(15);
+        $funcionarios = Funcionario::with('departamento')->latest()->paginate(15);
         return view('funcionarios.index', compact('funcionarios'));
     }
 
     public function create(): View
     {
-        return view('funcionarios.create');
+        $departamentos = Departamento::orderBy('nome')->get();
+        return view('funcionarios.create', compact('departamentos'));
     }
 
     public function store(StoreFuncionarioRequest $request): RedirectResponse
@@ -31,13 +33,14 @@ class FuncionarioController extends Controller
 
     public function show(Funcionario $funcionario): View
     {
-        $funcionario->load(['responsabilidades.patrimonio', 'chamados.patrimonio']);
+        $funcionario->load(['departamento', 'responsabilidades.patrimonio', 'chamados.patrimonios']);
         return view('funcionarios.show', compact('funcionario'));
     }
 
     public function edit(Funcionario $funcionario): View
     {
-        return view('funcionarios.edit', compact('funcionario'));
+        $departamentos = Departamento::orderBy('nome')->get();
+        return view('funcionarios.edit', compact('funcionario', 'departamentos'));
     }
 
     public function update(UpdateFuncionarioRequest $request, Funcionario $funcionario): RedirectResponse

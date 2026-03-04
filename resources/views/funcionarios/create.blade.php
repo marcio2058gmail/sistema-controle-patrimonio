@@ -32,6 +32,20 @@
                         <x-input-error :messages="$errors->get('cargo')" class="mt-1" />
                     </div>
 
+                    <div>
+                        <x-input-label for="departamento_id" value="Departamento" />
+                        <select id="departamento_id" name="departamento_id"
+                            class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm focus:ring focus:ring-indigo-300">
+                            <option value="">Sem departamento</option>
+                            @foreach($departamentos as $dep)
+                                <option value="{{ $dep->id }}" {{ old('departamento_id') == $dep->id ? 'selected' : '' }}>
+                                    {{ $dep->nome }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <x-input-error :messages="$errors->get('departamento_id')" class="mt-1" />
+                    </div>
+
                     <div class="flex justify-end gap-3 pt-2">
                         <a href="{{ route('funcionarios.index') }}"
                            class="px-4 py-2 text-sm rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50">Cancelar</a>

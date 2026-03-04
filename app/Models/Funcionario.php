@@ -13,9 +13,15 @@ class Funcionario extends Model
         'email',
         'cargo',
         'user_id',
+        'departamento_id',
     ];
 
     // ---------- Relacionamentos ----------
+
+    public function departamento(): BelongsTo
+    {
+        return $this->belongsTo(Departamento::class);
+    }
 
     public function user(): BelongsTo
     {

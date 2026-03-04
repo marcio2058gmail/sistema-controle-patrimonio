@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ChamadoController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DepartamentoController;
 use App\Http\Controllers\FuncionarioController;
 use App\Http\Controllers\PatrimonioController;
 use App\Http\Controllers\ProfileController;
@@ -26,6 +27,7 @@ Route::middleware('auth')->group(function () {
 
 // Rotas para Admin e Gestor
 Route::middleware(['auth', 'role:admin,gestor'])->group(function () {
+    Route::resource('departamentos', DepartamentoController::class);
     Route::resource('patrimonios', PatrimonioController::class);
     Route::resource('funcionarios', FuncionarioController::class);
     Route::resource('responsabilidades', ResponsabilidadeController::class);

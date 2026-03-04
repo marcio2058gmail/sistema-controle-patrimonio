@@ -15,9 +15,10 @@ class StoreFuncionarioRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nome'  => ['required', 'string', 'max:150'],
-            'email' => ['required', 'email', 'max:150', 'unique:funcionarios,email'],
-            'cargo' => ['nullable', 'string', 'max:100'],
+            'nome'            => ['required', 'string', 'max:150'],
+            'email'           => ['required', 'email', 'max:150', 'unique:funcionarios,email'],
+            'cargo'           => ['nullable', 'string', 'max:100'],
+            'departamento_id' => ['nullable', 'exists:departamentos,id'],
         ];
     }
 }

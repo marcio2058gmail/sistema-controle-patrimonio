@@ -21,6 +21,18 @@
                     <div><dt class="text-gray-500">Nome</dt><dd class="font-medium text-gray-800 dark:text-gray-200">{{ $funcionario->nome }}</dd></div>
                     <div><dt class="text-gray-500">E-mail</dt><dd class="text-gray-800 dark:text-gray-200">{{ $funcionario->email }}</dd></div>
                     <div><dt class="text-gray-500">Cargo</dt><dd class="text-gray-800 dark:text-gray-200">{{ $funcionario->cargo ?? '—' }}</dd></div>
+                    <div>
+                        <dt class="text-gray-500">Departamento</dt>
+                        <dd class="text-gray-800 dark:text-gray-200">
+                            @if($funcionario->departamento)
+                                <a href="{{ route('departamentos.show', $funcionario->departamento) }}" class="text-indigo-600 hover:underline">
+                                    {{ $funcionario->departamento->nome }}
+                                </a>
+                            @else
+                                —
+                            @endif
+                        </dd>
+                    </div>
                     <div><dt class="text-gray-500">Cadastrado em</dt><dd class="text-gray-800 dark:text-gray-200">{{ $funcionario->created_at->format('d/m/Y') }}</dd></div>
                 </dl>
             </div>
@@ -45,7 +57,7 @@
                         <tr>
                             <td class="px-6 py-3 text-gray-500">{{ $chamado->id }}</td>
                             <td class="px-6 py-3 text-gray-800 dark:text-gray-200">{{ Str::limit($chamado->descricao, 50) }}</td>
-                            <td class="px-6 py-3 text-gray-500">{{ $chamado->patrimonio?->codigo_patrimonio ?? '—' }}</td>
+                            <td class="px-6 py-3 text-gray-500">{{ $chamado->patrimonios->pluck('codigo_patrimonio')->implode(', ') ?: '—' }}</td>
                             <td class="px-6 py-3"><x-status-badge :status="$chamado->status" type="chamado" /></td>
                         </tr>
                         @endforeach
