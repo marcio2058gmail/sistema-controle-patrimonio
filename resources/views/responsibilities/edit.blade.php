@@ -11,9 +11,9 @@
 
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-6 mb-4">
                 <p class="text-sm text-gray-500">
-                    Funcionário: <strong class="text-gray-800 dark:text-gray-200">{{ $responsibility->funcionario->nome }}</strong>
+                    Funcionário: <strong class="text-gray-800 dark:text-gray-200">{{ $responsibility->employee->nome }}</strong>
                     &nbsp;|&nbsp;
-                    Patrimônio: <strong class="text-gray-800 dark:text-gray-200 font-mono">{{ $responsibility->patrimonio->codigo_patrimonio }}</strong>
+                    Patrimônio: <strong class="text-gray-800 dark:text-gray-200 font-mono">{{ $responsibility->asset->codigo_patrimonio }}</strong>
                 </p>
             </div>
 
