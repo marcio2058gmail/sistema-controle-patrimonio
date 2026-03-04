@@ -102,7 +102,7 @@ class DashboardController extends Controller
             // Patrimônios nas responsabilidades ativas do departamento, agrupados por status
             $assetsByStatus = Responsibility::whereNull('data_devolucao')
                 ->whereIn('funcionario_id', Employee::where('departamento_id', $deptId)->pluck('id'))
-                ->join('assets', 'patrimonios.id', '=', 'responsabilidades.patrimonio_id')
+                ->join('patrimonios', 'patrimonios.id', '=', 'responsabilidades.patrimonio_id')
                 ->select('patrimonios.status', DB::raw('count(distinct patrimonios.id) as total'))
                 ->groupBy('patrimonios.status')
                 ->pluck('total', 'patrimonios.status')
