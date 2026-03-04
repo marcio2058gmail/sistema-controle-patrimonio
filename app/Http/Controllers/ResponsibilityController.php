@@ -59,7 +59,7 @@ class ResponsibilityController extends Controller
         $responsibility->update($request->validated());
 
         // Se foi devolvido, marcar patrimônio como disponível
-        if ($request->filled('data_devolucao') && ! $responsibility->asset->responsabilidadeAtiva()) {
+        if ($request->filled('data_devolucao') && ! $responsibility->asset->activeResponsibility()) {
             $responsibility->asset->update(['status' => Asset::STATUS_DISPONIVEL]);
         }
 

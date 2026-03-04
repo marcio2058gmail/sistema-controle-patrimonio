@@ -12,14 +12,16 @@ class Responsibility extends Model
     protected $fillable = [
         'funcionario_id',
         'patrimonio_id',
-        'data_atribuicao',
+        'data_entrega',
         'data_devolucao',
-        'observacoes',
+        'termo_responsabilidade',
+        'assinado',
     ];
 
     protected $casts = [
-        'data_atribuicao' => 'date',
+        'data_entrega'    => 'date',
         'data_devolucao'  => 'date',
+        'assinado'        => 'boolean',
     ];
 
     // ---------- Relationships ----------
