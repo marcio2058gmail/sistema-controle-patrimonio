@@ -16,35 +16,35 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="route('chamados.index')" :active="request()->routeIs('chamados.*')">
+                    <x-nav-link :href="route('tickets.index')" :active="request()->routeIs('tickets.*')">
                         Chamados
                     </x-nav-link>
 
-                    @if(auth()->user()->isAdminOrGestor())
+                    @if(auth()->user()->isAdminOrManager())
                     @if(auth()->user()->isAdmin())
-                        <x-nav-link :href="route('patrimonios.index')" :active="request()->routeIs('patrimonios.*')">
+                        <x-nav-link :href="route('assets.index')" :active="request()->routeIs('assets.*')">
                             Patrimônios
                         </x-nav-link>
-                    @elseif(auth()->user()->isGestor())
-                        <x-nav-link :href="route('patrimonios.index')" :active="request()->routeIs('patrimonios.*')">
+                    @elseif(auth()->user()->isManager())
+                        <x-nav-link :href="route('assets.index')" :active="request()->routeIs('assets.*')">
                             Patrimônios Disponíveis
                         </x-nav-link>
                     @endif
 
-                        <x-nav-link :href="route('funcionarios.index')" :active="request()->routeIs('funcionarios.*')">
+                        <x-nav-link :href="route('employees.index')" :active="request()->routeIs('employees.*')">
                             Funcionários
                         </x-nav-link>
 
-                        <x-nav-link :href="route('departamentos.index')" :active="request()->routeIs('departamentos.*')">
+                        <x-nav-link :href="route('departments.index')" :active="request()->routeIs('departments.*')">
                             Departamentos
                         </x-nav-link>
 
-                        <x-nav-link :href="route('responsabilidades.index')" :active="request()->routeIs('responsabilidades.*')">
+                        <x-nav-link :href="route('responsibilities.index')" :active="request()->routeIs('responsibilities.*')">
                             Responsabilidades
                         </x-nav-link>
 
                         @if(auth()->user()->isAdmin())
-                            <x-nav-link :href="route('gestores.index')" :active="request()->routeIs('gestores.*')">
+                            <x-nav-link :href="route('managers.index')" :active="request()->routeIs('managers.*')">
                                 Gestores
                             </x-nav-link>
                         @endif
@@ -103,35 +103,35 @@
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link :href="route('chamados.index')" :active="request()->routeIs('chamados.*')">
+            <x-responsive-nav-link :href="route('tickets.index')" :active="request()->routeIs('tickets.*')">
                 Chamados
             </x-responsive-nav-link>
 
-            @if(auth()->user()->isAdminOrGestor())
+            @if(auth()->user()->isAdminOrManager())
                 @if(auth()->user()->isAdmin())
-                    <x-responsive-nav-link :href="route('patrimonios.index')" :active="request()->routeIs('patrimonios.*')">
+                    <x-responsive-nav-link :href="route('assets.index')" :active="request()->routeIs('assets.*')">
                         Patrimônios
                     </x-responsive-nav-link>
-                @elseif(auth()->user()->isGestor())
-                    <x-responsive-nav-link :href="route('patrimonios.index')" :active="request()->routeIs('patrimonios.*')">
+                @elseif(auth()->user()->isManager())
+                    <x-responsive-nav-link :href="route('assets.index')" :active="request()->routeIs('assets.*')">
                         Patrimônios Disponíveis
                     </x-responsive-nav-link>
                 @endif
 
-                <x-responsive-nav-link :href="route('funcionarios.index')" :active="request()->routeIs('funcionarios.*')">
+                <x-responsive-nav-link :href="route('employees.index')" :active="request()->routeIs('employees.*')">
                     Funcionários
                 </x-responsive-nav-link>
 
-                <x-responsive-nav-link :href="route('departamentos.index')" :active="request()->routeIs('departamentos.*')">
+                <x-responsive-nav-link :href="route('departments.index')" :active="request()->routeIs('departments.*')">
                     Departamentos
                 </x-responsive-nav-link>
 
-                <x-responsive-nav-link :href="route('responsabilidades.index')" :active="request()->routeIs('responsabilidades.*')">
+                <x-responsive-nav-link :href="route('responsibilities.index')" :active="request()->routeIs('responsibilities.*')">
                     Responsabilidades
                 </x-responsive-nav-link>
 
                 @if(auth()->user()->isAdmin())
-                    <x-responsive-nav-link :href="route('gestores.index')" :active="request()->routeIs('gestores.*')">
+                    <x-responsive-nav-link :href="route('managers.index')" :active="request()->routeIs('managers.*')">
                         Gestores
                     </x-responsive-nav-link>
                 @endif

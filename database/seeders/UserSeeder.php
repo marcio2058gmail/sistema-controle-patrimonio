@@ -25,7 +25,7 @@ class UserSeeder extends Seeder
             'email'             => 'gestor@patrimonio.test',
             'email_verified_at' => now(),
             'password'          => Hash::make('password'),
-            'role'              => 'gestor',
+            'role'              => 'manager',
         ]);
 
         // Funcionários
@@ -48,7 +48,7 @@ class UserSeeder extends Seeder
                 'email'             => $data['email'],
                 'email_verified_at' => now(),
                 'password'          => Hash::make('password'),
-                'role'              => 'funcionario',
+                'role'              => 'employee',
             ]);
         }
     }

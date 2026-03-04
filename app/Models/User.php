@@ -35,9 +35,9 @@ class User extends Authenticatable
 
     // ---------- Relacionamentos ----------
 
-    public function funcionario(): HasOne
+    public function employee(): HasOne
     {
-        return $this->hasOne(Funcionario::class);
+        return $this->hasOne(Employee::class);
     }
 
     // ---------- Helpers de perfil ----------
@@ -47,18 +47,18 @@ class User extends Authenticatable
         return $this->role === 'admin';
     }
 
-    public function isGestor(): bool
+    public function isManager(): bool
     {
-        return $this->role === 'gestor';
+        return $this->role === 'manager';
     }
 
-    public function isFuncionario(): bool
+    public function isEmployee(): bool
     {
-        return $this->role === 'funcionario';
+        return $this->role === 'employee';
     }
 
-    public function isAdminOrGestor(): bool
+    public function isAdminOrManager(): bool
     {
-        return in_array($this->role, ['admin', 'gestor']);
+        return in_array($this->role, ['admin', 'manager']);
     }
 }

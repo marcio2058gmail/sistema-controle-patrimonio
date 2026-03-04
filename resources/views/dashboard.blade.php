@@ -3,8 +3,8 @@
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             @if(auth()->user()->isAdmin())
                 Dashboard — Controle Patrimonial
-            @elseif(auth()->user()->isGestor() && $departamento)
-                Dashboard — {{ $departamento->nome }}
+            @elseif(auth()->user()->isManager() && $department)
+                Dashboard — {{ $department->nome }}
             @else
                 Meu Painel
             @endif
@@ -20,44 +20,44 @@
                 @if(auth()->user()->isAdmin())
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5 flex flex-col gap-1">
                     <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Patrimônios</span>
-                    <span class="text-3xl font-bold text-gray-800 dark:text-gray-100">{{ $totalPatrimonios }}</span>
+                    <span class="text-3xl font-bold text-gray-800 dark:text-gray-100">{{ $totalAssets }}</span>
                     <span class="text-xs text-gray-400">{{ $patrimoniosSemResponsavel }} disponíveis</span>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5 flex flex-col gap-1">
                     <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Funcionários</span>
-                    <span class="text-3xl font-bold text-gray-800 dark:text-gray-100">{{ $totalFuncionarios }}</span>
+                    <span class="text-3xl font-bold text-gray-800 dark:text-gray-100">{{ $totalEmployees }}</span>
                 </div>
 
-                @elseif(auth()->user()->isGestor())
+                @elseif(auth()->user()->isManager())
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5 flex flex-col gap-1">
                     <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Patrimônios em Uso</span>
-                    <span class="text-3xl font-bold text-gray-800 dark:text-gray-100">{{ $totalPatrimonios }}</span>
+                    <span class="text-3xl font-bold text-gray-800 dark:text-gray-100">{{ $totalAssets }}</span>
                     <span class="text-xs text-gray-400">no departamento</span>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5 flex flex-col gap-1">
                     <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Funcionários</span>
-                    <span class="text-3xl font-bold text-gray-800 dark:text-gray-100">{{ $totalFuncionarios }}</span>
+                    <span class="text-3xl font-bold text-gray-800 dark:text-gray-100">{{ $totalEmployees }}</span>
                     <span class="text-xs text-gray-400">no departamento</span>
                 </div>
 
                 @else
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5 flex flex-col gap-1">
                     <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Patrimônios Sob Guarda</span>
-                    <span class="text-3xl font-bold text-gray-800 dark:text-gray-100">{{ $totalPatrimonios }}</span>
+                    <span class="text-3xl font-bold text-gray-800 dark:text-gray-100">{{ $totalAssets }}</span>
                 </div>
                 @endif
 
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5 flex flex-col gap-1">
                     <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Chamados Abertos</span>
-                    <span class="text-3xl font-bold text-yellow-500">{{ $totalChamadosAbertos }}</span>
+                    <span class="text-3xl font-bold text-yellow-500">{{ $totalOpenTickets }}</span>
                     @if(! auth()->user()->isAdmin())
                         <span class="text-xs text-gray-400">em aberto</span>
                     @endif
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5 flex flex-col gap-1">
                     <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Atribuições Ativas</span>
-                    <span class="text-3xl font-bold text-blue-500">{{ $totalResponsabilidades }}</span>
-                    @if(auth()->user()->isGestor())
+                    <span class="text-3xl font-bold text-blue-500">{{ $totalResponsibilities }}</span>
+                    @if(auth()->user()->isManager())
                         <span class="text-xs text-gray-400">no departamento</span>
                     @endif
                 </div>
@@ -78,16 +78,16 @@
             </div>
 
             {{-- Tabela: Chamados abertos recentes --}}
-            @if($ultimosChamados->isNotEmpty())
+            @if($latestTickets->isNotEmpty())
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
                     <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">
                         Chamados Abertos Recentes
-                        @if(auth()->user()->isGestor() && $departamento)
-                            <span class="font-normal text-gray-400">— {{ $departamento->nome }}</span>
+                        @if(auth()->user()->isManager() && $department)
+                            <span class="font-normal text-gray-400">— {{ $department->nome }}</span>
                         @endif
                     </h3>
-                    <a href="{{ route('chamados.index') }}" class="text-xs text-blue-600 hover:underline">Ver todos</a>
+                    <a href="{{ route('tickets.index') }}" class="text-xs text-blue-600 hover:underline">Ver todos</a>
                 </div>
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
                     <thead class="bg-gray-50 dark:bg-gray-700">
@@ -100,16 +100,16 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                        @foreach($ultimosChamados as $chamado)
+                        @foreach($latestTickets as $ticket)
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-750">
-                            <td class="px-6 py-3 text-gray-600 dark:text-gray-400">{{ $chamado->id }}</td>
-                            <td class="px-6 py-3 text-gray-800 dark:text-gray-200">{{ $chamado->funcionario?->nome ?? '—' }}</td>
+                            <td class="px-6 py-3 text-gray-600 dark:text-gray-400">{{ $ticket->id }}</td>
+                            <td class="px-6 py-3 text-gray-800 dark:text-gray-200">{{ $ticket->funcionario?->nome ?? '—' }}</td>
                             <td class="px-6 py-3 text-gray-600 dark:text-gray-400 font-mono text-xs">
-                                {{ $chamado->patrimonios->pluck('codigo_patrimonio')->implode(', ') ?: '—' }}
+                                {{ $ticket->patrimonios->pluck('codigo_patrimonio')->implode(', ') ?: '—' }}
                             </td>
-                            <td class="px-6 py-3 text-gray-500 dark:text-gray-400">{{ $chamado->created_at->format('d/m/Y') }}</td>
+                            <td class="px-6 py-3 text-gray-500 dark:text-gray-400">{{ $ticket->created_at->format('d/m/Y') }}</td>
                             <td class="px-6 py-3 text-right">
-                                <a href="{{ route('chamados.show', $chamado) }}" class="text-blue-600 hover:underline text-xs">Ver</a>
+                                <a href="{{ route('tickets.show', $ticket) }}" class="text-blue-600 hover:underline text-xs">Ver</a>
                             </td>
                         </tr>
                         @endforeach
@@ -119,11 +119,11 @@
             @endif
 
             {{-- Tabela: Breakdown por departamento (admin) --}}
-            @if(auth()->user()->isAdmin() && $departamentosStats->isNotEmpty())
+            @if(auth()->user()->isAdmin() && $departmentStats->isNotEmpty())
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
                     <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Visão por Departamento</h3>
-                    <a href="{{ route('departamentos.index') }}" class="text-xs text-blue-600 hover:underline">Gerenciar</a>
+                    <a href="{{ route('departments.index') }}" class="text-xs text-blue-600 hover:underline">Gerenciar</a>
                 </div>
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
                     <thead class="bg-gray-50 dark:bg-gray-700">
@@ -135,10 +135,10 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                        @foreach($departamentosStats as $stat)
+                        @foreach($departmentStats as $stat)
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-750">
                             <td class="px-6 py-3 font-medium text-gray-800 dark:text-gray-200">
-                                <a href="{{ route('departamentos.show', $stat['departamento']) }}" class="hover:text-blue-600 hover:underline">
+                                <a href="{{ route('departments.show', $stat['departamento']) }}" class="hover:text-blue-600 hover:underline">
                                     {{ $stat['departamento']->nome }}
                                 </a>
                             </td>
@@ -174,9 +174,9 @@
         new Chart(document.getElementById('chartPatrimonios'), {
             type: 'doughnut',
             data: {
-                labels: {!! json_encode($patrimonioChartLabels) !!},
+                labels: {!! json_encode($assetChartLabels) !!},
                 datasets: [{
-                    data: {!! json_encode($patrimonioChartData) !!},
+                    data: {!! json_encode($assetChartData) !!},
                     backgroundColor: ['#22c55e', '#3b82f6', '#f59e0b'],
                     borderWidth: 2,
                 }]

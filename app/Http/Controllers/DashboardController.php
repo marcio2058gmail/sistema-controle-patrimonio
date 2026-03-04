@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Chamado;
-use App\Models\Departamento;
-use App\Models\Funcionario;
-use App\Models\Patrimonio;
-use App\Models\Responsabilidade;
+use App\Models\Ticket;
+use App\Models\Department;
+use App\Models\Employee;
+use App\Models\Asset;
+use App\Models\Responsibility;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -16,111 +16,111 @@ class DashboardController extends Controller
     public function index(Request $request): View
     {
         $user        = $request->user();
-        $funcionario = $user->funcionario;
+        $employee = $user->employee;
 
         // Contexto do gestor: departamento ao qual está vinculado
-        $departamento = null;
+        $department = null;
         $deptId       = null;
 
-        if ($user->isGestor() && $funcionario?->departamento_id) {
-            $deptId       = $funcionario->departamento_id;
-            $departamento = Departamento::find($deptId);
+        if ($user->isManager() && $employee?->departamento_id) {
+            $deptId       = $employee->departamento_id;
+            $department = Department::find($deptId);
         }
 
         // -------------------------------------------------------
         // KPIs — escopos por perfil
         // -------------------------------------------------------
         if ($user->isAdmin()) {
-            $totalPatrimonios        = Patrimonio::count();
-            $totalFuncionarios       = Funcionario::count();
-            $totalChamadosAbertos    = Chamado::where('status', Chamado::STATUS_ABERTO)->count();
-            $totalResponsabilidades  = Responsabilidade::whereNull('data_devolucao')->count();
-            $patrimoniosSemResponsavel = Patrimonio::where('status', Patrimonio::STATUS_DISPONIVEL)->count();
+            $totalAssets        = Asset::count();
+            $totalEmployees       = Employee::count();
+            $totalOpenTickets    = Ticket::where('status', Ticket::STATUS_ABERTO)->count();
+            $totalResponsibilities  = Responsibility::whereNull('data_devolucao')->count();
+            $patrimoniosSemResponsavel = Asset::where('status', Asset::STATUS_DISPONIVEL)->count();
 
             // Breakdown por departamento
-            $departamentosStats = Departamento::withCount('funcionarios')
+            $departmentStats = Department::withCount('employees')
                 ->with('funcionarios:id,departamento_id')
                 ->orderBy('nome')
                 ->get()
                 ->map(function ($dept) {
-                    $ids = $dept->funcionarios->pluck('id');
+                    $ids = $dept->employees->pluck('id');
                     return [
-                        'departamento'       => $dept,
+                        'department'       => $dept,
                         'total_funcionarios' => $dept->funcionarios_count,
                         'patrimonios_em_uso' => $ids->isEmpty() ? 0 :
-                            Responsabilidade::whereIn('funcionario_id', $ids)
+                            Responsibility::whereIn('funcionario_id', $ids)
                                 ->whereNull('data_devolucao')
                                 ->distinct('patrimonio_id')
                                 ->count('patrimonio_id'),
                         'chamados_abertos'   => $ids->isEmpty() ? 0 :
-                            Chamado::where('status', Chamado::STATUS_ABERTO)
+                            Ticket::where('status', Ticket::STATUS_ABERTO)
                                 ->whereIn('funcionario_id', $ids)
                                 ->count(),
                     ];
                 });
-        } elseif ($user->isGestor() && $deptId) {
-            $idsNoDept = Funcionario::where('departamento_id', $deptId)->pluck('id');
+        } elseif ($user->isManager() && $deptId) {
+            $idsNoDept = Employee::where('departamento_id', $deptId)->pluck('id');
 
-            $totalPatrimonios        = Responsabilidade::whereNull('data_devolucao')
+            $totalAssets        = Responsibility::whereNull('data_devolucao')
                                            ->whereIn('funcionario_id', $idsNoDept)
                                            ->distinct('patrimonio_id')->count('patrimonio_id');
-            $totalFuncionarios       = $idsNoDept->count();
-            $totalChamadosAbertos    = Chamado::where('status', Chamado::STATUS_ABERTO)
+            $totalEmployees       = $idsNoDept->count();
+            $totalOpenTickets    = Ticket::where('status', Ticket::STATUS_ABERTO)
                                            ->whereIn('funcionario_id', $idsNoDept)->count();
-            $totalResponsabilidades  = Responsabilidade::whereNull('data_devolucao')
+            $totalResponsibilities  = Responsibility::whereNull('data_devolucao')
                                            ->whereIn('funcionario_id', $idsNoDept)->count();
             $patrimoniosSemResponsavel = null; // não se aplica na visão do departamento
-            $departamentosStats = collect();
+            $departmentStats = collect();
         } else {
             // funcionário — só os próprios dados
-            $idsFunc = $funcionario ? [$funcionario->id] : [];
+            $idsFunc = $employee ? [$employee->id] : [];
 
-            $totalPatrimonios        = Responsabilidade::whereNull('data_devolucao')
+            $totalAssets        = Responsibility::whereNull('data_devolucao')
                                            ->whereIn('funcionario_id', $idsFunc)
                                            ->distinct('patrimonio_id')->count('patrimonio_id');
-            $totalFuncionarios       = null;
-            $totalChamadosAbertos    = Chamado::where('status', Chamado::STATUS_ABERTO)
+            $totalEmployees       = null;
+            $totalOpenTickets    = Ticket::where('status', Ticket::STATUS_ABERTO)
                                            ->whereIn('funcionario_id', $idsFunc)->count();
-            $totalResponsabilidades  = Responsabilidade::whereNull('data_devolucao')
+            $totalResponsibilities  = Responsibility::whereNull('data_devolucao')
                                            ->whereIn('funcionario_id', $idsFunc)->count();
             $patrimoniosSemResponsavel = null;
-            $departamentosStats = collect();
+            $departmentStats = collect();
         }
 
         // -------------------------------------------------------
         // Gráfico: patrimônios por status
         // -------------------------------------------------------
-        $patrimonioChartLabels = [];
-        $patrimonioChartData   = [];
+        $assetChartLabels = [];
+        $assetChartData   = [];
 
         if ($user->isAdmin()) {
-            $patrimoniosPorStatus = Patrimonio::select('status', DB::raw('count(*) as total'))
+            $assetsByStatus = Asset::select('status', DB::raw('count(*) as total'))
                 ->groupBy('status')
                 ->pluck('total', 'status')
                 ->toArray();
-        } elseif ($user->isGestor() && $deptId) {
+        } elseif ($user->isManager() && $deptId) {
             // Patrimônios nas responsabilidades ativas do departamento, agrupados por status
-            $patrimoniosPorStatus = Responsabilidade::whereNull('data_devolucao')
-                ->whereIn('funcionario_id', Funcionario::where('departamento_id', $deptId)->pluck('id'))
-                ->join('patrimonios', 'patrimonios.id', '=', 'responsabilidades.patrimonio_id')
+            $assetsByStatus = Responsibility::whereNull('data_devolucao')
+                ->whereIn('funcionario_id', Employee::where('departamento_id', $deptId)->pluck('id'))
+                ->join('assets', 'patrimonios.id', '=', 'responsabilidades.patrimonio_id')
                 ->select('patrimonios.status', DB::raw('count(distinct patrimonios.id) as total'))
                 ->groupBy('patrimonios.status')
                 ->pluck('total', 'patrimonios.status')
                 ->toArray();
         } else {
-            $patrimoniosPorStatus = [];
+            $assetsByStatus = [];
         }
 
-        $statusLabelsPatrimonio = Patrimonio::statusLabels();
+        $statusLabelsPatrimonio = Asset::statusLabels();
         foreach ($statusLabelsPatrimonio as $key => $label) {
-            $patrimonioChartLabels[] = $label;
-            $patrimonioChartData[]   = $patrimoniosPorStatus[$key] ?? 0;
+            $assetChartLabels[] = $label;
+            $assetChartData[]   = $assetsByStatus[$key] ?? 0;
         }
 
         // -------------------------------------------------------
         // Gráfico: chamados por mês (últimos 6 meses)
         // -------------------------------------------------------
-        $chamadosQuery = Chamado::select(
+        $chamadosQuery = Ticket::select(
                 DB::raw("DATE_FORMAT(created_at, '%Y-%m') as mes"),
                 DB::raw('count(*) as total')
             )
@@ -128,11 +128,11 @@ class DashboardController extends Controller
             ->groupBy('mes')
             ->orderBy('mes');
 
-        if ($user->isGestor() && $deptId) {
+        if ($user->isManager() && $deptId) {
             $chamadosQuery->whereIn('funcionario_id',
-                Funcionario::where('departamento_id', $deptId)->pluck('id'));
-        } elseif ($user->isFuncionario()) {
-            $chamadosQuery->whereIn('funcionario_id', $funcionario ? [$funcionario->id] : [0]);
+                Employee::where('departamento_id', $deptId)->pluck('id'));
+        } elseif ($user->isEmployee()) {
+            $chamadosQuery->whereIn('funcionario_id', $employee ? [$employee->id] : [0]);
         }
 
         $chamadosPorMes = $chamadosQuery->pluck('total', 'mes')->toArray();
@@ -148,32 +148,32 @@ class DashboardController extends Controller
         // -------------------------------------------------------
         // Últimos chamados abertos
         // -------------------------------------------------------
-        $ultimosChamadosQuery = Chamado::with(['funcionario', 'patrimonios'])
-            ->where('status', Chamado::STATUS_ABERTO)
+        $latestTicketsQuery = Ticket::with(['employee', 'assets'])
+            ->where('status', Ticket::STATUS_ABERTO)
             ->latest();
 
-        if ($user->isGestor() && $deptId) {
-            $ultimosChamadosQuery->whereIn('funcionario_id',
-                Funcionario::where('departamento_id', $deptId)->pluck('id'));
-        } elseif ($user->isFuncionario()) {
-            $ultimosChamadosQuery->whereIn('funcionario_id', $funcionario ? [$funcionario->id] : [0]);
+        if ($user->isManager() && $deptId) {
+            $latestTicketsQuery->whereIn('funcionario_id',
+                Employee::where('departamento_id', $deptId)->pluck('id'));
+        } elseif ($user->isEmployee()) {
+            $latestTicketsQuery->whereIn('funcionario_id', $employee ? [$employee->id] : [0]);
         }
 
-        $ultimosChamados = $ultimosChamadosQuery->take(5)->get();
+        $latestTickets = $latestTicketsQuery->take(5)->get();
 
         return view('dashboard', compact(
-            'totalPatrimonios',
-            'totalFuncionarios',
-            'totalChamadosAbertos',
-            'totalResponsabilidades',
-            'patrimonioChartLabels',
-            'patrimonioChartData',
+            'totalAssets',
+            'totalEmployees',
+            'totalOpenTickets',
+            'totalResponsibilities',
+            'assetChartLabels',
+            'assetChartData',
             'mesesLabels',
             'mesesData',
-            'ultimosChamados',
+            'latestTickets',
             'patrimoniosSemResponsavel',
-            'departamento',
-            'departamentosStats',
+            'department',
+            'departmentStats',
         ));
     }
 }
