@@ -20,18 +20,18 @@ class Ticket extends Model
         'status' => 'string',
     ];
 
-    public const STATUS_ABERTO   = 'aberto';
-    public const STATUS_APROVADO = 'aprovado';
-    public const STATUS_NEGADO   = 'negado';
-    public const STATUS_ENTREGUE = 'entregue';
+    public const STATUS_OPEN   = 'aberto';
+    public const STATUS_APPROVED = 'aprovado';
+    public const STATUS_DENIED   = 'negado';
+    public const STATUS_DELIVERED = 'entregue';
 
     public static function statusLabels(): array
     {
         return [
-            self::STATUS_ABERTO   => 'Aberto',
-            self::STATUS_APROVADO => 'Aprovado',
-            self::STATUS_NEGADO   => 'Negado',
-            self::STATUS_ENTREGUE => 'Entregue',
+            self::STATUS_OPEN   => 'Aberto',
+            self::STATUS_APPROVED => 'Aprovado',
+            self::STATUS_DENIED   => 'Negado',
+            self::STATUS_DELIVERED => 'Entregue',
         ];
     }
 

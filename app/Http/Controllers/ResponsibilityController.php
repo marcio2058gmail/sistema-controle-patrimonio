@@ -36,7 +36,7 @@ class ResponsibilityController extends Controller
         $responsibility = Responsibility::create($request->validated());
 
         // Marcar patrimônio como em uso
-        $responsibility->asset->update(['status' => Asset::STATUS_EM_USO]);
+        $responsibility->asset->update(['status' => Asset::STATUS_IN_USE]);
 
         return redirect()->route('responsibilities.index')
             ->with('sucesso', 'Responsabilidade registrada com sucesso.');
@@ -60,7 +60,7 @@ class ResponsibilityController extends Controller
 
         // Se foi devolvido, marcar patrimônio como disponível
         if ($request->filled('data_devolucao') && ! $responsibility->asset->activeResponsibility()) {
-            $responsibility->asset->update(['status' => Asset::STATUS_DISPONIVEL]);
+            $responsibility->asset->update(['status' => Asset::STATUS_AVAILABLE]);
         }
 
         return redirect()->route('responsibilities.index')

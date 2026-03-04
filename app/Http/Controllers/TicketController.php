@@ -137,33 +137,33 @@ class TicketController extends Controller
 
     public function aprovar(Ticket $ticket): RedirectResponse
     {
-        if ($ticket->status !== Ticket::STATUS_ABERTO) {
+        if ($ticket->status !== Ticket::STATUS_OPEN) {
             return back()->withErrors(['status' => 'Apenas chamados abertos podem ser aprovados.']);
         }
 
-        $ticket->update(['status' => Ticket::STATUS_APROVADO]);
+        $ticket->update(['status' => Ticket::STATUS_APPROVED]);
 
         return back()->with('sucesso', 'Chamado aprovado com sucesso.');
     }
 
     public function negar(Ticket $ticket): RedirectResponse
     {
-        if ($ticket->status !== Ticket::STATUS_ABERTO) {
+        if ($ticket->status !== Ticket::STATUS_OPEN) {
             return back()->withErrors(['status' => 'Apenas chamados abertos podem ser negados.']);
         }
 
-        $ticket->update(['status' => Ticket::STATUS_NEGADO]);
+        $ticket->update(['status' => Ticket::STATUS_DENIED]);
 
         return back()->with('sucesso', 'Chamado negado.');
     }
 
     public function entregar(Ticket $ticket): RedirectResponse
     {
-        if ($ticket->status !== Ticket::STATUS_APROVADO) {
+        if ($ticket->status !== Ticket::STATUS_APPROVED) {
             return back()->withErrors(['status' => 'Apenas chamados aprovados podem ser marcados como entregues.']);
         }
 
-        $assets = $ticket->assets()->where('status', Asset::STATUS_DISPONIVEL)->get();
+        $assets = $ticket->assets()->where('status', Asset::STATUS_AVAILABLE)->get();
 
         if ($assets->isEmpty()) {
             return back()->withErrors(['status' => 'O chamado não possui patrimônios disponíveis para entrega.']);
@@ -181,10 +181,10 @@ class TicketController extends Controller
                 'assinado'               => false,
             ]);
 
-            $asset->update(['status' => Asset::STATUS_EM_USO]);
+            $asset->update(['status' => Asset::STATUS_IN_USE]);
         }
 
-        $ticket->update(['status' => Ticket::STATUS_ENTREGUE]);
+        $ticket->update(['status' => Ticket::STATUS_DELIVERED]);
 
         return back()->with('sucesso', 'Entrega registrada e termos de responsabilidade gerados.');
     }

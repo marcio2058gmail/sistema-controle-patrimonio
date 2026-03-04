@@ -33,9 +33,9 @@ class DashboardController extends Controller
         if ($user->isAdmin()) {
             $totalAssets        = Asset::count();
             $totalEmployees       = Employee::count();
-            $totalOpenTickets    = Ticket::where('status', Ticket::STATUS_ABERTO)->count();
+            $totalOpenTickets    = Ticket::where('status', Ticket::STATUS_OPEN)->count();
             $totalResponsibilities  = Responsibility::whereNull('data_devolucao')->count();
-            $patrimoniosSemResponsavel = Asset::where('status', Asset::STATUS_DISPONIVEL)->count();
+            $patrimoniosSemResponsavel = Asset::where('status', Asset::STATUS_AVAILABLE)->count();
 
             // Breakdown por departamento
             $departmentStats = Department::withCount('employees')
@@ -53,7 +53,7 @@ class DashboardController extends Controller
                                 ->distinct('patrimonio_id')
                                 ->count('patrimonio_id'),
                         'chamados_abertos'   => $ids->isEmpty() ? 0 :
-                            Ticket::where('status', Ticket::STATUS_ABERTO)
+                            Ticket::where('status', Ticket::STATUS_OPEN)
                                 ->whereIn('funcionario_id', $ids)
                                 ->count(),
                     ];
@@ -65,7 +65,7 @@ class DashboardController extends Controller
                                            ->whereIn('funcionario_id', $idsNoDept)
                                            ->distinct('patrimonio_id')->count('patrimonio_id');
             $totalEmployees       = $idsNoDept->count();
-            $totalOpenTickets    = Ticket::where('status', Ticket::STATUS_ABERTO)
+            $totalOpenTickets    = Ticket::where('status', Ticket::STATUS_OPEN)
                                            ->whereIn('funcionario_id', $idsNoDept)->count();
             $totalResponsibilities  = Responsibility::whereNull('data_devolucao')
                                            ->whereIn('funcionario_id', $idsNoDept)->count();
@@ -79,7 +79,7 @@ class DashboardController extends Controller
                                            ->whereIn('funcionario_id', $idsFunc)
                                            ->distinct('patrimonio_id')->count('patrimonio_id');
             $totalEmployees       = null;
-            $totalOpenTickets    = Ticket::where('status', Ticket::STATUS_ABERTO)
+            $totalOpenTickets    = Ticket::where('status', Ticket::STATUS_OPEN)
                                            ->whereIn('funcionario_id', $idsFunc)->count();
             $totalResponsibilities  = Responsibility::whereNull('data_devolucao')
                                            ->whereIn('funcionario_id', $idsFunc)->count();
@@ -149,7 +149,7 @@ class DashboardController extends Controller
         // Últimos chamados abertos
         // -------------------------------------------------------
         $latestTicketsQuery = Ticket::with(['employee', 'assets'])
-            ->where('status', Ticket::STATUS_ABERTO)
+            ->where('status', Ticket::STATUS_OPEN)
             ->latest();
 
         if ($user->isManager() && $deptId) {

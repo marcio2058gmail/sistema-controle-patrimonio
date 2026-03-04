@@ -23,16 +23,16 @@ class Asset extends Model
         'status' => 'string',
     ];
 
-    public const STATUS_DISPONIVEL = 'disponivel';
-    public const STATUS_EM_USO     = 'em_uso';
-    public const STATUS_MANUTENCAO = 'manutencao';
+    public const STATUS_AVAILABLE = 'disponivel';
+    public const STATUS_IN_USE     = 'em_uso';
+    public const STATUS_MAINTENANCE = 'manutencao';
 
     public static function statusLabels(): array
     {
         return [
-            self::STATUS_DISPONIVEL => 'Disponível',
-            self::STATUS_EM_USO     => 'Em Uso',
-            self::STATUS_MANUTENCAO => 'Manutenção',
+            self::STATUS_AVAILABLE => 'Disponível',
+            self::STATUS_IN_USE     => 'Em Uso',
+            self::STATUS_MAINTENANCE => 'Manutenção',
         ];
     }
 
@@ -45,12 +45,12 @@ class Asset extends Model
 
     public function scopeDisponivel(Builder $query): Builder
     {
-        return $query->where('status', self::STATUS_DISPONIVEL);
+        return $query->where('status', self::STATUS_AVAILABLE);
     }
 
     public function scopeEmUso(Builder $query): Builder
     {
-        return $query->where('status', self::STATUS_EM_USO);
+        return $query->where('status', self::STATUS_IN_USE);
     }
 
     // ---------- Relationships ----------

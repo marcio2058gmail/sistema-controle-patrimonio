@@ -17,7 +17,7 @@ class AssetController extends Controller
 
         // Gestor vê apenas os disponíveis
         if ($request->user()->isManager()) {
-            $query->where('status', Asset::STATUS_DISPONIVEL);
+            $query->where('status', Asset::STATUS_AVAILABLE);
         }
 
         $assets   = $query->paginate(15);
