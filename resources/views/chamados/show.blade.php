@@ -49,8 +49,8 @@
                 </div>
             </div>
 
-            {{-- Ações para Admin/Gestor --}}
-            @if(auth()->user()->isAdminOrGestor())
+            {{-- Ações apenas para Admin --}}
+            @if(auth()->user()->isAdmin())
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
                 <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Ações</h3>
                 <div class="flex gap-3 flex-wrap">

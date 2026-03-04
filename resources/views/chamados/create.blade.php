@@ -13,13 +13,18 @@
 
                     @if(auth()->user()->isAdminOrGestor())
                     <div>
-                        <x-input-label for="funcionario_id" value="Funcionário *" />
+                        <x-input-label for="funcionario_id"
+                            value="{{ auth()->user()->isGestor() ? 'Funcionário do Departamento *' : 'Funcionário *' }}" />
+                        @if(auth()->user()->isGestor())
+                            <p class="mt-0.5 mb-1 text-xs text-gray-400">Selecione o membro da sua equipe ou você mesmo.</p>
+                        @endif
                         <select id="funcionario_id" name="funcionario_id"
                             class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm focus:ring focus:ring-indigo-300">
                             <option value="">Selecione...</option>
-                            @foreach($funcionarios as $funcionario)
-                                <option value="{{ $funcionario->id }}" {{ old('funcionario_id') == $funcionario->id ? 'selected' : '' }}>
-                                    {{ $funcionario->nome }}
+                            @foreach($funcionarios as $func)
+                                <option value="{{ $func->id }}" {{ old('funcionario_id') == $func->id ? 'selected' : '' }}>
+                                    {{ $func->nome }}
+                                    @if($func->cargo) — {{ $func->cargo }} @endif
                                 </option>
                             @endforeach
                         </select>

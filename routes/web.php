@@ -34,10 +34,12 @@ Route::middleware(['auth', 'role:admin,gestor'])->group(function () {
     Route::get('/responsabilidades/{responsabilidade}/pdf', [ResponsabilidadeController::class, 'gerarPdf'])
         ->name('responsabilidades.pdf');
 
-    // Ações de status dos chamados (apenas Admin/Gestor)
-    Route::patch('/chamados/{chamado}/aprovar', [ChamadoController::class, 'aprovar'])->name('chamados.aprovar');
-    Route::patch('/chamados/{chamado}/negar', [ChamadoController::class, 'negar'])->name('chamados.negar');
-    Route::patch('/chamados/{chamado}/entregar', [ChamadoController::class, 'entregar'])->name('chamados.entregar');
+    // Ações de status dos chamados (apenas Admin)
+    Route::middleware('role:admin')->group(function () {
+        Route::patch('/chamados/{chamado}/aprovar', [ChamadoController::class, 'aprovar'])->name('chamados.aprovar');
+        Route::patch('/chamados/{chamado}/negar', [ChamadoController::class, 'negar'])->name('chamados.negar');
+        Route::patch('/chamados/{chamado}/entregar', [ChamadoController::class, 'entregar'])->name('chamados.entregar');
+    });
 });
 
 // Chamados: visible a todos os autenticados, criação por todos
