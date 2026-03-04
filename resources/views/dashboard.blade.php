@@ -63,7 +63,9 @@
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-750">
                             <td class="px-6 py-3 text-gray-600 dark:text-gray-400">{{ $chamado->id }}</td>
                             <td class="px-6 py-3 text-gray-800 dark:text-gray-200">{{ $chamado->funcionario?->nome ?? '—' }}</td>
-                            <td class="px-6 py-3 text-gray-600 dark:text-gray-400">{{ $chamado->patrimonio?->codigo_patrimonio ?? '—' }}</td>
+                            <td class="px-6 py-3 text-gray-600 dark:text-gray-400 font-mono text-xs">
+                                {{ $chamado->patrimonios->pluck('codigo_patrimonio')->implode(', ') ?: '—' }}
+                            </td>
                             <td class="px-6 py-3 text-gray-500 dark:text-gray-400">{{ $chamado->created_at->format('d/m/Y') }}</td>
                             <td class="px-6 py-3 text-right">
                                 <a href="{{ route('chamados.show', $chamado) }}" class="text-blue-600 hover:underline text-xs">Ver</a>

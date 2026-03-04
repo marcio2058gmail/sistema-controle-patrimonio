@@ -13,7 +13,10 @@ class StoreChamadoRequest extends FormRequest
 
     public function rules(): array
     {
+        $isAdminOrGestor = $this->user()?->isAdminOrGestor();
+
         return [
+            'funcionario_id'  => [$isAdminOrGestor ? 'required' : 'nullable', 'exists:funcionarios,id'],
             'descricao'       => ['required', 'string', 'min:10', 'max:1000'],
             'patrimonio_ids'  => ['nullable', 'array'],
             'patrimonio_ids.*'=> ['exists:patrimonios,id'],
@@ -23,6 +26,7 @@ class StoreChamadoRequest extends FormRequest
     public function attributes(): array
     {
         return [
+            'funcionario_id' => 'funcionário',
             'descricao'      => 'descrição',
             'patrimonio_ids' => 'patrimônios',
         ];

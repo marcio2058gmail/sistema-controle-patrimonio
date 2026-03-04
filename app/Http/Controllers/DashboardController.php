@@ -54,7 +54,7 @@ class DashboardController extends Controller
         }
 
         // Últimos chamados abertos (para tabela no dashboard)
-        $ultimosChamados = Chamado::with(['funcionario', 'patrimonio'])
+        $ultimosChamados = Chamado::with(['funcionario', 'patrimonios'])
             ->where('status', Chamado::STATUS_ABERTO)
             ->latest()
             ->take(5)
