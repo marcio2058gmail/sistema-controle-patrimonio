@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Departamento;
-use App\Models\Funcionario;
+use App\Models\Department;
+use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -24,11 +24,11 @@ class FuncionarioSeeder extends Seeder
             'Analista de Sistemas',
         ];
 
-        $users          = User::where('role', 'funcionario')->get();
-        $departamentos  = Departamento::all();
+        $users          = User::where('role', 'employee')->get();
+        $departamentos  = Department::all();
 
         foreach ($users as $index => $user) {
-            Funcionario::create([
+            Employee::create([
                 'user_id'         => $user->id,
                 'nome'            => $user->name,
                 'email'           => $user->email,

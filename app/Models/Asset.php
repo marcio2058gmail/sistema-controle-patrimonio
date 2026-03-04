@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Asset extends Model
 {
-    protected $table = 'assets';
+    protected $table = 'patrimonios';
 
     protected $fillable = [
         'codigo_patrimonio',

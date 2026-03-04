@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Patrimonio;
+use App\Models\Asset;
 use Illuminate\Database\Seeder;
 
 class PatrimonioSeeder extends Seeder
@@ -33,7 +33,7 @@ class PatrimonioSeeder extends Seeder
         ];
 
         foreach ($patrimonios as $item) {
-            Patrimonio::create([
+            Asset::create([
                 'codigo_patrimonio' => $item['codigo'],
                 'descricao'         => $item['descricao'],
                 'modelo'            => $item['modelo'],

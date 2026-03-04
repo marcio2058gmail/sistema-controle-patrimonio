@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Funcionario;
-use App\Models\Patrimonio;
-use App\Models\Responsabilidade;
+use App\Models\Employee;
+use App\Models\Asset;
+use App\Models\Responsibility;
 use Illuminate\Database\Seeder;
 
 class ResponsabilidadeSeeder extends Seeder
@@ -12,8 +12,8 @@ class ResponsabilidadeSeeder extends Seeder
     public function run(): void
     {
         // Buscamos patrimônios que estão em_uso para criar responsabilidades
-        $patrimoniosEmUso = Patrimonio::where('status', 'em_uso')->get();
-        $funcionarios     = Funcionario::all();
+        $patrimoniosEmUso = Asset::where('status', 'em_uso')->get();
+        $funcionarios     = Employee::all();
 
         $termoBase = "Declaro ter recebido o bem patrimonial descrito neste documento em perfeito estado de conservação e funcionamento. " .
             "Comprometo-me a utilizá-lo exclusivamente para fins profissionais, conservando-o de forma adequada e responsabilizando-me " .
@@ -24,7 +24,7 @@ class ResponsabilidadeSeeder extends Seeder
             $funcionario   = $funcionarios[$index % $funcionarios->count()];
             $dataEntrega   = now()->subDays(rand(10, 180));
 
-            Responsabilidade::create([
+            Responsibility::create([
                 'funcionario_id'         => $funcionario->id,
                 'patrimonio_id'          => $patrimonio->id,
                 'data_entrega'           => $dataEntrega->toDateString(),
@@ -35,14 +35,14 @@ class ResponsabilidadeSeeder extends Seeder
         }
 
         // Algumas responsabilidades já encerradas (com devolução)
-        $patrimoniosDisponiveis = Patrimonio::where('status', 'disponivel')->take(3)->get();
+        $patrimoniosDisponiveis = Asset::where('status', 'disponivel')->take(3)->get();
 
         foreach ($patrimoniosDisponiveis as $index => $patrimonio) {
             $funcionario = $funcionarios[($index + 2) % $funcionarios->count()];
             $dataEntrega = now()->subDays(rand(90, 365));
             $dataDev     = $dataEntrega->copy()->addDays(rand(30, 89));
 
-            Responsabilidade::create([
+            Responsibility::create([
                 'funcionario_id'         => $funcionario->id,
                 'patrimonio_id'          => $patrimonio->id,
                 'data_entrega'           => $dataEntrega->toDateString(),

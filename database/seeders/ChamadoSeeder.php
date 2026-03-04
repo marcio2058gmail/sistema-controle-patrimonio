@@ -2,17 +2,17 @@
 
 namespace Database\Seeders;
 
-use App\Models\Chamado;
-use App\Models\Funcionario;
-use App\Models\Patrimonio;
+use App\Models\Ticket;
+use App\Models\Employee;
+use App\Models\Asset;
 use Illuminate\Database\Seeder;
 
 class ChamadoSeeder extends Seeder
 {
     public function run(): void
     {
-        $funcionarios = Funcionario::all();
-        $patrimonios  = Patrimonio::all();
+        $funcionarios = Employee::all();
+        $patrimonios  = Asset::all();
 
         $chamados = [
             [
@@ -80,7 +80,7 @@ class ChamadoSeeder extends Seeder
         foreach ($chamados as $index => $data) {
             $funcionario = $funcionarios[$index % $funcionarios->count()];
 
-            $chamado = Chamado::create([
+            $chamado = Ticket::create([
                 'funcionario_id' => $funcionario->id,
                 'descricao'      => $data['descricao'],
                 'status'         => $data['status'],
@@ -91,7 +91,7 @@ class ChamadoSeeder extends Seeder
             $qtd = rand(0, 2);
             if ($qtd > 0 && $patrimonios->count() > 0) {
                 $ids = $patrimonios->random(min($qtd, $patrimonios->count()))->pluck('id')->toArray();
-                $chamado->patrimonios()->sync($ids);
+                $chamado->assets()->sync($ids);
             }
         }
     }

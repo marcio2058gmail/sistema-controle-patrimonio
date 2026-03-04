@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Departamento;
+use App\Models\Department;
 use Illuminate\Database\Seeder;
 
 class DepartamentoSeeder extends Seeder
@@ -19,7 +19,7 @@ class DepartamentoSeeder extends Seeder
         ];
 
         foreach ($departamentos as $data) {
-            Departamento::firstOrCreate(['nome' => $data['nome']], $data);
+            Department::firstOrCreate(['nome' => $data['nome']], $data);
         }
     }
 }
