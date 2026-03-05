@@ -24,9 +24,9 @@
                     <div>
                         <dt class="text-gray-500">Departamento</dt>
                         <dd class="text-gray-800 dark:text-gray-200">
-                            @if($employee->departamento)
-                                <a href="{{ route('departments.show', $employee->departamento) }}" class="text-indigo-600 hover:underline">
-                                    {{ $employee->departamento->nome }}
+                            @if($employee->department)
+                                <a href="{{ route('departments.show', $employee->department) }}" class="text-indigo-600 hover:underline">
+                                    {{ $employee->department->nome }}
                                 </a>
                             @else
                                 —
@@ -38,7 +38,7 @@
             </div>
 
             {{-- Chamados --}}
-            @if($employee->chamados->isNotEmpty())
+            @if($employee->tickets->isNotEmpty())
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                     <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Chamados</h3>
@@ -53,11 +53,11 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                        @foreach($employee->chamados as $ticket)
+                        @foreach($employee->tickets as $ticket)
                         <tr>
                             <td class="px-6 py-3 text-gray-500">{{ $ticket->id }}</td>
                             <td class="px-6 py-3 text-gray-800 dark:text-gray-200">{{ Str::limit($ticket->descricao, 50) }}</td>
-                            <td class="px-6 py-3 text-gray-500">{{ $ticket->patrimonios->pluck('codigo_patrimonio')->implode(', ') ?: '—' }}</td>
+                            <td class="px-6 py-3 text-gray-500">{{ $ticket->assets->pluck('codigo_patrimonio')->implode(', ') ?: '—' }}</td>
                             <td class="px-6 py-3"><x-status-badge :status="$ticket->status" type="chamado" /></td>
                         </tr>
                         @endforeach
@@ -67,7 +67,7 @@
             @endif
 
             {{-- Responsabilidades --}}
-            @if($employee->responsabilidades->isNotEmpty())
+            @if($employee->responsibilities->isNotEmpty())
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                     <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Responsabilidades</h3>
@@ -81,9 +81,9 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                        @foreach($employee->responsabilidades as $r)
+                        @foreach($employee->responsibilities as $r)
                         <tr>
-                            <td class="px-6 py-3 font-mono text-gray-800 dark:text-gray-200">{{ $r->patrimonio->codigo_patrimonio }}</td>
+                            <td class="px-6 py-3 font-mono text-gray-800 dark:text-gray-200">{{ $r->asset->codigo_patrimonio }}</td>
                             <td class="px-6 py-3 text-gray-500">{{ $r->data_entrega->format('d/m/Y') }}</td>
                             <td class="px-6 py-3 text-gray-500">{{ $r->data_devolucao?->format('d/m/Y') ?? 'Ativo' }}</td>
                         </tr>

@@ -33,7 +33,7 @@ class EmployeeController extends Controller
 
     public function show(Employee $employee): View
     {
-        $employee->load(['department', 'responsabilidades.patrimonio', 'chamados.patrimonios']);
+        $employee->load(['department', 'responsibilities.asset', 'tickets.assets']);
         return view('employees.show', compact('employee'));
     }
 
