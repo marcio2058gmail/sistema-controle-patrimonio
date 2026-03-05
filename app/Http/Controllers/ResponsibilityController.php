@@ -26,8 +26,10 @@ class ResponsibilityController extends Controller
         }
 
         $responsibilities = $query->paginate(15);
+        $employees        = \App\Models\Employee::orderBy('nome')->get();
+        $availableAssets  = \App\Models\Asset::disponivel()->orderBy('descricao')->get();
 
-        return view('responsibilities.index', compact('responsibilities'));
+        return view('responsibilities.index', compact('responsibilities', 'employees', 'availableAssets'));
     }
 
     public function create(): View

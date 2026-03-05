@@ -3,16 +3,16 @@
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Responsabilidades</h2>
             @if(auth()->user()->role === 'admin')
-            <a href="{{ route('responsibilities.create') }}"
+            <button type="button" @click="modalOpen = true"
                class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
                 + Nova Responsabilidade
-            </a>
+            </button>
             @endif
         </div>
     </x-slot>
 
-    <div x-data="{ showDetail: false, detail: null, deleteTarget: null, editTarget: null, openEdit(d) { this.editTarget = d; this.showDetail = false; } }"
-         @keydown.escape.window="deleteTarget ? deleteTarget = null : editTarget ? editTarget = null : showDetail = false">
+    <div x-data="{ modalOpen: {{ $errors->any() ? 'true' : 'false' }}, showDetail: false, detail: null, deleteTarget: null, editTarget: null, openEdit(d) { this.editTarget = d; this.showDetail = false; } }"
+         @keydown.escape.window="modalOpen ? modalOpen = false : deleteTarget ? deleteTarget = null : editTarget ? editTarget = null : showDetail = false">
 
         <div class="py-8">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -249,6 +249,99 @@
                 </form>
             </div>
         </div>
+
+        {{-- ===== MODAL NOVA RESPONSABILIDADE ===== --}}
+        <div x-show="modalOpen"
+             x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60"
+             style="display:none">
+            <div class="absolute inset-0" @click="modalOpen = false"></div>
+            <div x-show="modalOpen"
+                 x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                 x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+                 class="relative w-full max-w-2xl bg-white dark:bg-gray-800 rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
+                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700 shrink-0">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">Nova Responsabilidade</h3>
+                    <button @click="modalOpen = false" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+                <div class="overflow-y-auto flex-1 px-6 py-5">
+                    <form id="form-nova-responsabilidade" action="{{ route('responsibilities.store') }}" method="POST" class="space-y-5">
+                        @csrf
+                        <div>
+                            <x-input-label for="funcionario_id" value="Funcionário *" />
+                            <select id="funcionario_id" name="funcionario_id" required
+                                class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm focus:ring focus:ring-indigo-300">
+                                <option value="">Selecione...</option>
+                                @foreach($employees as $employee)
+                                    <option value="{{ $employee->id }}" {{ old('funcionario_id') == $employee->id ? 'selected' : '' }}>{{ $employee->nome }}</option>
+                                @endforeach
+                            </select>
+                            <x-input-error :messages="$errors->get('funcionario_id')" class="mt-1" />
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <x-input-label for="data_entrega" value="Data de Entrega *" />
+                                <x-text-input id="data_entrega" name="data_entrega" type="date" class="mt-1 block w-full"
+                                    :value="old('data_entrega', now()->toDateString())" required />
+                                <x-input-error :messages="$errors->get('data_entrega')" class="mt-1" />
+                            </div>
+                            <div>
+                                <x-input-label for="data_devolucao" value="Data de Devolução" />
+                                <x-text-input id="data_devolucao" name="data_devolucao" type="date" class="mt-1 block w-full"
+                                    :value="old('data_devolucao')" />
+                                <x-input-error :messages="$errors->get('data_devolucao')" class="mt-1" />
+                            </div>
+                        </div>
+                        <div>
+                            <x-input-label for="termo_responsabilidade" value="Termo de Responsabilidade *" />
+                            <textarea id="termo_responsabilidade" name="termo_responsabilidade" rows="5" minlength="20" required
+                                class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm focus:ring focus:ring-indigo-300"
+                                placeholder="Descreva os termos de responsabilidade...">{{ old('termo_responsabilidade') }}</textarea>
+                            <x-input-error :messages="$errors->get('termo_responsabilidade')" class="mt-1" />
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <input type="hidden" name="assinado" value="0" />
+                            <input type="checkbox" id="assinado" name="assinado" value="1"
+                                {{ old('assinado') ? 'checked' : '' }}
+                                class="w-4 h-4 rounded border-gray-300 text-indigo-600 shadow-sm focus:ring focus:ring-indigo-300" />
+                            <x-input-label for="assinado" value="Termo assinado" class="mb-0" />
+                            <x-input-error :messages="$errors->get('assinado')" class="mt-1" />
+                        </div>
+                        <div x-data="{ search: '' }">
+                            <x-input-label value="Patrimônios *" />
+                            <x-input-error :messages="$errors->get('patrimonio_ids')" class="mt-1" />
+                            <x-input-error :messages="$errors->get('patrimonio_ids.*')" class="mt-1" />
+                            <x-text-input x-model="search" type="text" placeholder="Buscar patrimônio..." class="mt-1 mb-2 block w-full" />
+                            <div class="max-h-40 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-md divide-y divide-gray-100 dark:divide-gray-700">
+                                @forelse($availableAssets as $asset)
+                                    <label
+                                        x-show="search === '' || '{{ strtolower($asset->descricao . ' ' . $asset->codigo_patrimonio) }}'.includes(search.toLowerCase())"
+                                        class="flex items-center gap-3 px-3 py-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
+                                        <input type="checkbox" name="patrimonio_ids[]" value="{{ $asset->id }}"
+                                            {{ in_array($asset->id, old('patrimonio_ids', [])) ? 'checked' : '' }}
+                                            class="w-4 h-4 rounded border-gray-300 text-indigo-600 shadow-sm focus:ring focus:ring-indigo-300" />
+                                        <span class="text-sm text-gray-700 dark:text-gray-300">
+                                            <span class="font-medium">{{ $asset->descricao }}</span>
+                                            <span class="text-gray-400"> — {{ $asset->codigo_patrimonio }}</span>
+                                        </span>
+                                    </label>
+                                @empty
+                                    <p class="px-3 py-3 text-sm text-gray-500 dark:text-gray-400">Nenhum patrimônio disponível.</p>
+                                @endforelse
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/60 rounded-b-2xl shrink-0">
+                    <button type="button" @click="modalOpen = false" class="px-4 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">Cancelar</button>
+                    <button type="submit" form="form-nova-responsabilidade" class="px-4 py-2 text-sm font-medium rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white transition-colors">Cadastrar</button>
+                </div>
+            </div>
+        </div>
+        {{-- ===== FIM MODAL NOVA RESPONSABILIDADE ===== --}}
 
     </div>
 </x-app-layout>
