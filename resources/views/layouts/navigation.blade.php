@@ -5,8 +5,10 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}" class="text-gray-800 dark:text-gray-200 font-bold text-lg tracking-tight">
-                        Controle Patrimonial
+                    <a href="{{ route('dashboard') }}">
+                        <img src="https://app.locarmais.com/consImages/escuro.png"
+                             alt="Controle Patrimonial"
+                             class="h-8 w-auto">
                     </a>
                 </div>
 
