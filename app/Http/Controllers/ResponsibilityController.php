@@ -134,6 +134,32 @@ class ResponsibilityController extends Controller
             ->with('sucesso', 'Termo removido.');
     }
 
+    public function assinar(\Illuminate\Http\Request $request, Responsibility $responsibility): RedirectResponse
+    {
+        $user = $request->user();
+
+        // Somente o funcionário vinculado pode assinar
+        abort_unless($user->employee?->id === $responsibility->funcionario_id, 403);
+
+        if ($responsibility->assinado) {
+            return back()->with('erro', 'Este termo já foi assinado.');
+        }
+
+        $request->validate([
+            'assinatura_base64' => ['required', 'string'],
+        ]);
+
+        $responsibility->update([
+            'assinatura_base64' => $request->assinatura_base64,
+            'assinado'          => true,
+            'assinado_em'       => now(),
+            'assinado_ip'       => $request->ip(),
+        ]);
+
+        return redirect()->route('responsibilities.show', $responsibility)
+            ->with('sucesso', 'Termo assinado com sucesso! Agora você pode baixar o PDF.');
+    }
+
     public function gerarPdf(Responsibility $responsibility): Response
     {
         $user = auth()->user();

@@ -16,12 +16,16 @@ class Responsibility extends Model
         'data_devolucao',
         'termo_responsabilidade',
         'assinado',
+        'assinatura_base64',
+        'assinado_em',
+        'assinado_ip',
     ];
 
     protected $casts = [
         'data_entrega'   => 'date',
         'data_devolucao' => 'date',
         'assinado'       => 'boolean',
+        'assinado_em'    => 'datetime',
     ];
 
     // ---------- Relationships ----------

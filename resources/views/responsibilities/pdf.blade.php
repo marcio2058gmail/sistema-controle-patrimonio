@@ -24,7 +24,9 @@
         .signatures { margin-top: 50px; display: flex; justify-content: space-between; }
         .sig-line { text-align: center; width: 42%; }
         .sig-line .line { border-top: 1px solid #1a1a1a; padding-top: 6px; font-size: 10pt; }
-        .sig-line .label { font-size: 9pt; color: #666; }
+        .sig-line .img-box { margin-bottom: 6px; min-height: 70px; display: flex; align-items: flex-end; justify-content: center; }
+        .sig-line .img-box img { max-height: 70px; max-width: 95%; }
+        .sig-audit { font-size: 8pt; color: #888; margin-top: 3px; }
         .badge { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 9pt; font-weight: 600; }
         .badge-green { background: #d1fae5; color: #065f46; }
         .badge-yellow { background: #fef3c7; color: #92400e; }
@@ -102,10 +104,19 @@
 
     <div class="signatures">
         <div class="sig-line">
+            @if($responsibility->assinatura_base64)
+            <div class="img-box"><img src="{{ $responsibility->assinatura_base64 }}" alt="Assinatura"></div>
+            @else
+            <div style="min-height:70px;"></div>
+            @endif
             <div class="line">{{ $responsibility->employee->nome }}</div>
             <div class="label">Funcionário Responsável</div>
+            @if($responsibility->assinado_em)
+            <div class="sig-audit">Assinado digitalmente em {{ $responsibility->assinado_em->format('d/m/Y \à\s H:i') }}</div>
+            @endif
         </div>
         <div class="sig-line">
+            <div style="min-height:70px;"></div>
             <div class="line">Gestor de Patrimônio</div>
             <div class="label">Setor de Patrimônio</div>
         </div>

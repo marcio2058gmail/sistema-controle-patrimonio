@@ -52,6 +52,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('responsibilities', ResponsibilityController::class)->only(['index', 'show']);
     Route::get('/responsibilities/{responsibility}/pdf', [ResponsibilityController::class, 'gerarPdf'])
         ->name('responsibilities.pdf');
+    Route::post('/responsibilities/{responsibility}/assinar', [ResponsibilityController::class, 'assinar'])
+        ->name('responsibilities.assinar');
 });
 
 require __DIR__.'/auth.php';

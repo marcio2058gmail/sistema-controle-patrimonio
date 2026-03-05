@@ -67,16 +67,28 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-3">
-                                    @if($r->assinado) <span class="text-green-600 font-medium">Sim</span>
-                                    @else <span class="text-gray-400">Não</span>
+                                    @if($r->assinado)
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300">
+                                            <svg class="mr-1 h-3 w-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                                            Assinado
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300">Pendente</span>
                                     @endif
                                 </td>
                                 <td class="px-6 py-3 text-right space-x-3">
                                     <button type="button" @click="detail = {{ Js::from($rd) }}; showDetail = true" class="text-indigo-600 hover:text-indigo-800 dark:hover:text-indigo-400 text-xs font-medium transition-colors">Ver detalhes</button>
+                                    @if(auth()->user()->isAdmin())
                                     <a href="{{ route('responsibilities.pdf', $r) }}" target="_blank" class="text-gray-600 hover:text-gray-800 dark:hover:text-gray-300 text-xs font-medium transition-colors">PDF</a>
-                                    @if(auth()->user()->role === 'admin')
                                     <button type="button" @click="openEdit({{ Js::from($rd) }})" class="text-gray-600 hover:text-gray-800 dark:hover:text-gray-300 text-xs font-medium transition-colors">Editar</button>
                                     <button type="button" @click="deleteTarget = {{ Js::from(['url'=>route('responsibilities.destroy',$r),'name'=>'#'.$r->id.' - '.$r->employee->nome]) }}" class="text-red-600 hover:text-red-800 text-xs font-medium transition-colors">Excluir</button>
+                                    @else
+                                    @if($r->assinado)
+                                    <a href="{{ route('responsibilities.pdf', $r) }}" target="_blank" class="text-gray-600 hover:text-gray-800 dark:hover:text-gray-300 text-xs font-medium transition-colors">PDF</a>
+                                    @endif
+                                    @if(!$r->assinado && auth()->user()->isEmployee() && auth()->user()->employee?->id === $r->funcionario_id)
+                                    <a href="{{ route('responsibilities.show', $r) }}" class="text-indigo-600 hover:text-indigo-800 text-xs font-medium font-semibold transition-colors">✍ Assinar</a>
+                                    @endif
                                     @endif
                                 </td>
                             </tr>
