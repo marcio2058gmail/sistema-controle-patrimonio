@@ -32,10 +32,34 @@
                         </thead>
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                             @forelse($responsibilities as $r)
-                            @php $rd = ['id'=>$r->id,'employee'=>$r->employee->nome,'cargo'=>$r->employee->cargo,'code'=>$r->asset->codigo_patrimonio,'asset_desc'=>$r->asset->descricao,'entrega'=>$r->data_entrega->format('d/m/Y'),'devolucao'=>$r->data_devolucao?->format('d/m/Y'),'devolucao_raw'=>$r->data_devolucao?->toDateString(),'assinado'=>$r->assinado,'termo'=>$r->termo_responsabilidade,'is_admin'=>auth()->user()->isAdmin(),'url_edit'=>auth()->user()->isAdmin()?route('responsibilities.edit',$r):'','url_update'=>auth()->user()->isAdmin()?route('responsibilities.update',$r):'','url_destroy'=>auth()->user()->isAdmin()?route('responsibilities.destroy',$r):'','url_pdf'=>route('responsibilities.pdf',$r)]; @endphp
+                            @php
+                            $rd = [
+                                'id'           => $r->id,
+                                'employee'     => $r->employee->nome,
+                                'cargo'        => $r->employee->cargo,
+                                'assets'       => $r->assets->map(fn($a) => ['code' => $a->codigo_patrimonio, 'desc' => $a->descricao])->values()->toArray(),
+                                'assets_label' => $r->assets->pluck('codigo_patrimonio')->implode(', '),
+                                'assets_count' => $r->assets->count(),
+                                'entrega'      => $r->data_entrega->format('d/m/Y'),
+                                'devolucao'    => $r->data_devolucao?->format('d/m/Y'),
+                                'devolucao_raw'=> $r->data_devolucao?->toDateString(),
+                                'assinado'     => $r->assinado,
+                                'termo'        => $r->termo_responsabilidade,
+                                'is_admin'     => auth()->user()->isAdmin(),
+                                'url_edit'     => auth()->user()->isAdmin() ? route('responsibilities.edit', $r) : '',
+                                'url_update'   => auth()->user()->isAdmin() ? route('responsibilities.update', $r) : '',
+                                'url_destroy'  => auth()->user()->isAdmin() ? route('responsibilities.destroy', $r) : '',
+                                'url_pdf'      => route('responsibilities.pdf', $r),
+                            ];
+                            @endphp
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-750">
                                 <td class="px-6 py-3 text-gray-800 dark:text-gray-200">{{ $r->employee->nome }}</td>
-                                <td class="px-6 py-3 font-mono text-gray-600 dark:text-gray-400">{{ $r->asset->codigo_patrimonio }}</td>
+                                <td class="px-6 py-3 text-gray-600 dark:text-gray-400">
+                                    <span class="font-mono text-xs">{{ $r->assets->pluck('codigo_patrimonio')->implode(', ') }}</span>
+                                    @if($r->assets->count() > 1)
+                                    <span class="ml-1 inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300">{{ $r->assets->count() }}</span>
+                                    @endif
+                                </td>
                                 <td class="px-6 py-3 text-gray-500">{{ $r->data_entrega->format('d/m/Y') }}</td>
                                 <td class="px-6 py-3 text-gray-500">
                                     @if($r->data_devolucao) {{ $r->data_devolucao->format('d/m/Y') }}
@@ -88,10 +112,20 @@
                 <div class="overflow-y-auto flex-1 px-6 py-5 space-y-4">
                     <dl class="grid grid-cols-2 gap-x-6 gap-y-4 text-sm">
                         <div><dt class="text-gray-500">Cargo</dt><dd class="mt-0.5 text-gray-800 dark:text-gray-200" x-text="detail?.cargo || '—'"></dd></div>
-                        <div>
-                            <dt class="text-gray-500">Patrimônio</dt>
-                            <dd class="mt-0.5 font-mono font-medium text-gray-800 dark:text-gray-200" x-text="detail?.code"></dd>
-                            <dd class="text-xs text-gray-500" x-text="detail?.asset_desc"></dd>
+                        <div class="col-span-2">
+                            <dt class="text-gray-500 mb-2">Equipamentos
+                                <span class="ml-1 inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-700" x-text="detail?.assets_count"></span>
+                            </dt>
+                            <dd>
+                                <div class="space-y-1">
+                                    <template x-for="(a, i) in (detail?.assets ?? [])" :key="i">
+                                        <div class="flex items-baseline gap-2 text-sm">
+                                            <span class="font-mono font-medium text-gray-800 dark:text-gray-200" x-text="a.code"></span>
+                                            <span class="text-gray-500 text-xs" x-text="a.desc"></span>
+                                        </div>
+                                    </template>
+                                </div>
+                            </dd>
                         </div>
                         <div><dt class="text-gray-500">Data de Entrega</dt><dd class="mt-0.5 text-gray-800 dark:text-gray-200" x-text="detail?.entrega"></dd></div>
                         <div>
@@ -141,7 +175,7 @@
                 <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700 shrink-0">
                     <div>
                         <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100" x-text="'Editar #' + (editTarget?.id ?? '')"></h3>
-                        <p class="text-xs text-gray-500 mt-0.5" x-text="editTarget?.employee + ' — ' + editTarget?.code"></p>
+                        <p class="text-xs text-gray-500 mt-0.5" x-text="editTarget?.employee + ' — ' + (editTarget?.assets_count ?? 0) + ' equipamento(s)'"></p>
                     </div>
                     <button @click="editTarget = null" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>

@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Asset extends Model
 {
@@ -55,16 +54,17 @@ class Asset extends Model
 
     // ---------- Relationships ----------
 
-    public function responsibilities(): HasMany
+    public function responsibilities(): BelongsToMany
     {
-        return $this->hasMany(Responsibility::class, 'patrimonio_id');
+        return $this->belongsToMany(Responsibility::class, 'termo_patrimonios', 'patrimonio_id', 'termo_id')
+                    ->withTimestamps();
     }
 
     public function activeResponsibility(): ?Responsibility
     {
         return $this->responsibilities()
             ->whereNull('data_devolucao')
-            ->latest()
+            ->latest('termos.created_at')
             ->first();
     }
 

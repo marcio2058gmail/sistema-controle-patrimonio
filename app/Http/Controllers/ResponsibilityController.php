@@ -16,7 +16,7 @@ class ResponsibilityController extends Controller
 {
     public function index(): View
     {
-        $responsibilities = Responsibility::with(['employee', 'asset'])
+        $responsibilities = Responsibility::with(['employee', 'assets'])
             ->latest()
             ->paginate(15);
 
@@ -26,58 +26,102 @@ class ResponsibilityController extends Controller
     public function create(): View
     {
         $employees = Employee::orderBy('nome')->get();
-        $assets  = Asset::disponivel()->orderBy('descricao')->get();
+        $assets    = Asset::disponivel()->orderBy('descricao')->get();
 
         return view('responsibilities.create', compact('employees', 'assets'));
     }
 
     public function store(StoreResponsibilityRequest $request): RedirectResponse
     {
-        $responsibility = Responsibility::create($request->validated());
+        $data = $request->safe()->except('patrimonio_ids');
+        $patrimonioIds = $request->input('patrimonio_ids', []);
 
-        // Marcar patrimônio como em uso
-        $responsibility->asset->update(['status' => Asset::STATUS_IN_USE]);
+        $responsibility = Responsibility::create($data);
+        $responsibility->assets()->attach($patrimonioIds);
 
+        // Marcar todos os patrimônios como em uso
+        Asset::whereIn('id', $patrimonioIds)->update(['status' => Asset::STATUS_IN_USE]);
+
+        $count = count($patrimonioIds);
         return redirect()->route('responsibilities.index')
-            ->with('sucesso', 'Responsabilidade registrada com sucesso.');
+            ->with('sucesso', "Termo registrado com {$count} equipamento(s).");
     }
 
     public function show(Responsibility $responsibility): View
     {
-        $responsibility->load(['employee', 'asset']);
+        $responsibility->load(['employee', 'assets']);
         return view('responsibilities.show', compact('responsibility'));
     }
 
     public function edit(Responsibility $responsibility): View
     {
-        $responsibility->load(['employee', 'asset']);
-        return view('responsibilities.edit', compact('responsibility'));
+        $responsibility->load(['employee', 'assets']);
+        $assets = Asset::disponivel()->orderBy('descricao')->get();
+        return view('responsibilities.edit', compact('responsibility', 'assets'));
     }
 
     public function update(UpdateResponsibilityRequest $request, Responsibility $responsibility): RedirectResponse
     {
-        $responsibility->update($request->validated());
+        $responsibility->update($request->safe()->except('patrimonio_ids'));
 
-        // Se foi devolvido, marcar patrimônio como disponível
-        if ($request->filled('data_devolucao') && ! $responsibility->asset->activeResponsibility()) {
-            $responsibility->asset->update(['status' => Asset::STATUS_AVAILABLE]);
+        // Anexar novos patrimônios se enviados
+        if ($request->has('patrimonio_ids')) {
+            $newIds = array_filter((array) $request->input('patrimonio_ids'));
+            if (! empty($newIds)) {
+                $existingIds = $responsibility->assets()->pluck('patrimonios.id')->toArray();
+                $toAttach = array_diff($newIds, $existingIds);
+                if (! empty($toAttach)) {
+                    $responsibility->assets()->attach($toAttach);
+                    \App\Models\Asset::whereIn('id', $toAttach)->update(['status' => \App\Models\Asset::STATUS_IN_USE]);
+                }
+            }
+        }
+
+        // Se data_devolucao foi preenchida, liberar patrimônios que não têm outro termo ativo
+        if ($request->filled('data_devolucao')) {
+            foreach ($responsibility->assets as $asset) {
+                $outroAtivo = $asset->responsibilities()
+                    ->where('termos.id', '!=', $responsibility->id)
+                    ->whereNull('data_devolucao')
+                    ->exists();
+
+                if (! $outroAtivo) {
+                    $asset->update(['status' => Asset::STATUS_AVAILABLE]);
+                }
+            }
         }
 
         return redirect()->route('responsibilities.index')
-            ->with('sucesso', 'Responsabilidade atualizada com sucesso.');
+            ->with('sucesso', 'Termo atualizado com sucesso.');
     }
 
     public function destroy(Responsibility $responsibility): RedirectResponse
     {
+        $responsibility->load('assets');
+
+        // Se o termo estava ativo, liberar os patrimônios sem outro termo ativo
+        if (! $responsibility->data_devolucao) {
+            foreach ($responsibility->assets as $asset) {
+                $outroAtivo = $asset->responsibilities()
+                    ->where('termos.id', '!=', $responsibility->id)
+                    ->whereNull('data_devolucao')
+                    ->exists();
+
+                if (! $outroAtivo) {
+                    $asset->update(['status' => Asset::STATUS_AVAILABLE]);
+                }
+            }
+        }
+
         $responsibility->delete();
 
         return redirect()->route('responsibilities.index')
-            ->with('sucesso', 'Responsabilidade removida.');
+            ->with('sucesso', 'Termo removido.');
     }
 
     public function gerarPdf(Responsibility $responsibility): Response
     {
-        $responsibility->load(['employee', 'asset']);
+        $responsibility->load(['employee', 'assets']);
 
         $pdf = Pdf::loadView('responsibilities.pdf', compact('responsibility'))
             ->setPaper('a4', 'portrait');
@@ -87,3 +131,4 @@ class ResponsibilityController extends Controller
         return $pdf->download($nomeArquivo);
     }
 }
+

@@ -4,14 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Responsibility extends Model
 {
-    protected $table = 'responsabilidades';
+    protected $table = 'termos';
 
     protected $fillable = [
         'funcionario_id',
-        'patrimonio_id',
         'data_entrega',
         'data_devolucao',
         'termo_responsabilidade',
@@ -19,9 +19,9 @@ class Responsibility extends Model
     ];
 
     protected $casts = [
-        'data_entrega'    => 'date',
-        'data_devolucao'  => 'date',
-        'assinado'        => 'boolean',
+        'data_entrega'   => 'date',
+        'data_devolucao' => 'date',
+        'assinado'       => 'boolean',
     ];
 
     // ---------- Relationships ----------
@@ -31,8 +31,9 @@ class Responsibility extends Model
         return $this->belongsTo(Employee::class, 'funcionario_id');
     }
 
-    public function asset(): BelongsTo
+    public function assets(): BelongsToMany
     {
-        return $this->belongsTo(Asset::class, 'patrimonio_id');
+        return $this->belongsToMany(Asset::class, 'termo_patrimonios', 'termo_id', 'patrimonio_id')
+                    ->withTimestamps();
     }
 }

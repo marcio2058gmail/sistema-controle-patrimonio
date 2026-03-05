@@ -14,9 +14,11 @@ class UpdateResponsibilityRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'data_devolucao'        => ['nullable', 'date', 'after:data_entrega'],
+            'data_devolucao'         => ['nullable', 'date'],
             'termo_responsabilidade' => ['sometimes', 'string', 'min:20'],
-            'assinado'              => ['boolean'],
+            'assinado'               => ['boolean'],
+            'patrimonio_ids'         => ['sometimes', 'array'],
+            'patrimonio_ids.*'       => ['exists:patrimonios,id'],
         ];
     }
 
