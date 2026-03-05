@@ -11,6 +11,17 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
+        <!-- Dark mode: aplica classe antes do render para evitar flash -->
+        <script>
+            (function() {
+                const saved = localStorage.getItem('theme');
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (saved === 'dark' || (!saved && prefersDark)) {
+                    document.documentElement.classList.add('dark');
+                }
+            })();
+        </script>
+
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
@@ -33,5 +44,28 @@
             </main>
         </div>
         @stack('scripts')
+        <script>
+            function toggleTheme() {
+                const isDark = document.documentElement.classList.toggle('dark');
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+                updateThemeIcons(isDark);
+            }
+
+            function updateThemeIcons(isDark) {
+                // Desktop
+                document.getElementById('icon-sun')?.classList.toggle('hidden', !isDark);
+                document.getElementById('icon-moon')?.classList.toggle('hidden', isDark);
+                // Mobile
+                document.getElementById('icon-sun-mobile')?.classList.toggle('hidden', !isDark);
+                document.getElementById('icon-moon-mobile')?.classList.toggle('hidden', isDark);
+                const lbl = document.getElementById('theme-label-mobile');
+                if (lbl) lbl.textContent = isDark ? 'Modo claro' : 'Modo escuro';
+            }
+
+            // Sincroniza ícones com o estado inicial (definido pelo script anti-flash)
+            document.addEventListener('DOMContentLoaded', function () {
+                updateThemeIcons(document.documentElement.classList.contains('dark'));
+            });
+        </script>
     </body>
 </html>
