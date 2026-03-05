@@ -182,20 +182,22 @@ class TicketController extends Controller
             return back()->withErrors(['status' => 'O chamado não possui patrimônios disponíveis para entrega.']);
         }
 
-        foreach ($assets as $asset) {
-            // Cria responsabilidade para cada patrimônio
-            Responsibility::create([
-                'funcionario_id'         => $ticket->funcionario_id,
-                'patrimonio_id'          => $asset->id,
-                'data_entrega'           => now()->toDateString(),
-                'termo_responsabilidade' => "Termo gerado automaticamente na entrega do chamado #{$ticket->id}. " .
-                    "O funcionário {$ticket->employee->nome} recebe o patrimônio " .
-                    "{$asset->codigo_patrimonio} — {$asset->descricao}.",
-                'assinado'               => false,
-            ]);
+        // Lista dos equipamentos para o texto do termo
+        $listaEquipamentos = $assets->map(fn ($a) => "• {$a->codigo_patrimonio} — {$a->descricao}")->implode("\n");
 
-            $asset->update(['status' => Asset::STATUS_IN_USE]);
-        }
+        // Cria UM único termo com todos os equipamentos do chamado
+        $responsibility = Responsibility::create([
+            'funcionario_id'         => $ticket->funcionario_id,
+            'data_entrega'           => now()->toDateString(),
+            'termo_responsabilidade' => "Termo gerado automaticamente na entrega do chamado #{$ticket->id}.\n\n" .
+                "O funcionário {$ticket->employee->nome} recebe os seguintes equipamentos:\n\n" .
+                $listaEquipamentos,
+            'assinado'               => false,
+        ]);
+
+        // Vincula todos os equipamentos ao termo via pivot e atualiza status
+        $responsibility->assets()->attach($assets->pluck('id'));
+        Asset::whereIn('id', $assets->pluck('id'))->update(['status' => Asset::STATUS_IN_USE]);
 
         $ticket->update(['status' => Ticket::STATUS_DELIVERED]);
 
