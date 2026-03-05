@@ -48,10 +48,12 @@ class DashboardController extends Controller
                         'department'       => $dept,
                         'total_funcionarios' => $dept->employees_count,
                         'patrimonios_em_uso' => $ids->isEmpty() ? 0 :
-                            Responsibility::whereIn('funcionario_id', $ids)
-                                ->whereNull('data_devolucao')
-                                ->distinct('patrimonio_id')
-                                ->count('patrimonio_id'),
+                            DB::table('termo_patrimonios')
+                                ->join('termos', 'termos.id', '=', 'termo_patrimonios.termo_id')
+                                ->whereIn('termos.funcionario_id', $ids)
+                                ->whereNull('termos.data_devolucao')
+                                ->distinct('termo_patrimonios.patrimonio_id')
+                                ->count('termo_patrimonios.patrimonio_id'),
                         'chamados_abertos'   => $ids->isEmpty() ? 0 :
                             Ticket::where('status', Ticket::STATUS_OPEN)
                                 ->whereIn('funcionario_id', $ids)
@@ -67,9 +69,12 @@ class DashboardController extends Controller
                                            ->distinct('funcionario_id')
                                            ->pluck('funcionario_id');
 
-            $totalAssets        = Responsibility::whereNull('data_devolucao')
-                                           ->whereIn('funcionario_id', $idsNoDept)
-                                           ->distinct('patrimonio_id')->count('patrimonio_id');
+            $totalAssets        = DB::table('termo_patrimonios')
+                                           ->join('termos', 'termos.id', '=', 'termo_patrimonios.termo_id')
+                                           ->whereIn('termos.funcionario_id', $idsNoDept)
+                                           ->whereNull('termos.data_devolucao')
+                                           ->distinct('termo_patrimonios.patrimonio_id')
+                                           ->count('termo_patrimonios.patrimonio_id');
             $totalEmployees       = $idsNoDept->count();
             $totalOpenTickets    = Ticket::where('status', Ticket::STATUS_OPEN)
                                            ->whereIn('funcionario_id', $idsNoDept)->count();
@@ -85,8 +90,10 @@ class DashboardController extends Controller
                 ->map(function ($emp) {
                     return [
                         'employee'           => $emp,
-                        'patrimonios_em_uso' => Responsibility::whereNull('data_devolucao')
-                                                    ->where('funcionario_id', $emp->id)
+                        'patrimonios_em_uso' => DB::table('termo_patrimonios')
+                                                    ->join('termos', 'termos.id', '=', 'termo_patrimonios.termo_id')
+                                                    ->where('termos.funcionario_id', $emp->id)
+                                                    ->whereNull('termos.data_devolucao')
                                                     ->count(),
                         'chamados_abertos'   => Ticket::where('status', Ticket::STATUS_OPEN)
                                                     ->where('funcionario_id', $emp->id)
@@ -97,9 +104,12 @@ class DashboardController extends Controller
             // funcionário — só os próprios dados
             $idsFunc = $employee ? [$employee->id] : [];
 
-            $totalAssets        = Responsibility::whereNull('data_devolucao')
-                                           ->whereIn('funcionario_id', $idsFunc)
-                                           ->distinct('patrimonio_id')->count('patrimonio_id');
+            $totalAssets        = DB::table('termo_patrimonios')
+                                           ->join('termos', 'termos.id', '=', 'termo_patrimonios.termo_id')
+                                           ->whereIn('termos.funcionario_id', $idsFunc)
+                                           ->whereNull('termos.data_devolucao')
+                                           ->distinct('termo_patrimonios.patrimonio_id')
+                                           ->count('termo_patrimonios.patrimonio_id');
             $totalEmployees       = null;
             $totalOpenTickets    = Ticket::where('status', Ticket::STATUS_OPEN)
                                            ->whereIn('funcionario_id', $idsFunc)->count();
