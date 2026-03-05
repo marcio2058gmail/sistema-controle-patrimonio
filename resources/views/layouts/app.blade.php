@@ -28,8 +28,12 @@
         <!-- Sidebar anti-flash: define largura colapsada antes do Alpine inicializar -->
         <style>
             html[data-sidebar=collapsed] #app-sidebar,
-            html[data-sidebar=collapsed] #app-spacer { width: 4rem !important; }
-            html[data-sidebar=collapsed] #app-logo   { height: 1.75rem !important; }
+            html[data-sidebar=collapsed] #app-spacer  { width: 4rem !important; }
+            html[data-sidebar=collapsed] #app-logo    { height: 1.75rem !important; }
+            /* Pré-oculta labels quando sidebar está colapsada */
+            html[data-sidebar=collapsed] .nav-label   { display: none !important; }
+            /* Pré-oculta separador HR quando sidebar está expandida */
+            html:not([data-sidebar=collapsed]) .nav-sep-collapsed { display: none !important; }
         </style>
         <script>
             (function() {

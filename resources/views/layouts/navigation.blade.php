@@ -52,7 +52,7 @@
             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
             </svg>
-            <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate">Dashboard</span>
+            <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate nav-label">Dashboard</span>
         </a>
 
         {{-- Chamados --}}
@@ -62,16 +62,16 @@
             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
             </svg>
-            <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate">Chamados</span>
+            <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate nav-label">Chamados</span>
         </a>
 
         @if(auth()->user()->isAdminOrManager())
 
         {{-- Separador --}}
-        <div class="pt-3 pb-1" x-show="!sidebarCollapsed" x-transition.opacity>
+        <div class="pt-3 pb-1 nav-label" x-show="!sidebarCollapsed" x-transition.opacity>
             <p class="px-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Gestão</p>
         </div>
-        <div class="pt-3" x-show="sidebarCollapsed" x-transition.opacity>
+        <div class="pt-3 nav-sep-collapsed" x-show="sidebarCollapsed" x-transition.opacity>
             <hr class="border-gray-700">
         </div>
 
@@ -82,7 +82,7 @@
             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
             </svg>
-            <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate">Patrimônios</span>
+            <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate nav-label">Patrimônios</span>
         </a>
 
         {{-- Funcionários --}}
@@ -92,7 +92,7 @@
             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
             </svg>
-            <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate">Funcionários</span>
+            <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate nav-label">Funcionários</span>
         </a>
 
         {{-- Departamentos --}}
@@ -102,7 +102,7 @@
             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
             </svg>
-            <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate">Departamentos</span>
+            <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate nav-label">Departamentos</span>
         </a>
 
         {{-- Responsabilidades --}}
@@ -112,7 +112,7 @@
             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
-            <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate">Responsabilidades</span>
+            <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate nav-label">Responsabilidades</span>
         </a>
 
         @if(auth()->user()->isAdmin())
@@ -123,7 +123,7 @@
             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
-            <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate">Gestores</span>
+            <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate nav-label">Gestores</span>
         </a>
         @endif
 
@@ -144,7 +144,7 @@
             <svg id="icon-moon" class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
             </svg>
-            <span x-show="!sidebarCollapsed" x-transition.opacity id="theme-label-mobile">Modo escuro</span>
+            <span x-show="!sidebarCollapsed" x-transition.opacity id="theme-label-mobile" class="nav-label">Modo escuro</span>
         </button>
 
         {{-- Perfil --}}
@@ -154,7 +154,7 @@
             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
             </svg>
-            <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate min-w-0">
+            <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate min-w-0 nav-label">
                 <span class="block truncate">{{ Auth::user()->name }}</span>
                 <span class="block text-xs text-gray-500 capitalize">{{ Auth::user()->role }}</span>
             </span>
@@ -169,7 +169,7 @@
                 <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                 </svg>
-                <span x-show="!sidebarCollapsed" x-transition.opacity>Sair</span>
+                <span x-show="!sidebarCollapsed" x-transition.opacity class="nav-label">Sair</span>
             </button>
         </form>
 
