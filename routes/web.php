@@ -50,7 +50,7 @@ Route::middleware(['auth', 'role:admin,manager'])->group(function () {
 
 // Tickets: visible to all authenticated users
 Route::middleware('auth')->group(function () {
-    Route::resource('tickets', TicketController::class)->only(['index', 'create', 'store', 'show']);
+    Route::resource('tickets', TicketController::class)->only(['index', 'store', 'show']);
 });
 
 require __DIR__.'/auth.php';

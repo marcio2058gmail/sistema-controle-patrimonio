@@ -45,10 +45,23 @@ class TicketController extends Controller
             $query->where('status', $request->status);
         }
 
-        $tickets     = $query->paginate(15)->withQueryString();
+        $tickets      = $query->paginate(15)->withQueryString();
         $statusLabels = Ticket::statusLabels();
 
-        return view('tickets.index', compact('tickets', 'statusLabels'));
+        // Dados para o modal "Abrir Chamado"
+        $assets = Asset::disponivel()->orderBy('descricao')->get();
+        if ($user->isAdmin()) {
+            $employees = Employee::orderBy('nome')->get();
+        } elseif ($user->isManager()) {
+            $emp       = $user->employee;
+            $employees = ($emp && $emp->departamento_id)
+                ? Employee::where('departamento_id', $emp->departamento_id)->orderBy('nome')->get()
+                : collect();
+        } else {
+            $employees = collect();
+        }
+
+        return view('tickets.index', compact('tickets', 'statusLabels', 'assets', 'employees'));
     }
 
     public function create(Request $request): View
