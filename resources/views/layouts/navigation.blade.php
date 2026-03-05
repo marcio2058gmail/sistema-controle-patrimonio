@@ -65,6 +65,18 @@
             <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate nav-label">Chamados</span>
         </a>
 
+        @if(auth()->user()->isEmployee())
+        {{-- Meus Termos (funcionário) --}}
+        <a href="{{ route('responsibilities.index') }}"
+            :title="sidebarCollapsed ? 'Meus Termos' : ''"
+            class="{{ $linkBase }} {{ request()->routeIs('responsibilities.*') ? $active : $inactive }}">
+            <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate nav-label">Meus Termos</span>
+        </a>
+        @endif
+
         @if(auth()->user()->isAdminOrManager())
 
         {{-- Separador --}}

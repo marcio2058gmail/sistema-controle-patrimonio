@@ -31,9 +31,6 @@ Route::middleware(['auth', 'role:admin,manager'])->group(function () {
     Route::resource('departments', DepartmentController::class)->only(['index', 'show']);
     Route::resource('assets', AssetController::class);
     Route::resource('employees', EmployeeController::class)->only(['index', 'show']);
-    Route::resource('responsibilities', ResponsibilityController::class)->only(['index', 'show']);
-    Route::get('/responsibilities/{responsibility}/pdf', [ResponsibilityController::class, 'gerarPdf'])
-        ->name('responsibilities.pdf');
 
     // Admin-only actions and management
     Route::middleware('role:admin')->group(function () {
@@ -49,9 +46,12 @@ Route::middleware(['auth', 'role:admin,manager'])->group(function () {
     });
 });
 
-// Tickets: visible to all authenticated users
+// Tickets and responsibilities: visible to all authenticated users
 Route::middleware('auth')->group(function () {
     Route::resource('tickets', TicketController::class)->only(['index', 'store', 'show']);
+    Route::resource('responsibilities', ResponsibilityController::class)->only(['index', 'show']);
+    Route::get('/responsibilities/{responsibility}/pdf', [ResponsibilityController::class, 'gerarPdf'])
+        ->name('responsibilities.pdf');
 });
 
 require __DIR__.'/auth.php';

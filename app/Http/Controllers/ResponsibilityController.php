@@ -16,9 +16,17 @@ class ResponsibilityController extends Controller
 {
     public function index(): View
     {
-        $responsibilities = Responsibility::with(['employee', 'assets'])
-            ->latest()
-            ->paginate(15);
+        $user  = auth()->user();
+        $query = Responsibility::with(['employee', 'assets'])->latest();
+
+        if (! $user->isAdmin()) {
+            $employeeId = $user->employee?->id;
+            abort_unless($employeeId, 403);
+            $query->where('funcionario_id', $employeeId)
+                  ->where('assinado', true);
+        }
+
+        $responsibilities = $query->paginate(15);
 
         return view('responsibilities.index', compact('responsibilities'));
     }
@@ -49,6 +57,13 @@ class ResponsibilityController extends Controller
 
     public function show(Responsibility $responsibility): View
     {
+        $user = auth()->user();
+        if (! $user->isAdmin()) {
+            abort_unless(
+                $responsibility->funcionario_id === $user->employee?->id && $responsibility->assinado,
+                403
+            );
+        }
         $responsibility->load(['employee', 'assets']);
         return view('responsibilities.show', compact('responsibility'));
     }
@@ -121,6 +136,14 @@ class ResponsibilityController extends Controller
 
     public function gerarPdf(Responsibility $responsibility): Response
     {
+        $user = auth()->user();
+        if (! $user->isAdmin()) {
+            abort_unless(
+                $responsibility->funcionario_id === $user->employee?->id && $responsibility->assinado,
+                403
+            );
+        }
+
         $responsibility->load(['employee', 'assets']);
 
         $pdf = Pdf::loadView('responsibilities.pdf', compact('responsibility'))
