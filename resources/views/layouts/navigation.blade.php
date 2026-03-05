@@ -107,7 +107,8 @@
             <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate nav-label">Funcionários</span>
         </a>
 
-        {{-- Departamentos --}}
+        {{-- Departamentos (somente admin) --}}
+        @if(auth()->user()->isAdmin())
         <a href="{{ route('departments.index') }}"
             :title="sidebarCollapsed ? 'Departamentos' : ''"
             class="{{ $linkBase }} {{ request()->routeIs('departments.*') ? $active : $inactive }}">
@@ -116,6 +117,7 @@
             </svg>
             <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate nav-label">Departamentos</span>
         </a>
+        @endif
 
         {{-- Responsabilidades (somente admin) --}}
         @if(auth()->user()->isAdmin())

@@ -13,7 +13,16 @@ class EmployeeController extends Controller
 {
     public function index(): View
     {
-        $employees = Employee::with('department')->latest()->paginate(15);
+        $user = auth()->user();
+
+        $query = Employee::with('department')->latest();
+
+        if ($user->isManager()) {
+            $deptId = $user->employee?->departamento_id;
+            $query->where('departamento_id', $deptId);
+        }
+
+        $employees = $query->paginate(15);
         $departments = Department::orderBy('nome')->get(['id','nome']);
         return view('employees.index', compact('employees', 'departments'));
     }
