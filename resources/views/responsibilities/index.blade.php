@@ -50,12 +50,14 @@
                             <td class="px-6 py-3 text-right space-x-3">
                                 <a href="{{ route('responsibilities.show', $r) }}" class="text-blue-600 hover:underline text-xs">Ver</a>
                                 <a href="{{ route('responsibilities.pdf', $r) }}" class="text-gray-600 hover:underline text-xs" target="_blank">PDF</a>
+                                @if(auth()->user()->role === 'admin')
                                 <a href="{{ route('responsibilities.edit', $r) }}" class="text-indigo-600 hover:underline text-xs">Editar</a>
                                 <form action="{{ route('responsibilities.destroy', $r) }}" method="POST" class="inline"
                                       onsubmit="return confirm('Confirmar exclusão?')">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="text-red-600 hover:underline text-xs">Excluir</button>
                                 </form>
+                                @endif
                             </td>
                         </tr>
                         @empty

@@ -9,10 +9,12 @@
                    class="bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium px-4 py-2 rounded-lg">
                     📄 Baixar PDF
                 </a>
+                @if(auth()->user()->role === 'admin')
                 <a href="{{ route('responsibilities.edit', $responsibility) }}"
                    class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg">
                     Editar
                 </a>
+                @endif
             </div>
         </div>
     </x-slot>
