@@ -2,10 +2,12 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Funcionários</h2>
+            @if(auth()->user()->isAdmin())
             <a href="{{ route('employees.create') }}"
                class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
                 + Novo Funcionário
             </a>
+            @endif
         </div>
     </x-slot>
 
@@ -37,8 +39,10 @@
                                 <td class="px-6 py-3 text-gray-500">{{ $employee->department?->nome ?? '—' }}</td>
                                 <td class="px-6 py-3 text-right space-x-3">
                                     <button type="button" @click="detail = {{ Js::from($ed) }}; showDetail = true" class="text-indigo-600 hover:text-indigo-800 dark:hover:text-indigo-400 text-xs font-medium transition-colors">Ver detalhes</button>
+                                    @if(auth()->user()->isAdmin())
                                     <button type="button" @click="openEdit({{ Js::from($ed) }})" class="text-gray-600 hover:text-gray-800 dark:hover:text-gray-300 text-xs font-medium transition-colors">Editar</button>
                                     <button type="button" @click="deleteTarget = {{ Js::from(['url'=>route('employees.destroy',$employee),'name'=>$employee->nome]) }}" class="text-red-600 hover:text-red-800 text-xs font-medium transition-colors">Excluir</button>
+                                    @endif
                                 </td>
                             </tr>
                             @empty
@@ -76,7 +80,9 @@
                     </dl>
                 </div>
                 <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/60 rounded-b-2xl shrink-0">
+                    @if(auth()->user()->isAdmin())
                     <button type="button" @click="openEdit(detail)" class="px-4 py-2 text-sm font-medium rounded-lg border border-indigo-500 text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors">Editar</button>
+                    @endif
                     <button type="button" @click="showDetail = false" class="px-4 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">Fechar</button>
                 </div>
             </div>

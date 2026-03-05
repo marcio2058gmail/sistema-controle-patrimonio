@@ -30,13 +30,14 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'role:admin,manager'])->group(function () {
     Route::resource('departments', DepartmentController::class)->only(['index', 'show']);
     Route::resource('assets', AssetController::class);
-    Route::resource('employees', EmployeeController::class);
+    Route::resource('employees', EmployeeController::class)->only(['index', 'show']);
     Route::resource('responsibilities', ResponsibilityController::class)->only(['index', 'show']);
     Route::get('/responsibilities/{responsibility}/pdf', [ResponsibilityController::class, 'gerarPdf'])
         ->name('responsibilities.pdf');
 
     // Admin-only actions and management
     Route::middleware('role:admin')->group(function () {
+        Route::resource('employees', EmployeeController::class)->except(['index', 'show']);
         Route::resource('responsibilities', ResponsibilityController::class)->except(['index', 'show']);
         Route::resource('departments', DepartmentController::class)->except(['index', 'show']);
         Route::patch('/tickets/{ticket}/aprovar', [TicketController::class, 'aprovar'])->name('tickets.aprovar');
