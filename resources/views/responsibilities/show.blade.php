@@ -125,18 +125,27 @@
                     pad: null,
                     isEmpty: true,
                     init() {
-                        const canvas = this.\$refs.canvas;
-                        this.pad = new SignaturePad(canvas, { backgroundColor: 'rgb(255,255,255)', penColor: 'rgb(30,30,30)' });
-                        this.pad.addEventListener('beginStroke', () => { this.isEmpty = false; });
-                        this.resize();
+                        this.$nextTick(() => {
+                            const canvas = this.\$refs.canvas;
+                            const ratio  = Math.max(window.devicePixelRatio || 1, 1);
+                            canvas.width  = canvas.offsetWidth  * ratio;
+                            canvas.height = canvas.offsetHeight * ratio;
+                            canvas.getContext('2d').scale(ratio, ratio);
+                            this.pad = new SignaturePad(canvas, {
+                                backgroundColor: 'rgb(255,255,255)',
+                                penColor: 'rgb(30,30,30)'
+                            });
+                            this.pad.addEventListener('beginStroke', () => { this.isEmpty = false; });
+                        });
                     },
                     resize() {
-                        const c = this.\$refs.canvas;
-                        const r = Math.max(window.devicePixelRatio || 1, 1);
-                        const data = this.pad.toData();
-                        c.width = c.offsetWidth * r;
-                        c.height = c.offsetHeight * r;
-                        c.getContext('2d').scale(r, r);
+                        if (!this.pad) return;
+                        const c     = this.\$refs.canvas;
+                        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+                        const data  = this.pad.toData();
+                        c.width  = c.offsetWidth  * ratio;
+                        c.height = c.offsetHeight * ratio;
+                        c.getContext('2d').scale(ratio, ratio);
                         this.pad.clear();
                         this.pad.fromData(data);
                         this.isEmpty = this.pad.isEmpty();
