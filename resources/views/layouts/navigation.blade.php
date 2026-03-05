@@ -15,9 +15,6 @@
             <img src="https://app.locarmais.com/consImages/escuro.png" alt="LocarMais"
                  :class="sidebarCollapsed ? 'h-7' : 'h-8'"
                  class="w-auto shrink-0 transition-all duration-200">
-            <span x-show="!sidebarCollapsed" x-transition.opacity class="text-white font-semibold text-sm truncate">
-                LocarMais
-            </span>
         </a>
 
         {{-- Botão colapso (desktop) --}}
