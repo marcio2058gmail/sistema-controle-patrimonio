@@ -118,8 +118,8 @@
             </div>
             @endif
 
-            {{-- Canvas de assinatura (só para o funcionário do termo, enquanto não assinou) --}}
-            @if(!$responsibility->assinado && auth()->user()->isEmployee() && auth()->user()->employee?->id === $responsibility->funcionario_id)
+            {{-- Canvas de assinatura (para o responsável pelo termo — funcionário ou gestor — enquanto não assinou) --}}
+            @if(!$responsibility->assinado && !auth()->user()->isAdmin() && auth()->user()->employee?->id === $responsibility->funcionario_id)
             <div
                 x-data="{
                     pad: null,

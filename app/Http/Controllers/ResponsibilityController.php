@@ -22,8 +22,7 @@ class ResponsibilityController extends Controller
         if (! $user->isAdmin()) {
             $employeeId = $user->employee?->id;
             abort_unless($employeeId, 403);
-            $query->where('funcionario_id', $employeeId)
-                  ->where('assinado', true);
+            $query->where('funcionario_id', $employeeId);
         }
 
         $responsibilities = $query->paginate(15);
@@ -60,7 +59,7 @@ class ResponsibilityController extends Controller
         $user = auth()->user();
         if (! $user->isAdmin()) {
             abort_unless(
-                $responsibility->funcionario_id === $user->employee?->id && $responsibility->assinado,
+                $responsibility->funcionario_id === $user->employee?->id,
                 403
             );
         }
@@ -138,7 +137,7 @@ class ResponsibilityController extends Controller
     {
         $user = $request->user();
 
-        // Somente o funcionário vinculado pode assinar
+        // Somente o responsável pelo termo (funcionário ou gestor) pode assinar
         abort_unless($user->employee?->id === $responsibility->funcionario_id, 403);
 
         if ($responsibility->assinado) {

@@ -65,8 +65,8 @@
             <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate nav-label">Chamados</span>
         </a>
 
-        @if(auth()->user()->isEmployee())
-        {{-- Meus Termos (funcionário) --}}
+        @if(auth()->user()->isEmployee() || auth()->user()->isManager())
+        {{-- Meus Termos (funcionário ou gestor com equipamentos) --}}
         <a href="{{ route('responsibilities.index') }}"
             :title="sidebarCollapsed ? 'Meus Termos' : ''"
             class="{{ $linkBase }} {{ request()->routeIs('responsibilities.*') ? $active : $inactive }}">

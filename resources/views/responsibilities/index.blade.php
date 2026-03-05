@@ -86,7 +86,7 @@
                                     @if($r->assinado)
                                     <a href="{{ route('responsibilities.pdf', $r) }}" target="_blank" class="text-gray-600 hover:text-gray-800 dark:hover:text-gray-300 text-xs font-medium transition-colors">PDF</a>
                                     @endif
-                                    @if(!$r->assinado && auth()->user()->isEmployee() && auth()->user()->employee?->id === $r->funcionario_id)
+                                    @if(!$r->assinado && !auth()->user()->isAdmin() && auth()->user()->employee?->id === $r->funcionario_id)
                                     <a href="{{ route('responsibilities.show', $r) }}" class="text-indigo-600 hover:text-indigo-800 text-xs font-medium font-semibold transition-colors">✍ Assinar</a>
                                     @endif
                                     @endif
