@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Gestores</h2>
-            <button type="button" @click="modalOpen = true"
+            <button type="button" @click="$dispatch('open-novo-gestor')"
                class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition">
                 + Novo Gestor
             </button>
@@ -10,7 +10,8 @@
     </x-slot>
 
     <div x-data="{ modalOpen: {{ $errors->any() ? 'true' : 'false' }}, deleteTarget: null, editTarget: null, openEdit(d) { this.editTarget = d; } }"
-         @keydown.escape.window="modalOpen ? modalOpen = false : deleteTarget ? deleteTarget = null : editTarget ? editTarget = null : null">
+         @keydown.escape.window="modalOpen ? modalOpen = false : deleteTarget ? deleteTarget = null : editTarget ? editTarget = null : null"
+         @open-novo-gestor.window="modalOpen = true">
 
         <div class="py-8">
             <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">

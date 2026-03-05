@@ -5,7 +5,7 @@
                 {{ auth()->user()->isAdmin() ? 'Patrimônios' : 'Patrimônios Disponíveis' }}
             </h2>
             @if(auth()->user()->isAdmin())
-            <button type="button" @click="modalOpen = true"
+            <button type="button" @click="$dispatch('open-novo-patrimonio')"
                class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
                 + Novo Patrimônio
             </button>
@@ -23,7 +23,8 @@
             openDetail(d) { this.detail = d; this.showDetail = true; },
             openEdit(d) { this.editTarget = d; this.showDetail = false; }
          }"
-         @keydown.escape.window="modalOpen ? modalOpen = false : deleteTarget ? deleteTarget = null : editTarget ? editTarget = null : showDetail = false">
+         @keydown.escape.window="modalOpen ? modalOpen = false : deleteTarget ? deleteTarget = null : editTarget ? editTarget = null : showDetail = false"
+         @open-novo-patrimonio.window="modalOpen = true">
 
         <div class="py-8">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

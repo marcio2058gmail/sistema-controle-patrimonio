@@ -3,7 +3,7 @@
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Departamentos</h2>
             @if(auth()->user()->isAdmin())
-            <button type="button" @click="modalOpen = true"
+            <button type="button" @click="$dispatch('open-novo-departamento')"
                class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
                 + Novo Departamento
             </button>
@@ -12,7 +12,8 @@
     </x-slot>
 
     <div x-data="{ modalOpen: {{ $errors->any() ? 'true' : 'false' }}, showDetail: false, detail: null, deleteTarget: null, editTarget: null, openEdit(d) { this.editTarget = d; this.showDetail = false; } }"
-         @keydown.escape.window="modalOpen ? modalOpen = false : deleteTarget ? deleteTarget = null : editTarget ? editTarget = null : showDetail = false">
+         @keydown.escape.window="modalOpen ? modalOpen = false : deleteTarget ? deleteTarget = null : editTarget ? editTarget = null : showDetail = false"
+         @open-novo-departamento.window="modalOpen = true">
 
         <div class="py-8">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
