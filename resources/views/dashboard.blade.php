@@ -55,10 +55,13 @@
                     @endif
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5 flex flex-col gap-1">
-                    <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Atribuições Ativas</span>
-                    <span class="text-3xl font-bold text-blue-500">{{ $totalResponsibilities }}</span>
                     @if(auth()->user()->isManager())
-                        <span class="text-xs text-gray-400">no departamento</span>
+                        <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Sem Patrimônio</span>
+                        <span class="text-3xl font-bold {{ $totalResponsibilities > 0 ? 'text-red-500' : 'text-green-500' }}">{{ $totalResponsibilities }}</span>
+                        <span class="text-xs text-gray-400">funcionários sem atribuição</span>
+                    @else
+                        <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Atribuições Ativas</span>
+                        <span class="text-3xl font-bold text-blue-500">{{ $totalResponsibilities }}</span>
                     @endif
                 </div>
             </div>
@@ -67,7 +70,13 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
                     <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">
-                        {{ auth()->user()->isAdmin() ? 'Patrimônios por Status' : 'Patrimônios em Uso — por Status' }}
+                        @if(auth()->user()->isAdmin())
+                            Patrimônios por Status
+                        @elseif(auth()->user()->isManager())
+                            Cobertura de Patrimônio — {{ $department?->nome }}
+                        @else
+                            Patrimônios em Uso
+                        @endif
                     </h3>
                     <canvas id="chartPatrimonios" height="200"></canvas>
                 </div>
@@ -76,6 +85,61 @@
                     <canvas id="chartChamados" height="200"></canvas>
                 </div>
             </div>
+
+            {{-- Tabela: Funcionários do departamento (gestor) --}}
+            @if(auth()->user()->isManager() && $employeeStats->isNotEmpty())
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                    <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                        Funcionários do Departamento
+                        @if($department)
+                            <span class="font-normal text-gray-400">— {{ $department->nome }}</span>
+                        @endif
+                    </h3>
+                    <a href="{{ route('employees.index') }}" class="text-xs text-blue-600 hover:underline">Ver todos</a>
+                </div>
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
+                    <thead class="bg-gray-50 dark:bg-gray-700">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nome</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cargo</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Patrimônios</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Chamados Abertos</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                        @foreach($employeeStats as $stat)
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-750">
+                            <td class="px-6 py-3 font-medium text-gray-800 dark:text-gray-200">
+                                <a href="{{ route('employees.show', $stat['employee']) }}" class="hover:text-blue-600 hover:underline">
+                                    {{ $stat['employee']->nome }}
+                                </a>
+                            </td>
+                            <td class="px-6 py-3 text-gray-500 dark:text-gray-400">{{ $stat['employee']->cargo }}</td>
+                            <td class="px-6 py-3 text-center">
+                                @if($stat['patrimonios_em_uso'] > 0)
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                                        {{ $stat['patrimonios_em_uso'] }}
+                                    </span>
+                                @else
+                                    <span class="text-xs text-red-400 font-medium">nenhum</span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-3 text-center">
+                                @if($stat['chamados_abertos'] > 0)
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                                        {{ $stat['chamados_abertos'] }}
+                                    </span>
+                                @else
+                                    <span class="text-gray-400">—</span>
+                                @endif
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            @endif
 
             {{-- Tabela: Chamados abertos recentes --}}
             @if($latestTickets->isNotEmpty())
@@ -177,7 +241,11 @@
                 labels: {!! json_encode($assetChartLabels) !!},
                 datasets: [{
                     data: {!! json_encode($assetChartData) !!},
+                    @if(auth()->user()->isManager())
+                    backgroundColor: ['#22c55e', '#ef4444'],
+                    @else
                     backgroundColor: ['#22c55e', '#3b82f6', '#f59e0b'],
+                    @endif
                     borderWidth: 2,
                 }]
             },

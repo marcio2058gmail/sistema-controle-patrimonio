@@ -58,8 +58,14 @@ class DashboardController extends Controller
                                 ->count(),
                     ];
                 });
+            $employeeStats = collect();
         } elseif ($user->isManager() && $deptId) {
             $idsNoDept = Employee::where('departamento_id', $deptId)->pluck('id');
+
+            $idsComPatrimonio = Responsibility::whereNull('data_devolucao')
+                                           ->whereIn('funcionario_id', $idsNoDept)
+                                           ->distinct('funcionario_id')
+                                           ->pluck('funcionario_id');
 
             $totalAssets        = Responsibility::whereNull('data_devolucao')
                                            ->whereIn('funcionario_id', $idsNoDept)
@@ -67,10 +73,26 @@ class DashboardController extends Controller
             $totalEmployees       = $idsNoDept->count();
             $totalOpenTickets    = Ticket::where('status', Ticket::STATUS_OPEN)
                                            ->whereIn('funcionario_id', $idsNoDept)->count();
-            $totalResponsibilities  = Responsibility::whereNull('data_devolucao')
-                                           ->whereIn('funcionario_id', $idsNoDept)->count();
-            $patrimoniosSemResponsavel = null; // não se aplica na visão do departamento
+            $totalResponsibilities  = $idsNoDept->count() - $idsComPatrimonio->count(); // funcionários SEM patrimônio
+            $patrimoniosSemResponsavel = null;
             $departmentStats = collect();
+
+            // Tabela de funcionários do depto com seus números
+            $employeeStats = Employee::whereIn('id', $idsNoDept)
+                ->with('user')
+                ->orderBy('nome')
+                ->get()
+                ->map(function ($emp) {
+                    return [
+                        'employee'           => $emp,
+                        'patrimonios_em_uso' => Responsibility::whereNull('data_devolucao')
+                                                    ->where('funcionario_id', $emp->id)
+                                                    ->count(),
+                        'chamados_abertos'   => Ticket::where('status', Ticket::STATUS_OPEN)
+                                                    ->where('funcionario_id', $emp->id)
+                                                    ->count(),
+                    ];
+                });
         } else {
             // funcionário — só os próprios dados
             $idsFunc = $employee ? [$employee->id] : [];
@@ -85,6 +107,7 @@ class DashboardController extends Controller
                                            ->whereIn('funcionario_id', $idsFunc)->count();
             $patrimoniosSemResponsavel = null;
             $departmentStats = collect();
+            $employeeStats = collect();
         }
 
         // -------------------------------------------------------
@@ -99,14 +122,18 @@ class DashboardController extends Controller
                 ->pluck('total', 'status')
                 ->toArray();
         } elseif ($user->isManager() && $deptId) {
-            // Patrimônios nas responsabilidades ativas do departamento, agrupados por status
-            $assetsByStatus = Responsibility::whereNull('data_devolucao')
-                ->whereIn('funcionario_id', Employee::where('departamento_id', $deptId)->pluck('id'))
-                ->join('patrimonios', 'patrimonios.id', '=', 'responsabilidades.patrimonio_id')
-                ->select('patrimonios.status', DB::raw('count(distinct patrimonios.id) as total'))
-                ->groupBy('patrimonios.status')
-                ->pluck('total', 'patrimonios.status')
-                ->toArray();
+            // Cobertura: funcionários com vs sem patrimônio ativo no departamento
+            $idsNoDeptChart = Employee::where('departamento_id', $deptId)->pluck('id');
+            $comPatrimonio  = Responsibility::whereNull('data_devolucao')
+                ->whereIn('funcionario_id', $idsNoDeptChart)
+                ->distinct('funcionario_id')
+                ->count('funcionario_id');
+            $semPatrimonio  = $idsNoDeptChart->count() - $comPatrimonio;
+
+            $assetChartLabels = ['Com patrimônio', 'Sem patrimônio'];
+            $assetChartData   = [$comPatrimonio, $semPatrimonio];
+            // Pula o loop de status abaixo
+            goto after_status_loop;
         } else {
             $assetsByStatus = [];
         }
@@ -116,6 +143,8 @@ class DashboardController extends Controller
             $assetChartLabels[] = $label;
             $assetChartData[]   = $assetsByStatus[$key] ?? 0;
         }
+
+        after_status_loop:
 
         // -------------------------------------------------------
         // Gráfico: chamados por mês (últimos 6 meses)
@@ -174,6 +203,7 @@ class DashboardController extends Controller
             'patrimoniosSemResponsavel',
             'department',
             'departmentStats',
+            'employeeStats',
         ));
     }
 }
