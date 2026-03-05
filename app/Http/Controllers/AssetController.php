@@ -22,8 +22,9 @@ class AssetController extends Controller
 
         $assets   = $query->paginate(15);
         $apenasDisponiveis = $request->user()->isManager();
+        $statusLabels = Asset::statusLabels();
 
-        return view('assets.index', compact('assets', 'apenasDisponiveis'));
+        return view('assets.index', compact('assets', 'apenasDisponiveis', 'statusLabels'));
     }
 
     public function create(Request $request): View

@@ -11,8 +11,8 @@
         </div>
     </x-slot>
 
-    <div x-data="{ showDetail: false, detail: null, deleteTarget: null }"
-         @keydown.escape.window="deleteTarget ? deleteTarget = null : showDetail = false">
+    <div x-data="{ showDetail: false, detail: null, deleteTarget: null, editTarget: null, openEdit(d) { this.editTarget = d; this.showDetail = false; } }"
+         @keydown.escape.window="deleteTarget ? deleteTarget = null : editTarget ? editTarget = null : showDetail = false">
 
         <div class="py-8">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -30,7 +30,7 @@
                         </thead>
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                             @forelse($departments as $department)
-                            @php $dd = ['id'=>$department->id,'nome'=>$department->nome,'descricao'=>$department->descricao,'count'=>$department->funcionarios_count,'created'=>$department->created_at->format('d/m/Y'),'is_admin'=>auth()->user()->isAdmin(),'url_edit'=>auth()->user()->isAdmin()?route('departments.edit',$department):'','url_show'=>route('departments.show',$department),'url_destroy'=>auth()->user()->isAdmin()?route('departments.destroy',$department):'']; @endphp
+                            @php $dd = ['id'=>$department->id,'nome'=>$department->nome,'descricao'=>$department->descricao,'count'=>$department->funcionarios_count,'created'=>$department->created_at->format('d/m/Y'),'is_admin'=>auth()->user()->isAdmin(),'url_edit'=>auth()->user()->isAdmin()?route('departments.edit',$department):'','url_update'=>auth()->user()->isAdmin()?route('departments.update',$department):'','url_show'=>route('departments.show',$department),'url_destroy'=>auth()->user()->isAdmin()?route('departments.destroy',$department):'']; @endphp
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-750">
                                 <td class="px-6 py-3 font-medium text-gray-800 dark:text-gray-200">{{ $department->nome }}</td>
                                 <td class="px-6 py-3 text-gray-500 max-w-sm truncate">{{ $department->descricao ?? '—' }}</td>
@@ -40,7 +40,7 @@
                                 <td class="px-6 py-3 text-right space-x-3">
                                     <button type="button" @click="detail = {{ Js::from($dd) }}; showDetail = true" class="text-indigo-600 hover:text-indigo-800 dark:hover:text-indigo-400 text-xs font-medium transition-colors">Ver detalhes</button>
                                     @if(auth()->user()->isAdmin())
-                                    <a href="{{ route('departments.edit', $department) }}" class="text-gray-600 hover:text-gray-800 dark:hover:text-gray-300 text-xs font-medium transition-colors">Editar</a>
+                                    <button type="button" @click="openEdit({{ Js::from($dd) }})" class="text-gray-600 hover:text-gray-800 dark:hover:text-gray-300 text-xs font-medium transition-colors">Editar</button>
                                     <button type="button" @click="deleteTarget = {{ Js::from(['url'=>route('departments.destroy',$department),'name'=>$department->nome,'warn'=>'Os funcionários serão desvinculados.']) }}" class="text-red-600 hover:text-red-800 text-xs font-medium transition-colors">Excluir</button>
                                     @endif
                                 </td>
@@ -64,7 +64,7 @@
             <div x-show="showDetail"
                  x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
                  x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
-                 class="relative w-full max-w-lg bg-white dark:bg-gray-800 rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
+                 class="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-2xl flex flex-col max-h-[80vh]">
                 <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700 shrink-0">
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100" x-text="detail?.nome"></h3>
                     <button @click="showDetail = false" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
@@ -91,10 +91,48 @@
                 </div>
                 <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/60 rounded-b-2xl shrink-0">
                     <template x-if="detail?.is_admin">
-                        <a :href="detail?.url_edit" class="px-4 py-2 text-sm font-medium rounded-lg border border-indigo-500 text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors">Editar</a>
+                        <button type="button" @click="openEdit(detail)" class="px-4 py-2 text-sm font-medium rounded-lg border border-indigo-500 text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors">Editar</button>
                     </template>
                     <button type="button" @click="showDetail = false" class="px-4 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">Fechar</button>
                 </div>
+            </div>
+        </div>
+
+        {{-- MODAL EDITAR --}}
+        <div x-show="editTarget !== null"
+             x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60" style="display:none">
+            <div class="absolute inset-0" @click="editTarget = null"></div>
+            <div x-show="editTarget !== null"
+                 x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                 x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+                 class="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-2xl flex flex-col max-h-[80vh]">
+                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700 shrink-0">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100" x-text="'Editar — ' + (editTarget?.nome ?? '')"></h3>
+                    <button @click="editTarget = null" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+                <template x-if="editTarget !== null">
+                    <form :action="editTarget.url_update" method="POST" class="flex flex-col flex-1 overflow-hidden">
+                        @csrf @method('PATCH')
+                        <div class="overflow-y-auto flex-1 px-6 py-5 space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nome *</label>
+                                <input type="text" name="nome" :value="editTarget.nome" required class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Descrição</label>
+                                <textarea name="descricao" rows="4" x-init="$el.value = editTarget.descricao ?? ''" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300"></textarea>
+                            </div>
+                        </div>
+                        <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/60 rounded-b-2xl shrink-0">
+                            <button type="button" @click="editTarget = null" class="px-4 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">Cancelar</button>
+                            <button type="submit" class="px-4 py-2 text-sm font-medium rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white transition-colors">Salvar</button>
+                        </div>
+                    </form>
+                </template>
             </div>
         </div>
 

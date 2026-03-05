@@ -9,8 +9,8 @@
         </div>
     </x-slot>
 
-    <div x-data="{ deleteTarget: null }"
-         @keydown.escape.window="deleteTarget = null">
+    <div x-data="{ deleteTarget: null, editTarget: null, openEdit(d) { this.editTarget = d; } }"
+         @keydown.escape.window="deleteTarget ? deleteTarget = null : editTarget ? editTarget = null : null">
 
         <div class="py-8">
             <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -29,6 +29,7 @@
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                         @forelse($managers as $manager)
+                        @php $md = ['name'=>$manager->name,'email'=>$manager->email,'cargo'=>$manager->employee?->cargo,'dept_id'=>$manager->employee?->departamento_id,'url_update'=>route('managers.update',$manager),'url_destroy'=>route('managers.destroy',$manager)]; @endphp
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-750">
                             <td class="px-6 py-3 text-gray-800 dark:text-gray-200 font-medium">
                                 {{ $manager->name }}
@@ -50,8 +51,7 @@
                                 @endif
                             </td>
                             <td class="px-6 py-3 text-right space-x-3">
-                                <a href="{{ route('managers.edit', $manager) }}"
-                                   class="text-gray-600 hover:text-gray-800 dark:hover:text-gray-300 text-xs font-medium transition-colors">Editar</a>
+                                <button type="button" @click="openEdit({{ Js::from($md) }})" class="text-gray-600 hover:text-gray-800 dark:hover:text-gray-300 text-xs font-medium transition-colors">Editar</button>
                                 @if(auth()->user()->isAdmin())
                                 <button type="button"
                                     @click="deleteTarget = {{ Js::from(['url'=>route('managers.destroy',$manager),'name'=>$manager->name,'warn'=>'O registro de funcionário vinculado também será excluído.']) }}"
@@ -77,6 +77,67 @@
             </div>
         </div>
     </div>
+
+        {{-- MODAL EDITAR GESTOR --}}
+        <div x-show="editTarget !== null"
+             x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60" style="display:none">
+            <div class="absolute inset-0" @click="editTarget = null"></div>
+            <div x-show="editTarget !== null"
+                 x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                 x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+                 class="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-2xl flex flex-col max-h-[80vh]">
+                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700 shrink-0">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100" x-text="'Editar — ' + (editTarget?.name ?? '')"></h3>
+                    <button @click="editTarget = null" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+                <template x-if="editTarget !== null">
+                    <form :action="editTarget.url_update" method="POST" class="flex flex-col flex-1 overflow-hidden">
+                        @csrf @method('PUT')
+                        <div class="overflow-y-auto flex-1 px-6 py-5 space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nome completo *</label>
+                                <input type="text" name="name" :value="editTarget.name" required class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">E-mail *</label>
+                                <input type="email" name="email" :value="editTarget.email" required class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Cargo</label>
+                                <input type="text" name="cargo" :value="editTarget.cargo ?? 'Gestor'" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Departamento</label>
+                                <select name="departamento_id" x-init="$el.value = editTarget.dept_id ?? ''" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300">
+                                    <option value="">Sem departamento</option>
+                                    @foreach($departments as $dep)
+                                    <option value="{{ $dep->id }}">{{ $dep->nome }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <hr class="border-gray-200 dark:border-gray-700">
+                            <p class="text-xs text-gray-400">Deixe em branco para manter a senha atual.</p>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nova senha</label>
+                                <input type="password" name="password" autocomplete="new-password" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Confirmar nova senha</label>
+                                <input type="password" name="password_confirmation" autocomplete="new-password" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300">
+                            </div>
+                        </div>
+                        <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/60 rounded-b-2xl shrink-0">
+                            <button type="button" @click="editTarget = null" class="px-4 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">Cancelar</button>
+                            <button type="submit" class="px-4 py-2 text-sm font-medium rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white transition-colors">Salvar</button>
+                        </div>
+                    </form>
+                </template>
+            </div>
+        </div>
 
         {{-- MODAL REMOVER GESTOR --}}
         <div x-show="deleteTarget !== null"

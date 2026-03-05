@@ -21,8 +21,9 @@ class ManagerController extends Controller
             ->with('employee.department')
             ->orderBy('name')
             ->paginate(15);
+        $departments = Department::orderBy('nome')->get(['id','nome']);
 
-        return view('managers.index', compact('managers'));
+        return view('managers.index', compact('managers', 'departments'));
     }
 
     public function create(): View

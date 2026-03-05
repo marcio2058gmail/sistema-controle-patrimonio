@@ -14,7 +14,8 @@ class EmployeeController extends Controller
     public function index(): View
     {
         $employees = Employee::with('department')->latest()->paginate(15);
-        return view('employees.index', compact('employees'));
+        $departments = Department::orderBy('nome')->get(['id','nome']);
+        return view('employees.index', compact('employees', 'departments'));
     }
 
     public function create(): View
