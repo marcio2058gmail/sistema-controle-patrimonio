@@ -120,79 +120,98 @@
 
             {{-- Canvas de assinatura (para o responsável pelo termo — funcionário ou gestor — enquanto não assinou) --}}
             @if(!$responsibility->assinado && !auth()->user()->isAdmin() && auth()->user()->employee?->id === $responsibility->funcionario_id)
-            <div
-                x-data="{
-                    pad: null,
-                    isEmpty: true,
-                    init() {
-                        const tryInit = () => {
-                            const canvas = this.\$refs.canvas;
-                            const w = canvas.parentElement.clientWidth || canvas.offsetWidth;
-                            if (!w) { requestAnimationFrame(tryInit); return; }
-                            const ratio = Math.max(window.devicePixelRatio || 1, 1);
-                            canvas.style.width  = w + 'px';
-                            canvas.style.height = '180px';
-                            canvas.width  = w * ratio;
-                            canvas.height = 180 * ratio;
-                            canvas.getContext('2d').scale(ratio, ratio);
-                            this.pad = new SignaturePad(canvas, {
-                                backgroundColor: 'rgb(255,255,255)',
-                                penColor: 'rgb(20,20,20)',
-                                minWidth: 1,
-                                maxWidth: 3
-                            });
-                            this.pad.addEventListener('beginStroke', () => { this.isEmpty = false; });
-                        };
-                        requestAnimationFrame(tryInit);
-                    },
-                    resize() {
-                        if (!this.pad) return;
-                        const c     = this.\$refs.canvas;
-                        const w     = c.parentElement.clientWidth || c.offsetWidth;
-                        const ratio = Math.max(window.devicePixelRatio || 1, 1);
-                        const data  = this.pad.toData();
-                        c.style.width  = w + 'px';
-                        c.style.height = '180px';
-                        c.width  = w * ratio;
-                        c.height = 180 * ratio;
-                        c.getContext('2d').scale(ratio, ratio);
-                        this.pad.clear();
-                        this.pad.fromData(data);
-                        this.isEmpty = this.pad.isEmpty();
-                    },
-                    clear() { this.pad.clear(); this.isEmpty = true; },
-                    submit() {
-                        if (this.pad.isEmpty()) return;
-                        this.\$refs.sigInput.value = this.pad.toDataURL('image/png');
-                        this.\$refs.sigForm.submit();
-                    }
-                }"
-                @resize.window.debounce.300ms="resize()"
-                class="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
-
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-6" id="sig-block">
                 <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Assinatura Digital</h3>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Leia o termo acima e assine no campo abaixo para confirmar o recebimento dos equipamentos.</p>
 
-                <div class="border-2 border-dashed border-gray-300 dark:border-gray-500 rounded-xl bg-white">
-                    <canvas x-ref="canvas" class="touch-none block rounded-xl" style="cursor:crosshair; display:block;"></canvas>
+                <div class="border-2 border-dashed border-gray-300 dark:border-gray-500 rounded-xl bg-white" id="sig-wrap" style="height:180px; position:relative;">
+                    <canvas id="sig-canvas" style="position:absolute;top:0;left:0;cursor:crosshair;touch-action:none;"></canvas>
                 </div>
 
                 <div class="flex items-center justify-between mt-3">
-                    <button type="button" @click="clear()" class="text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">Limpar</button>
-                    <form x-ref="sigForm" action="{{ route('responsibilities.assinar', $responsibility) }}" method="POST">
+                    <button type="button" id="sig-clear" class="text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">Limpar</button>
+                    <form id="sig-form" action="{{ route('responsibilities.assinar', $responsibility) }}" method="POST">
                         @csrf
-                        <input type="hidden" name="assinatura_base64" x-ref="sigInput">
-                        <button
-                            type="button"
-                            @click="submit()"
-                            :disabled="isEmpty"
-                            :class="isEmpty ? 'opacity-40 cursor-not-allowed' : 'hover:bg-indigo-700'"
-                            class="px-5 py-2 text-sm font-medium rounded-lg bg-indigo-600 text-white transition-colors">
+                        <input type="hidden" name="assinatura_base64" id="sig-input">
+                        <button type="button" id="sig-submit" disabled
+                            class="px-5 py-2 text-sm font-medium rounded-lg bg-indigo-600 text-white transition-colors opacity-40 cursor-not-allowed">
                             Confirmar Assinatura
                         </button>
                     </form>
                 </div>
             </div>
+
+            <script>
+            (function () {
+                function initPad() {
+                    // Aguarda window.SignaturePad (carregado pelo bundle Vite como module)
+                    if (typeof window.SignaturePad === 'undefined') { setTimeout(initPad, 50); return; }
+
+                    var wrap   = document.getElementById('sig-wrap');
+                    var canvas = document.getElementById('sig-canvas');
+                    if (!wrap || !canvas) return;
+
+                    var w = wrap.clientWidth;
+                    var h = wrap.clientHeight;
+                    if (w === 0 || h === 0) { setTimeout(initPad, 50); return; }
+
+                    var ratio = Math.max(window.devicePixelRatio || 1, 1);
+                    canvas.width  = w * ratio;
+                    canvas.height = h * ratio;
+                    canvas.style.width  = w + 'px';
+                    canvas.style.height = h + 'px';
+                    canvas.getContext('2d').scale(ratio, ratio);
+
+                    var pad = new window.SignaturePad(canvas, {
+                        backgroundColor: 'rgb(255,255,255)',
+                        penColor: 'rgb(20,20,20)',
+                        minWidth: 1,
+                        maxWidth: 3
+                    });
+
+                    var submitBtn = document.getElementById('sig-submit');
+
+                    pad.addEventListener('endStroke', function () {
+                        if (!pad.isEmpty()) {
+                            submitBtn.disabled = false;
+                            submitBtn.classList.remove('opacity-40', 'cursor-not-allowed');
+                            submitBtn.classList.add('hover:bg-indigo-700');
+                        }
+                    });
+
+                    document.getElementById('sig-clear').addEventListener('click', function () {
+                        pad.clear();
+                        submitBtn.disabled = true;
+                        submitBtn.classList.add('opacity-40', 'cursor-not-allowed');
+                        submitBtn.classList.remove('hover:bg-indigo-700');
+                    });
+
+                    submitBtn.addEventListener('click', function () {
+                        if (pad.isEmpty()) return;
+                        document.getElementById('sig-input').value = pad.toDataURL('image/png');
+                        document.getElementById('sig-form').submit();
+                    });
+
+                    window.addEventListener('resize', function () {
+                        var data = pad.toData();
+                        var nw = wrap.clientWidth;
+                        canvas.width  = nw * ratio;
+                        canvas.height = h  * ratio;
+                        canvas.style.width  = nw + 'px';
+                        canvas.style.height = h  + 'px';
+                        canvas.getContext('2d').scale(ratio, ratio);
+                        pad.clear();
+                        pad.fromData(data);
+                    });
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initPad);
+                } else {
+                    initPad();
+                }
+            })();
+            </script>
             @endif
         </div>
     </div>
