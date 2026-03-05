@@ -31,7 +31,9 @@
     <body class="font-sans antialiased bg-gray-100 dark:bg-gray-900">
 
         {{-- Layout wrapper --}}
-        <div x-data="{ sidebarOpen: false }" class="min-h-screen flex">
+        <div x-data="{ sidebarOpen: false, sidebarCollapsed: localStorage.getItem('sidebarCollapsed') === 'true' }"
+             x-init="$watch('sidebarCollapsed', v => localStorage.setItem('sidebarCollapsed', v))"
+             class="min-h-screen flex">
 
             {{-- Sidebar --}}
             @include('layouts.navigation')
@@ -59,7 +61,6 @@
                         <img src="https://app.locarmais.com/consImages/escuro.png" alt="LocarMais" class="h-7 w-auto">
                     </a>
                 </div>
-
                 <!-- Page Heading -->
                 @isset($header)
                     <header class="bg-white dark:bg-gray-800 shadow-sm">
