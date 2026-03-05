@@ -45,7 +45,8 @@
         $inactive = 'text-gray-400 hover:bg-gray-800 hover:text-white';
         @endphp
 
-        {{-- Dashboard --}}
+        {{-- Dashboard (somente admin) --}}
+        @if(auth()->user()->isAdmin())
         <a href="{{ route('dashboard') }}"
             :title="sidebarCollapsed ? 'Dashboard' : ''"
             class="{{ $linkBase }} {{ request()->routeIs('dashboard') ? $active : $inactive }}">
@@ -54,6 +55,7 @@
             </svg>
             <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate nav-label">Dashboard</span>
         </a>
+        @endif
 
         {{-- Chamados --}}
         <a href="{{ route('tickets.index') }}"
