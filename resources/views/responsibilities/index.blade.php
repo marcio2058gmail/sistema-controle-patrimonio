@@ -2,10 +2,12 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Responsabilidades</h2>
+            @if(auth()->user()->role === 'admin')
             <a href="{{ route('responsibilities.create') }}"
                class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg">
                 + Nova Responsabilidade
             </a>
+            @endif
         </div>
     </x-slot>
 
