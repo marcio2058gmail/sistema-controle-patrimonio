@@ -25,6 +25,19 @@
             })();
         </script>
 
+        <!-- Sidebar anti-flash: define largura colapsada antes do Alpine inicializar -->
+        <style>
+            html[data-sidebar=collapsed] #app-sidebar,
+            html[data-sidebar=collapsed] #app-spacer { width: 4rem !important; }
+        </style>
+        <script>
+            (function() {
+                if (localStorage.getItem('sidebarCollapsed') === 'true') {
+                    document.documentElement.setAttribute('data-sidebar', 'collapsed');
+                }
+            })();
+        </script>
+
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
@@ -32,7 +45,14 @@
 
         {{-- Layout wrapper --}}
         <div x-data="{ sidebarOpen: false, sidebarCollapsed: localStorage.getItem('sidebarCollapsed') === 'true' }"
-             x-init="$watch('sidebarCollapsed', v => localStorage.setItem('sidebarCollapsed', v))"
+             x-init="
+                $watch('sidebarCollapsed', v => localStorage.setItem('sidebarCollapsed', v));
+                $nextTick(() => {
+                    document.documentElement.removeAttribute('data-sidebar');
+                    document.getElementById('app-sidebar')?.classList.add('transition-all');
+                    document.getElementById('app-spacer')?.classList.add('transition-all');
+                });
+             "
              class="min-h-screen flex">
 
             {{-- Sidebar --}}

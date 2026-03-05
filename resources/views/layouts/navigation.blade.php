@@ -1,5 +1,6 @@
 {{-- Sidebar --}}
 <aside
+    id="app-sidebar"
     :class="{
         'translate-x-0': sidebarOpen,
         '-translate-x-full': !sidebarOpen,
@@ -7,7 +8,7 @@
         'w-64': !sidebarCollapsed,
         'w-16': sidebarCollapsed
     }"
-    class="fixed inset-y-0 left-0 z-30 bg-gray-900 flex flex-col transition-all duration-200 ease-in-out"
+    class="fixed inset-y-0 left-0 z-30 bg-gray-900 flex flex-col w-64 duration-200 ease-in-out"
 >
     {{-- Logo + botão colapso --}}
     <div class="flex items-center h-16 px-3 border-b border-gray-700 shrink-0 overflow-hidden">
@@ -175,5 +176,6 @@
 </aside>
 
 {{-- Espaçador reativo para compensar a sidebar no desktop --}}
-<div class="hidden sm:block shrink-0 transition-all duration-200"
+<div id="app-spacer"
+     class="hidden sm:block shrink-0 w-64 duration-200"
      :class="sidebarCollapsed ? 'w-16' : 'w-64'"></div>
