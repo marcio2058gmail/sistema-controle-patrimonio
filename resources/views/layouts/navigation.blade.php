@@ -27,7 +27,7 @@
                         </x-nav-link>
                     @elseif(auth()->user()->isManager())
                         <x-nav-link :href="route('assets.index')" :active="request()->routeIs('assets.*')">
-                            Patrimônios Disponíveis
+                            Patrimônios
                         </x-nav-link>
                     @endif
 
@@ -133,7 +133,7 @@
                     </x-responsive-nav-link>
                 @elseif(auth()->user()->isManager())
                     <x-responsive-nav-link :href="route('assets.index')" :active="request()->routeIs('assets.*')">
-                        Patrimônios Disponíveis
+                        Patrimônios
                     </x-responsive-nav-link>
                 @endif
 
