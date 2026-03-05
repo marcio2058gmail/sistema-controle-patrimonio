@@ -125,26 +125,36 @@
                     pad: null,
                     isEmpty: true,
                     init() {
-                        this.$nextTick(() => {
+                        const tryInit = () => {
                             const canvas = this.\$refs.canvas;
-                            const ratio  = Math.max(window.devicePixelRatio || 1, 1);
-                            canvas.width  = canvas.offsetWidth  * ratio;
-                            canvas.height = canvas.offsetHeight * ratio;
+                            const w = canvas.parentElement.clientWidth || canvas.offsetWidth;
+                            if (!w) { requestAnimationFrame(tryInit); return; }
+                            const ratio = Math.max(window.devicePixelRatio || 1, 1);
+                            canvas.style.width  = w + 'px';
+                            canvas.style.height = '180px';
+                            canvas.width  = w * ratio;
+                            canvas.height = 180 * ratio;
                             canvas.getContext('2d').scale(ratio, ratio);
                             this.pad = new SignaturePad(canvas, {
                                 backgroundColor: 'rgb(255,255,255)',
-                                penColor: 'rgb(30,30,30)'
+                                penColor: 'rgb(20,20,20)',
+                                minWidth: 1,
+                                maxWidth: 3
                             });
                             this.pad.addEventListener('beginStroke', () => { this.isEmpty = false; });
-                        });
+                        };
+                        requestAnimationFrame(tryInit);
                     },
                     resize() {
                         if (!this.pad) return;
                         const c     = this.\$refs.canvas;
+                        const w     = c.parentElement.clientWidth || c.offsetWidth;
                         const ratio = Math.max(window.devicePixelRatio || 1, 1);
                         const data  = this.pad.toData();
-                        c.width  = c.offsetWidth  * ratio;
-                        c.height = c.offsetHeight * ratio;
+                        c.style.width  = w + 'px';
+                        c.style.height = '180px';
+                        c.width  = w * ratio;
+                        c.height = 180 * ratio;
                         c.getContext('2d').scale(ratio, ratio);
                         this.pad.clear();
                         this.pad.fromData(data);
@@ -163,8 +173,8 @@
                 <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Assinatura Digital</h3>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Leia o termo acima e assine no campo abaixo para confirmar o recebimento dos equipamentos.</p>
 
-                <div class="border-2 border-dashed border-gray-300 dark:border-gray-500 rounded-xl overflow-hidden bg-white" style="height:180px">
-                    <canvas x-ref="canvas" class="w-full h-full touch-none" style="cursor:crosshair"></canvas>
+                <div class="border-2 border-dashed border-gray-300 dark:border-gray-500 rounded-xl bg-white">
+                    <canvas x-ref="canvas" class="touch-none block rounded-xl" style="cursor:crosshair; display:block;"></canvas>
                 </div>
 
                 <div class="flex items-center justify-between mt-3">
