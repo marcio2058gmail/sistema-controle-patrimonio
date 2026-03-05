@@ -13,9 +13,10 @@
     {{-- Logo + botão colapso --}}
     <div class="flex items-center h-16 px-3 border-b border-gray-700 shrink-0 overflow-hidden">
         <a href="{{ route('dashboard') }}" class="flex items-center gap-2 min-w-0">
-            <img src="https://app.locarmais.com/consImages/escuro.png" alt="LocarMais"
+            <img id="app-logo"
+                 src="https://app.locarmais.com/consImages/escuro.png" alt="LocarMais"
                  :class="sidebarCollapsed ? 'h-7' : 'h-8'"
-                 class="w-auto shrink-0 transition-all duration-200">
+                 class="w-auto shrink-0 h-8 duration-200">
         </a>
 
         {{-- Botão colapso (desktop) --}}

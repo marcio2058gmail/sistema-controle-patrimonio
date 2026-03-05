@@ -29,6 +29,7 @@
         <style>
             html[data-sidebar=collapsed] #app-sidebar,
             html[data-sidebar=collapsed] #app-spacer { width: 4rem !important; }
+            html[data-sidebar=collapsed] #app-logo   { height: 1.75rem !important; }
         </style>
         <script>
             (function() {
@@ -51,6 +52,7 @@
                     document.documentElement.removeAttribute('data-sidebar');
                     document.getElementById('app-sidebar')?.classList.add('transition-all');
                     document.getElementById('app-spacer')?.classList.add('transition-all');
+                    document.getElementById('app-logo')?.classList.add('transition-all');
                 });
              "
              class="min-h-screen flex">
