@@ -7,6 +7,9 @@
 
         <title>{{ config('app.name', 'Controle Patrimonial') }}</title>
 
+        <!-- Favicon -->
+        <link rel="icon" type="image/png" href="https://app.locarmais.com/consImages/escuro.png">
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
