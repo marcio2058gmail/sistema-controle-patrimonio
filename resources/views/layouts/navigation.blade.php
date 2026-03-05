@@ -57,6 +57,18 @@
         </a>
         @endif
 
+        @if(auth()->user()->isEmployee())
+        {{-- Equipamentos disponíveis (somente funcionário) --}}
+        <a href="{{ route('assets.index') }}"
+            :title="sidebarCollapsed ? 'Equipamentos' : ''"
+            class="{{ $linkBase }} {{ request()->routeIs('assets.*') ? $active : $inactive }}">
+            <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/>
+            </svg>
+            <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate nav-label">Equipamentos</span>
+        </a>
+        @endif
+
         {{-- Chamados --}}
         <a href="{{ route('tickets.index') }}"
             :title="sidebarCollapsed ? 'Chamados' : ''"

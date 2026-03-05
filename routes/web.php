@@ -29,7 +29,7 @@ Route::middleware('auth')->group(function () {
 // Routes for Admin and Manager
 Route::middleware(['auth', 'role:admin,manager'])->group(function () {
     Route::resource('departments', DepartmentController::class)->only(['index', 'show']);
-    Route::resource('assets', AssetController::class);
+    Route::resource('assets', AssetController::class)->except(['index', 'show']);
     Route::resource('employees', EmployeeController::class)->only(['index', 'show']);
 
     // Admin-only actions and management
@@ -50,6 +50,8 @@ Route::middleware(['auth', 'role:admin,manager'])->group(function () {
 Route::middleware('auth')->group(function () {
     Route::resource('tickets', TicketController::class)->only(['index', 'store', 'show']);
     Route::resource('responsibilities', ResponsibilityController::class)->only(['index', 'show']);
+    // Assets index/show accessible by all profiles (controller handles filtering by role)
+    Route::resource('assets', AssetController::class)->only(['index', 'show']);
     Route::get('/responsibilities/{responsibility}/pdf', [ResponsibilityController::class, 'gerarPdf'])
         ->name('responsibilities.pdf');
     Route::post('/responsibilities/{responsibility}/assinar', [ResponsibilityController::class, 'assinar'])

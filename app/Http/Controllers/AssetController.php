@@ -15,13 +15,13 @@ class AssetController extends Controller
     {
         $query = Asset::latest();
 
-        // Gestor vê apenas os disponíveis
-        if ($request->user()->isManager()) {
+        // Gestor e Funcionário veem apenas os disponíveis
+        if ($request->user()->isManager() || $request->user()->isEmployee()) {
             $query->where('status', Asset::STATUS_AVAILABLE);
         }
 
         $assets   = $query->paginate(15);
-        $apenasDisponiveis = $request->user()->isManager();
+        $apenasDisponiveis = ! $request->user()->isAdmin();
         $statusLabels = Asset::statusLabels();
 
         return view('assets.index', compact('assets', 'apenasDisponiveis', 'statusLabels'));
