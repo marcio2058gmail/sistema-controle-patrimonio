@@ -16,7 +16,7 @@ class UpdateEmployeeRequest extends FormRequest
     {
         return [
             'nome'            => ['required', 'string', 'max:150'],
-            'email'           => ['required', 'email', 'max:150', Rule::unique('employees', 'email')->ignore($this->employee)],
+            'email'           => ['required', 'email', 'max:150', Rule::unique('funcionarios', 'email')->ignore($this->employee)],
             'cargo'           => ['nullable', 'string', 'max:100'],
             'departamento_id' => ['nullable', 'exists:departamentos,id'],
         ];

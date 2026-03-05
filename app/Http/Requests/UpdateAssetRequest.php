@@ -15,7 +15,7 @@ class UpdateAssetRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'codigo_patrimonio' => ['required', 'string', 'max:50', Rule::unique('assets', 'codigo_patrimonio')->ignore($this->asset)],
+            'codigo_patrimonio' => ['required', 'string', 'max:50', Rule::unique('patrimonios', 'codigo_patrimonio')->ignore($this->asset)],
             'descricao'         => ['required', 'string', 'max:255'],
             'modelo'            => ['nullable', 'string', 'max:100'],
             'numero_serie'      => ['nullable', 'string', 'max:100'],

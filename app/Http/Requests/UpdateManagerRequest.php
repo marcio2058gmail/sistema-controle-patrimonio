@@ -22,7 +22,7 @@ class UpdateManagerRequest extends FormRequest
             'email'           => [
                 'required', 'email', 'max:150',
                 Rule::unique('users', 'email')->ignore($gestorId),
-                Rule::unique('employees', 'email')->ignore($funcId),
+                Rule::unique('funcionarios', 'email')->ignore($funcId),
             ],
             'password'        => ['nullable', 'string', 'min:8', 'confirmed'],
             'cargo'           => ['nullable', 'string', 'max:100'],
