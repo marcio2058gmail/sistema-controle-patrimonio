@@ -31,9 +31,9 @@
                             <td class="px-6 py-3 text-gray-500">{{ $employee->email }}</td>
                             <td class="px-6 py-3 text-gray-500">{{ $employee->cargo ?? '—' }}</td>
                             <td class="px-6 py-3 text-gray-500">
-                                @if($employee->departamento)
-                                    <a href="{{ route('departments.show', $employee->departamento) }}" class="text-indigo-600 hover:underline text-xs">
-                                        {{ $employee->departamento->nome }}
+                                @if($employee->department)
+                                    <a href="{{ route('departments.show', $employee->department) }}" class="text-indigo-600 hover:underline text-xs">
+                                        {{ $employee->department->nome }}
                                     </a>
                                 @else
                                     <span class="text-gray-400">—</span>
