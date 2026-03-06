@@ -33,5 +33,24 @@ export default {
         },
     },
 
+    safelist: [
+        // Cores emerald (devolução, status)
+        { pattern: /bg-emerald-(50|100|500|600|700)/ },
+        { pattern: /text-emerald-(600|700|800)/ },
+        { pattern: /border-emerald-(400|500|600)/ },
+        { pattern: /hover:bg-emerald-(700|800)/ },
+        // Cores green (status badges)
+        { pattern: /bg-green-(100|600|700)/ },
+        { pattern: /text-green-(600|700|800)/ },
+        // Cores yellow/orange (status badges)
+        { pattern: /bg-yellow-(100|200)/ },
+        { pattern: /text-yellow-(600|700|800)/ },
+        { pattern: /bg-orange-(100)/ },
+        { pattern: /text-orange-(700|800)/ },
+        // Cores red (exclusão, alertas)
+        { pattern: /bg-red-(100|600)/ },
+        { pattern: /text-red-(600|700|800)/ },
+    ],
+
     plugins: [forms],
 };
