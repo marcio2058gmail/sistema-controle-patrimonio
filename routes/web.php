@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\DashboardController;
@@ -43,6 +44,10 @@ Route::middleware(['auth', 'role:admin,manager'])->group(function () {
         Route::resource('managers', ManagerController::class)
             ->parameters(['managers' => 'manager'])
             ->except(['show']);
+
+        Route::resource('admins', AdminController::class)
+            ->parameters(['admins' => 'admin'])
+            ->only(['index', 'store', 'update', 'destroy']);
     });
 });
 
