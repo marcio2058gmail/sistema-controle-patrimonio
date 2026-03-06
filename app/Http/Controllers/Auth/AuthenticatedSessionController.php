@@ -29,9 +29,28 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         $user = $request->user();
-        $home = $user->isAdmin() ? route('dashboard', absolute: false) : route('tickets.index', absolute: false);
 
-        return redirect()->intended($home);
+        // Super admin vai para gestão de empresas
+        if ($user->isSuperAdmin()) {
+            return redirect()->intended(route('companies.index'));
+        }
+
+        $empresas = $user->empresas()->where('ativa', true)->get();
+
+        // Sem empresa: vai direto para seleção (que mostrará mensagem de erro)
+        if ($empresas->isEmpty()) {
+            return redirect()->route('companies.select');
+        }
+
+        // Auto-seleciona se só tem uma empresa
+        if ($empresas->count() === 1) {
+            session(['empresa_ativa_id' => $empresas->first()->id]);
+            $home = $user->isAdmin() ? route('dashboard', absolute: false) : route('tickets.index', absolute: false);
+            return redirect()->intended($home);
+        }
+
+        // Múltiplas empresas: vai para seleção
+        return redirect()->route('companies.select');
     }
 
     /**

@@ -16,7 +16,19 @@ class Employee extends Model
         'cargo',
         'user_id',
         'departamento_id',
+        'empresa_id',
     ];
+
+    // ---------- Scope de empresa ----------
+
+    public function scopeForCompany($query, ?int $companyId = null)
+    {
+        $companyId = $companyId ?? (int) session('empresa_ativa_id');
+        if ($companyId) {
+            $query->where('empresa_id', $companyId);
+        }
+        return $query;
+    }
 
     // ---------- Relationships ----------
 
@@ -28,6 +40,11 @@ class Employee extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class, 'empresa_id');
     }
 
     public function responsibilities(): HasMany

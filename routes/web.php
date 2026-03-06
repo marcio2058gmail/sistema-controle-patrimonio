@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\DashboardController;
@@ -15,25 +16,50 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-// Dashboard
-Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+// -------------------------------------------------------
+// Rotas de empresa (seleção/switch) — sem company.select
+// -------------------------------------------------------
+Route::middleware('auth')->group(function () {
+    Route::get('/companies/select', [CompanyController::class, 'select'])->name('companies.select');
+    Route::post('/companies/switch', [CompanyController::class, 'switch'])->name('companies.switch');
+});
 
-// User profile
+// Gestão de empresas — super_admin apenas (sem company.select)
+Route::middleware(['auth', 'role:super_admin'])->prefix('companies')->name('companies.')->group(function () {
+    Route::get('/', [CompanyController::class, 'index'])->name('index');
+    Route::post('/', [CompanyController::class, 'store'])->name('store');
+    Route::patch('/{company}', [CompanyController::class, 'update'])->name('update');
+    Route::delete('/{company}', [CompanyController::class, 'destroy'])->name('destroy');
+    Route::get('/{company}/users', [CompanyController::class, 'users'])->name('users');
+    Route::post('/{company}/users', [CompanyController::class, 'addUser'])->name('addUser');
+    Route::delete('/{company}/users', [CompanyController::class, 'removeUser'])->name('removeUser');
+});
+
+// -------------------------------------------------------
+// Profile (sem company.select — usuário pode editar perfil a qualquer momento)
+// -------------------------------------------------------
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Routes for Admin and Manager
-Route::middleware(['auth', 'role:admin,manager'])->group(function () {
+// -------------------------------------------------------
+// Rotas de negócio — requerem empresa selecionada
+// -------------------------------------------------------
+
+// Dashboard
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified', 'company.select'])
+    ->name('dashboard');
+
+// Admin e Manager
+Route::middleware(['auth', 'company.select', 'role:admin,manager'])->group(function () {
     Route::resource('departments', DepartmentController::class)->only(['index', 'show']);
     Route::resource('assets', AssetController::class)->except(['index', 'show']);
     Route::resource('employees', EmployeeController::class)->only(['index', 'show']);
 
-    // Admin-only actions and management
+    // Admin-only
     Route::middleware('role:admin')->group(function () {
         Route::resource('employees', EmployeeController::class)->except(['index', 'show']);
         Route::resource('responsibilities', ResponsibilityController::class)->except(['index', 'show']);
@@ -51,11 +77,10 @@ Route::middleware(['auth', 'role:admin,manager'])->group(function () {
     });
 });
 
-// Tickets and responsibilities: visible to all authenticated users
-Route::middleware('auth')->group(function () {
+// Chamados e termos — todos os autenticados com empresa
+Route::middleware(['auth', 'company.select'])->group(function () {
     Route::resource('tickets', TicketController::class)->only(['index', 'store', 'show']);
     Route::resource('responsibilities', ResponsibilityController::class)->only(['index', 'show']);
-    // Assets index/show accessible by all profiles (controller handles filtering by role)
     Route::resource('assets', AssetController::class)->only(['index', 'show']);
     Route::get('/responsibilities/{responsibility}/pdf', [ResponsibilityController::class, 'gerarPdf'])
         ->name('responsibilities.pdf');

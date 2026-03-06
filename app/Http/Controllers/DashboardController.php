@@ -31,14 +31,15 @@ class DashboardController extends Controller
         // KPIs — escopos por perfil
         // -------------------------------------------------------
         if ($user->isAdmin()) {
-            $totalAssets        = Asset::count();
-            $totalEmployees       = Employee::count();
-            $totalOpenTickets    = Ticket::where('status', Ticket::STATUS_OPEN)->count();
-            $totalResponsibilities  = Responsibility::whereNull('data_devolucao')->count();
-            $patrimoniosSemResponsavel = Asset::where('status', Asset::STATUS_AVAILABLE)->count();
+            $totalAssets        = Asset::forCompany()->count();
+            $totalEmployees       = Employee::forCompany()->count();
+            $totalOpenTickets    = Ticket::forCompany()->where('status', Ticket::STATUS_OPEN)->count();
+            $totalResponsibilities  = Responsibility::forCompany()->whereNull('data_devolucao')->count();
+            $patrimoniosSemResponsavel = Asset::forCompany()->where('status', Asset::STATUS_AVAILABLE)->count();
 
             // Breakdown por departamento
-            $departmentStats = Department::withCount('employees')
+            $departmentStats = Department::forCompany()
+                ->withCount('employees')
                 ->with('employees:id,departamento_id')
                 ->orderBy('nome')
                 ->get()
@@ -127,7 +128,8 @@ class DashboardController extends Controller
         $assetChartData   = [];
 
         if ($user->isAdmin()) {
-            $assetsByStatus = Asset::select('status', DB::raw('count(*) as total'))
+            $assetsByStatus = Asset::forCompany()
+                ->select('status', DB::raw('count(*) as total'))
                 ->groupBy('status')
                 ->pluck('total', 'status')
                 ->toArray();

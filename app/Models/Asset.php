@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Asset extends Model
@@ -16,7 +17,19 @@ class Asset extends Model
         'modelo',
         'numero_serie',
         'status',
+        'empresa_id',
     ];
+
+    // ---------- Scope de empresa ----------
+
+    public function scopeForCompany($query, ?int $companyId = null)
+    {
+        $companyId = $companyId ?? (int) session('empresa_ativa_id');
+        if ($companyId) {
+            $query->where('empresa_id', $companyId);
+        }
+        return $query;
+    }
 
     protected $casts = [
         'status' => 'string',
@@ -53,6 +66,11 @@ class Asset extends Model
     }
 
     // ---------- Relationships ----------
+
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class, 'empresa_id');
+    }
 
     public function responsibilities(): BelongsToMany
     {

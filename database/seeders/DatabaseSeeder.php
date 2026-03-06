@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Database\Seeders\UserSeeder;
+use Database\Seeders\EmpresaSeeder;
 use Database\Seeders\DepartamentoSeeder;
 use Database\Seeders\FuncionarioSeeder;
 use Database\Seeders\PatrimonioSeeder;
@@ -25,10 +26,11 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            UserSeeder::class,
-            DepartamentoSeeder::class,
-            FuncionarioSeeder::class,
-            PatrimonioSeeder::class,
+            UserSeeder::class,        // 1. Cria usuários (admin, manager, employees)
+            EmpresaSeeder::class,     // 2. Cria empresa + super_admin + vincula usuários
+            DepartamentoSeeder::class,// 3. Departamentos (usa Company::first())
+            FuncionarioSeeder::class, // 4. Funcionários (usa Company::first())
+            PatrimonioSeeder::class,  // 5. Patrimônios (usa Company::first())
             ChamadoSeeder::class,
             ResponsabilidadeSeeder::class,
         ]);

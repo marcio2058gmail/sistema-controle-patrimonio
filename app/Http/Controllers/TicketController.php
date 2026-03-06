@@ -15,13 +15,13 @@ class TicketController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = Ticket::with(['employee', 'assets'])->latest();
+        $query = Ticket::forCompany()->with(['employee', 'assets'])->latest();
 
         $user        = $request->user();
         $employee = $user->employee;
 
         if ($user->isAdmin()) {
-            // admin vê tudo
+            // admin vê tudo (já filtrado por empresa)
         } elseif ($user->isManager()) {
             // gestor vê os chamados do seu departamento
             if ($employee && $employee->departamento_id) {
@@ -49,13 +49,13 @@ class TicketController extends Controller
         $statusLabels = Ticket::statusLabels();
 
         // Dados para o modal "Abrir Chamado"
-        $assets = Asset::disponivel()->orderBy('descricao')->get();
+        $assets = Asset::forCompany()->disponivel()->orderBy('descricao')->get();
         if ($user->isAdmin()) {
-            $employees = Employee::orderBy('nome')->get();
+            $employees = Employee::forCompany()->orderBy('nome')->get();
         } elseif ($user->isManager()) {
             $emp       = $user->employee;
             $employees = ($emp && $emp->departamento_id)
-                ? Employee::where('departamento_id', $emp->departamento_id)->orderBy('nome')->get()
+                ? Employee::forCompany()->where('departamento_id', $emp->departamento_id)->orderBy('nome')->get()
                 : collect();
         } else {
             $employees = collect();
@@ -66,15 +66,15 @@ class TicketController extends Controller
 
     public function create(Request $request): View
     {
-        $assets = Asset::disponivel()->orderBy('descricao')->get();
+        $assets = Asset::forCompany()->disponivel()->orderBy('descricao')->get();
         $user        = $request->user();
 
         if ($user->isAdmin()) {
-            $employees = Employee::orderBy('nome')->get();
+            $employees = Employee::forCompany()->orderBy('nome')->get();
         } elseif ($user->isManager()) {
             $employee  = $user->employee;
             $employees = ($employee && $employee->departamento_id)
-                ? Employee::where('departamento_id', $employee->departamento_id)->orderBy('nome')->get()
+                ? Employee::forCompany()->where('departamento_id', $employee->departamento_id)->orderBy('nome')->get()
                 : collect();
         } else {
             $employees = collect();

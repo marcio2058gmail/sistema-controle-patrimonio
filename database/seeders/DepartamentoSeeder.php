@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Department;
+use App\Models\Company;
 use Illuminate\Database\Seeder;
 
 class DepartamentoSeeder extends Seeder
@@ -18,8 +19,13 @@ class DepartamentoSeeder extends Seeder
             ['nome' => 'Administrativo',            'descricao' => 'Suporte administrativo geral e facilities.'],
         ];
 
+        $empresa = Company::first();
+
         foreach ($departamentos as $data) {
-            Department::firstOrCreate(['nome' => $data['nome']], $data);
+            Department::firstOrCreate(
+                ['nome' => $data['nome']],
+                array_merge($data, ['empresa_id' => $empresa?->id])
+            );
         }
     }
 }

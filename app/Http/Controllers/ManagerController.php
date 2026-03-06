@@ -21,14 +21,14 @@ class ManagerController extends Controller
             ->with('employee.department')
             ->orderBy('name')
             ->paginate(15);
-        $departments = Department::orderBy('nome')->get(['id','nome']);
+        $departments = Department::forCompany()->orderBy('nome')->get(['id','nome']);
 
         return view('managers.index', compact('managers', 'departments'));
     }
 
     public function create(): View
     {
-        $departments = Department::orderBy('nome')->get();
+        $departments = Department::forCompany()->orderBy('nome')->get();
 
         return view('managers.create', compact('departments'));
     }
@@ -50,6 +50,7 @@ class ManagerController extends Controller
                 'email'           => $request->email,
                 'cargo'           => $request->cargo ?: 'Gestor',
                 'departamento_id' => $request->departamento_id ?: null,
+                'empresa_id'      => session('empresa_ativa_id'),
             ]);
         });
 
@@ -62,7 +63,7 @@ class ManagerController extends Controller
         abort_if($manager->role !== 'manager', 404);
 
         $manager->load('employee.department');
-        $departments = Department::orderBy('nome')->get();
+        $departments = Department::forCompany()->orderBy('nome')->get();
 
         return view('managers.edit', compact('manager', 'departments'));
     }

@@ -23,19 +23,26 @@ class ResponsibilityController extends Controller
             $employeeId = $user->employee?->id;
             abort_unless($employeeId, 403);
             $query->where('funcionario_id', $employeeId);
+        } else {
+            // Scope por empresa
+            $companyId = (int) session('empresa_ativa_id');
+            if ($companyId) {
+                $empleadosIds = \App\Models\Employee::forCompany($companyId)->pluck('id');
+                $query->whereIn('funcionario_id', $empleadosIds);
+            }
         }
 
         $responsibilities = $query->paginate(15);
-        $employees        = \App\Models\Employee::orderBy('nome')->get();
-        $availableAssets  = \App\Models\Asset::disponivel()->orderBy('descricao')->get();
+        $employees        = \App\Models\Employee::forCompany()->orderBy('nome')->get();
+        $availableAssets  = \App\Models\Asset::forCompany()->disponivel()->orderBy('descricao')->get();
 
         return view('responsibilities.index', compact('responsibilities', 'employees', 'availableAssets'));
     }
 
     public function create(): View
     {
-        $employees = Employee::orderBy('nome')->get();
-        $assets    = Asset::disponivel()->orderBy('descricao')->get();
+        $employees = Employee::forCompany()->orderBy('nome')->get();
+        $assets    = Asset::forCompany()->disponivel()->orderBy('descricao')->get();
 
         return view('responsibilities.create', compact('employees', 'assets'));
     }

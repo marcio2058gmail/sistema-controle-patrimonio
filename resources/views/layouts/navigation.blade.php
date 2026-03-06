@@ -45,6 +45,27 @@
         $inactive = 'text-gray-400 hover:bg-gray-800 hover:text-white';
         @endphp
 
+        {{-- Indicador de empresa ativa --}}
+        @php $empresaAtiva = auth()->user()->activeCompany(); @endphp
+        @if($empresaAtiva || auth()->user()->isSuperAdmin())
+        <div x-show="!sidebarCollapsed" x-transition.opacity
+             class="mx-1 mb-2 px-3 py-2 rounded-lg bg-gray-800 border border-gray-700">
+            <p class="text-xs text-gray-500 uppercase tracking-wider font-medium mb-0.5">Empresa</p>
+            <p class="text-xs text-gray-200 font-semibold truncate">
+                {{ $empresaAtiva?->nome ?? 'Todas as empresas' }}
+            </p>
+            @if(!auth()->user()->isSuperAdmin() && auth()->user()->empresas()->where('ativa', true)->count() > 1)
+            <a href="{{ route('companies.select') }}" class="text-xs text-indigo-400 hover:text-indigo-300 transition mt-0.5 inline-block">
+                Trocar empresa →
+            </a>
+            @elseif(auth()->user()->isSuperAdmin())
+            <a href="{{ route('companies.select') }}" class="text-xs text-purple-400 hover:text-purple-300 transition mt-0.5 inline-block">
+                Trocar contexto →
+            </a>
+            @endif
+        </div>
+        @endif
+
         {{-- Dashboard (somente admin) --}}
         @if(auth()->user()->isAdmin())
         <a href="{{ route('dashboard') }}"
@@ -155,6 +176,18 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
             </svg>
             <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate nav-label">Administradores</span>
+        </a>
+        @endif
+
+        {{-- Empresas (super_admin) --}}
+        @if(auth()->user()->isSuperAdmin())
+        <a href="{{ route('companies.index') }}"
+            :title="sidebarCollapsed ? 'Empresas' : ''"
+            class="{{ $linkBase }} {{ request()->routeIs('companies.*') ? $active : $inactive }}">
+            <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/>
+            </svg>
+            <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate nav-label">Empresas</span>
         </a>
         @endif
 

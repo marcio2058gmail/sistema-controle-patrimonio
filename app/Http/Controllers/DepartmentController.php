@@ -14,7 +14,8 @@ class DepartmentController extends Controller
 {
     public function index(): View
     {
-        $departments = Department::withCount('employees')
+        $departments = Department::forCompany()
+            ->withCount('employees')
             ->orderBy('nome')
             ->paginate(15);
 
@@ -32,7 +33,9 @@ class DepartmentController extends Controller
     {
         abort_unless($request->user()->isAdmin(), 403);
 
-        Department::create($request->validated());
+        Department::create(array_merge($request->validated(), [
+            'empresa_id' => session('empresa_ativa_id'),
+        ]));
 
         return redirect()->route('departments.index')
             ->with('sucesso', 'Departamento criado com sucesso.');

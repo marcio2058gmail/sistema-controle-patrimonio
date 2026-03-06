@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Department;
 use App\Models\Employee;
 use App\Models\User;
+use App\Models\Company;
 use Illuminate\Database\Seeder;
 
 class FuncionarioSeeder extends Seeder
@@ -26,6 +27,7 @@ class FuncionarioSeeder extends Seeder
 
         $users          = User::where('role', 'employee')->get();
         $departamentos  = Department::all();
+        $empresa        = Company::first();
 
         foreach ($users as $index => $user) {
             Employee::create([
@@ -36,6 +38,7 @@ class FuncionarioSeeder extends Seeder
                 'departamento_id' => $departamentos->isNotEmpty()
                     ? $departamentos[$index % $departamentos->count()]->id
                     : null,
+                'empresa_id'      => $empresa?->id,
             ]);
         }
     }

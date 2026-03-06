@@ -15,7 +15,7 @@ class EmployeeController extends Controller
     {
         $user = auth()->user();
 
-        $query = Employee::with('department')->latest();
+        $query = Employee::forCompany()->with('department')->latest();
 
         if ($user->isManager()) {
             $deptId = $user->employee?->departamento_id;
@@ -23,19 +23,21 @@ class EmployeeController extends Controller
         }
 
         $employees = $query->paginate(15);
-        $departments = Department::orderBy('nome')->get(['id','nome']);
+        $departments = Department::forCompany()->orderBy('nome')->get(['id','nome']);
         return view('employees.index', compact('employees', 'departments'));
     }
 
     public function create(): View
     {
-        $departments = Department::orderBy('nome')->get();
+        $departments = Department::forCompany()->orderBy('nome')->get();
         return view('employees.create', compact('departments'));
     }
 
     public function store(StoreEmployeeRequest $request): RedirectResponse
     {
-        Employee::create($request->validated());
+        Employee::create(array_merge($request->validated(), [
+            'empresa_id' => session('empresa_ativa_id'),
+        ]));
 
         return redirect()->route('employees.index')
             ->with('sucesso', 'Funcionário cadastrado com sucesso.');
@@ -49,7 +51,7 @@ class EmployeeController extends Controller
 
     public function edit(Employee $employee): View
     {
-        $departments = Department::orderBy('nome')->get();
+        $departments = Department::forCompany()->orderBy('nome')->get();
         return view('employees.edit', compact('employee', 'departments'));
     }
 

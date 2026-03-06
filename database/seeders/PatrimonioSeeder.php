@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Asset;
+use App\Models\Company;
 use Illuminate\Database\Seeder;
 
 class PatrimonioSeeder extends Seeder
@@ -32,6 +33,8 @@ class PatrimonioSeeder extends Seeder
             ['codigo' => 'PC-002', 'descricao' => 'Desktop Lenovo ThinkCentre',   'modelo' => 'ThinkCentre M70s',      'serie' => 'LNVO-TC7001', 'status' => 'manutencao'],
         ];
 
+        $empresa = Company::first();
+
         foreach ($patrimonios as $item) {
             Asset::create([
                 'codigo_patrimonio' => $item['codigo'],
@@ -39,6 +42,7 @@ class PatrimonioSeeder extends Seeder
                 'modelo'            => $item['modelo'],
                 'numero_serie'      => $item['serie'],
                 'status'            => $item['status'],
+                'empresa_id'        => $empresa?->id,
             ]);
         }
     }

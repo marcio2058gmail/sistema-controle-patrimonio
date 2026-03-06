@@ -40,6 +40,17 @@ class Ticket extends Model
         return self::statusLabels()[$this->status] ?? $this->status;
     }
 
+    // ---------- Scope de empresa ----------
+
+    public function scopeForCompany($query, ?int $companyId = null)
+    {
+        $companyId = $companyId ?? (int) session('empresa_ativa_id');
+        if ($companyId) {
+            $query->whereHas('employee', fn ($q) => $q->where('empresa_id', $companyId));
+        }
+        return $query;
+    }
+
     // ---------- Relationships ----------
 
     public function employee(): BelongsTo

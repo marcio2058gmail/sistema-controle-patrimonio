@@ -19,7 +19,14 @@ class RoleMiddleware
             return redirect()->route('login');
         }
 
-        if (! in_array($request->user()->role, $roles)) {
+        // Super admin tem acesso total a qualquer rota protegida por role
+        if ($request->user()->isSuperAdmin()) {
+            return $next($request);
+        }
+
+        // Verifica o papel no contexto da empresa ativa (ou global se sem empresa)
+        $userRole = $request->user()->roleInCompany();
+        if (! in_array($userRole, $roles)) {
             abort(403, 'Acesso não autorizado.');
         }
 

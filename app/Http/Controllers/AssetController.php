@@ -13,7 +13,7 @@ class AssetController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = Asset::latest();
+        $query = Asset::forCompany()->latest();
 
         // Gestor e Funcionário veem apenas os disponíveis
         if ($request->user()->isManager() || $request->user()->isEmployee()) {
@@ -37,7 +37,9 @@ class AssetController extends Controller
     public function store(StoreAssetRequest $request): RedirectResponse
     {
         abort_unless($request->user()->isAdmin(), 403);
-        Asset::create($request->validated());
+        Asset::create(array_merge($request->validated(), [
+            'empresa_id' => session('empresa_ativa_id'),
+        ]));
 
         return redirect()->route('assets.index')
             ->with('sucesso', 'Patrimônio cadastrado com sucesso.');
