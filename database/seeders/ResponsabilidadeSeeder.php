@@ -15,11 +15,6 @@ class ResponsabilidadeSeeder extends Seeder
         $patrimoniosEmUso = Asset::where('status', 'em_uso')->get();
         $funcionarios     = Employee::all();
 
-        $termoBase = "Declaro ter recebido o bem patrimonial descrito neste documento em perfeito estado de conservação e funcionamento. " .
-            "Comprometo-me a utilizá-lo exclusivamente para fins profissionais, conservando-o de forma adequada e responsabilizando-me " .
-            "por qualquer dano decorrente de mau uso, negligência ou imprudência. " .
-            "Em caso de necessidade de manutenção, devolução ou transferência, comunicarei imediatamente ao setor responsável.";
-
         foreach ($patrimoniosEmUso as $index => $patrimonio) {
             $funcionario   = $funcionarios[$index % $funcionarios->count()];
             $dataEntrega   = now()->subDays(rand(10, 180));
@@ -29,7 +24,7 @@ class ResponsabilidadeSeeder extends Seeder
                 'patrimonio_id'          => $patrimonio->id,
                 'data_entrega'           => $dataEntrega->toDateString(),
                 'data_devolucao'         => null,
-                'termo_responsabilidade' => $termoBase,
+                'termo_responsabilidade' => null,
                 'assinado'               => (bool) rand(0, 1),
             ]);
         }
@@ -47,7 +42,7 @@ class ResponsabilidadeSeeder extends Seeder
                 'patrimonio_id'          => $patrimonio->id,
                 'data_entrega'           => $dataEntrega->toDateString(),
                 'data_devolucao'         => $dataDev->toDateString(),
-                'termo_responsabilidade' => $termoBase . ' Bem devolvido em ' . $dataDev->format('d/m/Y') . '.',
+                'termo_responsabilidade' => null,
                 'assinado'               => true,
             ]);
         }
