@@ -11,8 +11,8 @@
         </div>
     </x-slot>
 
-    <div x-data="{ modalOpen: {{ $errors->any() ? 'true' : 'false' }}, showDetail: false, detail: null, deleteTarget: null, editTarget: null, openEdit(d) { this.editTarget = d; this.showDetail = false; } }"
-         @keydown.escape.window="modalOpen ? modalOpen = false : deleteTarget ? deleteTarget = null : editTarget ? editTarget = null : showDetail = false"
+    <div x-data="{ modalOpen: {{ $errors->any() ? 'true' : 'false' }}, showDetail: false, detail: null, deleteTarget: null, editTarget: null, devolverTarget: null, openEdit(d) { this.editTarget = d; this.showDetail = false; }, openDevolver(d) { this.devolverTarget = d; this.showDetail = false; } }"
+         @keydown.escape.window="modalOpen ? modalOpen = false : deleteTarget ? deleteTarget = null : editTarget ? editTarget = null : devolverTarget ? devolverTarget = null : showDetail = false"
          @open-nova-responsabilidade.window="modalOpen = true">
 
         <div class="py-8">
@@ -42,6 +42,7 @@
                                 'assets_label' => $r->assets->pluck('codigo_patrimonio')->implode(', '),
                                 'assets_count' => $r->assets->count(),
                                 'entrega'      => $r->data_entrega->format('d/m/Y'),
+                                'entrega_raw'  => $r->data_entrega->toDateString(),
                                 'devolucao'    => $r->data_devolucao?->format('d/m/Y'),
                                 'devolucao_raw'=> $r->data_devolucao?->toDateString(),
                                 'assinado'     => $r->assinado,
@@ -50,6 +51,7 @@
                                 'url_edit'     => auth()->user()->isAdmin() ? route('responsibilities.edit', $r) : '',
                                 'url_update'   => auth()->user()->isAdmin() ? route('responsibilities.update', $r) : '',
                                 'url_destroy'  => auth()->user()->isAdmin() ? route('responsibilities.destroy', $r) : '',
+                                'url_devolver' => auth()->user()->isAdmin() ? route('responsibilities.devolver', $r) : '',
                                 'url_pdf'      => route('responsibilities.pdf', $r),
                             ];
                             @endphp
@@ -167,11 +169,61 @@
                 </div>
                 <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/60 rounded-b-2xl shrink-0">
                     <a :href="detail?.url_pdf" target="_blank" class="px-4 py-2 text-sm font-medium rounded-lg border border-gray-400 dark:border-gray-500 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">📄 PDF</a>
+                    <template x-if="detail?.is_admin && !detail?.devolucao">
+                        <button type="button" @click="openDevolver(detail)" class="px-4 py-2 text-sm font-medium rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition-colors">↩ Registrar Devolução</button>
+                    </template>
                     <template x-if="detail?.is_admin">
                         <button type="button" @click="openEdit(detail)" class="px-4 py-2 text-sm font-medium rounded-lg border border-indigo-500 text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors">Editar</button>
                     </template>
                     <button type="button" @click="showDetail = false" class="px-4 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">Fechar</button>
                 </div>
+            </div>
+        </div>
+
+        {{-- MODAL REGISTRAR DEVOLUÇÃO --}}
+        <div x-show="devolverTarget !== null"
+             x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60" style="display:none">
+            <div class="absolute inset-0" @click="devolverTarget = null"></div>
+            <div x-show="devolverTarget !== null"
+                 x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                 x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+                 class="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-2xl">
+                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">↩ Registrar Devolução</h3>
+                        <p class="text-xs text-gray-500 mt-0.5" x-text="devolverTarget?.employee + ' — Responsabilidade #' + devolverTarget?.id"></p>
+                    </div>
+                    <button @click="devolverTarget = null" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+                {{-- mini resumo --}}
+                <div class="mx-6 mt-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg text-sm grid grid-cols-2 gap-2">
+                    <div><span class="text-gray-500">Funcionário</span><div class="font-medium text-gray-800 dark:text-gray-200 mt-0.5" x-text="devolverTarget?.employee"></div></div>
+                    <div><span class="text-gray-500">Data de Entrega</span><div class="font-medium text-gray-800 dark:text-gray-200 mt-0.5" x-text="devolverTarget?.entrega"></div></div>
+                    <div class="col-span-2"><span class="text-gray-500">Patrimônio(s)</span><div class="font-mono text-xs font-medium text-gray-800 dark:text-gray-200 mt-0.5" x-text="devolverTarget?.assets_label"></div></div>
+                </div>
+                <form method="POST" :action="devolverTarget?.url_devolver" class="px-6 pb-6 pt-4 space-y-4">
+                    @csrf
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Data de Devolução <span class="text-red-500">*</span></label>
+                        <input type="date" name="data_devolucao" required
+                               :max="new Date().toISOString().slice(0,10)"
+                               :min="devolverTarget?.entrega_raw ?? ''"
+                               class="block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Observações <span class="text-gray-400 text-xs">(opcional)</span></label>
+                        <textarea name="observacao_devolucao" rows="3" placeholder="Estado do equipamento, motivo da devolução…"
+                                  class="block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm resize-none"></textarea>
+                    </div>
+                    <div class="flex justify-end gap-3 pt-1">
+                        <button type="button" @click="devolverTarget = null" class="px-4 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">Cancelar</button>
+                        <button type="submit" class="px-5 py-2 text-sm font-medium rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition-colors">Confirmar Devolução</button>
+                    </div>
+                </form>
             </div>
         </div>
 
