@@ -38,6 +38,7 @@ atribuição a funcionários, abertura de chamados e geração de termos de resp
 | Funcionários        | CRUD com vínculo opcional a usuário do sistema                |
 | Departamentos       | Organização de funcionários por setor                         |
 | Gestores            | Cadastro de gestores vinculados a departamentos               |
+| Administradores     | Cadastro de novos admins do sistema (somente admin)           |
 | Chamados            | Fluxo de solicitação e aprovação de patrimônios               |
 | Responsabilidades   | Registro formal de entrega com geração de PDF                 |
 | Dashboard           | KPIs + gráficos adaptados por perfil (Chart.js)               |
@@ -103,11 +104,12 @@ O controle de acesso é implementado via coluna `role` na tabela `users` e o mid
 
 | Módulo                                   | Admin | Gestor         | Funcionário |
 |------------------------------------------|-------|----------------|-------------|
-| Dashboard                                | ✅ Global | ✅ Departamento | ✅ Próprio |
-| Patrimônios (CRUD completo)              | ✅    | ✅              | —           |
-| Funcionários (CRUD completo)             | ✅    | ✅              | —           |
+| Dashboard                                | ✅ Global | ✅ Departamento | —           |
+| Patrimônios (CRUD completo)              | ✅    | ✅              | 👁 disponíveis |
+| Funcionários (CRUD completo)             | ✅    | ✅ próprio dept | —           |
 | Departamentos (CRUD completo)            | ✅    | 👁 index/show  | —           |
 | Gestores (CRUD)                          | ✅    | —              | —           |
+| Administradores (CRUD)                   | ✅    | —              | —           |
 | Chamados — abrir                         | ✅    | ✅              | ✅          |
 | Chamados — aprovar/negar/entregar        | ✅    | —              | —           |
 | Responsabilidades — visualizar/PDF       | ✅    | ✅              | —           |
@@ -189,6 +191,7 @@ app/
 │   │   ├── EmployeeController.php        ← CRUD de funcionários
 │   │   ├── DepartmentController.php      ← CRUD de departamentos
 │   │   ├── ManagerController.php         ← CRUD de gestores
+│   │   ├── AdminController.php           ← CRUD de administradores (admin-only)
 │   │   ├── TicketController.php          ← Fluxo de chamados + ações
 │   │   ├── ResponsibilityController.php  ← CRUD + geração de PDF
 │   │   └── ProfileController.php         ← Breeze (perfil do usuário)
@@ -202,7 +205,8 @@ app/
 │       ├── StoreTicketRequest.php / UpdateTicketRequest.php
 │       ├── StoreResponsibilityRequest.php / UpdateResponsibilityRequest.php
 │       ├── StoreManagerRequest.php / UpdateManagerRequest.php
-│       └── StoreDepartmentRequest.php / UpdateDepartmentRequest.php
+│       ├── StoreDepartmentRequest.php / UpdateDepartmentRequest.php
+│       └── StoreAdminRequest.php / UpdateAdminRequest.php
 │
 ├── Models/
 │   ├── User.php             ← role, isAdmin(), isManager(), isEmployee(), isAdminOrManager()
@@ -224,6 +228,7 @@ resources/views/
 ├── employees/       index, create, edit, show
 ├── departments/     index, show, create, edit
 ├── managers/        index, create, edit
+├── admins/          index  (criar/editar/excluir via modais)
 ├── tickets/         index, create, show
 └── responsibilities/ index, create, edit, show, pdf
 
@@ -245,14 +250,14 @@ database/seeders/
 - **Status possíveis:** `disponivel` · `em_uso` · `manutencao`
 - O status é atualizado automaticamente para `em_uso` ao criar uma responsabilidade
 - O status volta para `disponivel` ao registrar a `data_devolucao`
-- **Acesso:** Admin e Gestor (CRUD completo)
+- **Acesso:** Admin e Gestor (CRUD completo) · Funcionário (somente listagem de disponíveis)
 
 ### Funcionários (`/employees`)
 
 - Podem ser vinculados a um usuário do sistema via `user_id`
 - Vinculados a departamentos via `departamento_id`
 - Funcionários vinculados enxergam apenas seus próprios chamados
-- **Acesso:** Admin e Gestor (CRUD completo)
+- **Acesso:** Admin (CRUD completo) · Gestor (CRUD restrito ao próprio departamento)
 
 ### Departamentos (`/departments`)
 
@@ -262,6 +267,13 @@ database/seeders/
 ### Gestores (`/managers`)
 
 - Usuários com perfil `manager` vinculados a um departamento
+- **Acesso:** somente Admin
+
+### Administradores (`/admins`)
+
+- Usuários com perfil `admin` — acesso total ao sistema
+- Não é possível remover a própria conta
+- Criar, editar e remover via modais inline (sem página separada)
 - **Acesso:** somente Admin
 
 ### Chamados (`/tickets`)
@@ -297,6 +309,8 @@ aberto → [negar]  → negado
 ---
 
 ## Dashboard por Perfil
+
+> O item **Dashboard** no menu lateral é exibido apenas para o **Admin**. Gestores e funcionários são redirecionados para `/tickets` após o login, mas o dashboard permanece acessível pela URL direta.
 
 ### Admin
 - KPIs globais: total de patrimônios, funcionários, chamados abertos, atribuições ativas
@@ -358,10 +372,10 @@ aberto → [negar]  → negado
 | Método | URI                                    | Nome                        | Acesso          |
 |--------|----------------------------------------|-----------------------------|-----------------|
 | GET    | `/dashboard`                           | `dashboard`                 | auth            |
-| GET    | `/assets`                              | `assets.index`              | admin, manager  |
+| GET    | `/assets`                              | `assets.index`              | auth (filtrado) |
 | GET    | `/assets/create`                       | `assets.create`             | admin, manager  |
 | POST   | `/assets`                              | `assets.store`              | admin, manager  |
-| GET    | `/assets/{id}`                         | `assets.show`               | admin, manager  |
+| GET    | `/assets/{id}`                         | `assets.show`               | auth            |
 | PATCH  | `/assets/{id}`                         | `assets.update`             | admin, manager  |
 | DELETE | `/assets/{id}`                         | `assets.destroy`            | admin, manager  |
 | GET    | `/employees`                           | `employees.index`           | admin, manager  |
@@ -374,6 +388,10 @@ aberto → [negar]  → negado
 | DELETE | `/departments/{id}`                    | `departments.destroy`       | admin           |
 | GET    | `/managers`                            | `managers.index`            | admin           |
 | *(+ CRUD completo)*                    |                             |                 |
+| GET    | `/admins`                              | `admins.index`              | admin           |
+| POST   | `/admins`                              | `admins.store`              | admin           |
+| PATCH  | `/admins/{id}`                         | `admins.update`             | admin           |
+| DELETE | `/admins/{id}`                         | `admins.destroy`            | admin           |
 | GET    | `/tickets`                             | `tickets.index`             | auth (filtrado) |
 | POST   | `/tickets`                             | `tickets.store`             | auth            |
 | PATCH  | `/tickets/{id}/aprovar`                | `tickets.aprovar`           | admin           |
@@ -491,3 +509,7 @@ O sistema utiliza a identidade visual da **LocarMais**:
 | Navbar sempre escura | Logo LocarMais (`escuro.png`) tem fundo escuro — navbar fixa em `bg-gray-900` garante legibilidade sempre |
 | `unique()` com tabela em português | Form Requests usam o nome real da tabela no BD (ex: `unique('patrimonios')`) |
 | JOINs com tabela em português | Queries raw no DashboardController referenciam nomes reais das tabelas |
+| Modais via Alpine.js `$dispatch` | Botões no `<x-slot name="header">` ficam fora do escopo `x-data`; `$dispatch` + listener `.window` resolvem a comunicação entre escopos |
+| Criação inline (modais) em vez de páginas separadas | Patrimônio, Funcionário, Departamento, Gestor, Responsabilidade e Admin são criados via modal na própria página de listagem, sem navegação extra |
+| Logo redireciona por perfil | Admin → `/dashboard`; Gestor/Funcionário → `/tickets` (página inicial relevante para cada perfil) |
+| Redirect pós-login por perfil | `AuthenticatedSessionController` envia admin para dashboard e demais perfis para tickets |
