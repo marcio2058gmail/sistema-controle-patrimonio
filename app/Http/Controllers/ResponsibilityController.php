@@ -10,13 +10,15 @@ use App\Models\Responsibility;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class ResponsibilityController extends Controller
 {
     public function index(): View
     {
-        $user  = auth()->user();
+        /** @var \App\Models\User $user */
+        $user  = Auth::user();
         $query = Responsibility::with(['employee', 'assets'])->latest();
 
         if (! $user->isAdmin()) {
@@ -65,7 +67,8 @@ class ResponsibilityController extends Controller
 
     public function show(Responsibility $responsibility): View
     {
-        $user = auth()->user();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
         if (! $user->isAdmin()) {
             abort_unless(
                 $responsibility->funcionario_id === $user->employee?->id,
@@ -170,7 +173,8 @@ class ResponsibilityController extends Controller
 
     public function gerarPdf(Responsibility $responsibility): Response
     {
-        $user = auth()->user();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
         if (! $user->isAdmin()) {
             abort_unless(
                 $responsibility->funcionario_id === $user->employee?->id && $responsibility->assinado,
