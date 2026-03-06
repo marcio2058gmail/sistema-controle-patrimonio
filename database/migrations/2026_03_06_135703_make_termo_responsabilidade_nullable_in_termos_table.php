@@ -17,7 +17,7 @@ return new class extends Migration
         });
 
         // Limpa textos genéricos do seeder para usar o modelo padrão do PDF
-        \DB::table('termos')->update(['termo_responsabilidade' => null]);
+        DB::table('termos')->update(['termo_responsabilidade' => null]);
     }
 
     /**
