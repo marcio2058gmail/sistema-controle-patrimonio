@@ -1,9 +1,8 @@
 <?php
 
-use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\TicketController;
-use App\Http\Controllers\ManagerController;
+use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EmployeeController;
@@ -22,6 +21,12 @@ Route::get('/', function () {
 Route::middleware('auth')->group(function () {
     Route::get('/companies/select', [CompanyController::class, 'select'])->name('companies.select');
     Route::post('/companies/switch', [CompanyController::class, 'switch'])->name('companies.switch');
+});
+
+// Gestão de usuários — admin e super_admin (company.select ignora super_admin automaticamente)
+Route::middleware(['auth', 'company.select', 'role:admin,super_admin'])->group(function () {
+    Route::resource('users', UserManagementController::class)
+        ->only(['index', 'store', 'update', 'destroy']);
 });
 
 // Gestão de empresas — super_admin apenas (sem company.select)
@@ -67,13 +72,6 @@ Route::middleware(['auth', 'company.select', 'role:admin,manager'])->group(funct
         Route::patch('/tickets/{ticket}/aprovar', [TicketController::class, 'aprovar'])->name('tickets.aprovar');
         Route::patch('/tickets/{ticket}/negar', [TicketController::class, 'negar'])->name('tickets.negar');
         Route::patch('/tickets/{ticket}/entregar', [TicketController::class, 'entregar'])->name('tickets.entregar');
-        Route::resource('managers', ManagerController::class)
-            ->parameters(['managers' => 'manager'])
-            ->except(['show']);
-
-        Route::resource('admins', AdminController::class)
-            ->parameters(['admins' => 'admin'])
-            ->only(['index', 'store', 'update', 'destroy']);
     });
 });
 

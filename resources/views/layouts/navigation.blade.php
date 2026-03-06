@@ -123,16 +123,6 @@
             <hr class="border-gray-700">
         </div>
 
-        {{-- Funcionários --}}
-        <a href="{{ route('employees.index') }}"
-            :title="sidebarCollapsed ? 'Funcionários' : ''"
-            class="{{ $linkBase }} {{ request()->routeIs('employees.*') ? $active : $inactive }}">
-            <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
-            </svg>
-            <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate nav-label">Funcionários</span>
-        </a>
-
         {{-- Departamentos (somente admin) --}}
         @if(auth()->user()->isAdmin())
         <a href="{{ route('departments.index') }}"
@@ -157,25 +147,15 @@
         </a>
         @endif
 
-        @if(auth()->user()->isAdmin())
-        {{-- Gestores --}}
-        <a href="{{ route('managers.index') }}"
-            :title="sidebarCollapsed ? 'Gestores' : ''"
-            class="{{ $linkBase }} {{ request()->routeIs('managers.*') ? $active : $inactive }}">
+        @if(auth()->user()->isAdmin() || auth()->user()->isSuperAdmin())
+        {{-- Usuários --}}
+        <a href="{{ route('users.index') }}"
+            :title="sidebarCollapsed ? 'Usuários' : ''"
+            class="{{ $linkBase }} {{ request()->routeIs('users.*') ? $active : $inactive }}">
             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
-            <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate nav-label">Gestores</span>
-        </a>
-
-        {{-- Administradores --}}
-        <a href="{{ route('admins.index') }}"
-            :title="sidebarCollapsed ? 'Administradores' : ''"
-            class="{{ $linkBase }} {{ request()->routeIs('admins.*') ? $active : $inactive }}">
-            <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-            </svg>
-            <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate nav-label">Administradores</span>
+            <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate nav-label">Usuários</span>
         </a>
         @endif
 

@@ -53,6 +53,20 @@
                         <x-input-error :messages="$errors->get('status')" class="mt-1" />
                     </div>
 
+                    @if(auth()->user()->isSuperAdmin())
+                    <div>
+                        <x-input-label for="empresa_id" value="Empresa *" />
+                        <select id="empresa_id" name="empresa_id" required
+                            class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm focus:ring focus:ring-indigo-300">
+                            <option value="">— selecione —</option>
+                            @foreach($companies as $co)
+                                <option value="{{ $co->id }}" {{ old('empresa_id', $asset->empresa_id) == $co->id ? 'selected' : '' }}>{{ $co->nome }}</option>
+                            @endforeach
+                        </select>
+                        <x-input-error :messages="$errors->get('empresa_id')" class="mt-1" />
+                    </div>
+                    @endif
+
                     <div class="flex justify-end gap-3 pt-2">
                         <a href="{{ route('assets.index') }}"
                            class="px-4 py-2 text-sm rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50">Cancelar</a>
