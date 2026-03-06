@@ -170,13 +170,13 @@
                 <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/60 rounded-b-2xl shrink-0 space-y-2">
                     {{-- Botão de devolução em destaque (admin only, só quando ativo) --}}
                     @if(auth()->user()->isAdmin())
-                    <div x-show="!detail?.devolucao" style="display:none">
-                        <button type="button" @click="openDevolver(detail)"
-                            class="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition-colors">
-                            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
-                            Registrar Devolução
-                        </button>
-                    </div>
+                    <button type="button"
+                        x-show="!detail?.devolucao"
+                        @click="openDevolver(detail)"
+                        class="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition-colors">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+                        Registrar Devolução
+                    </button>
                     @endif
                     {{-- Ações secundárias --}}
                     <div class="flex justify-end gap-2">
