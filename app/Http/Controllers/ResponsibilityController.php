@@ -182,9 +182,11 @@ class ResponsibilityController extends Controller
             );
         }
 
-        $responsibility->load(['employee', 'assets']);
+        $responsibility->load(['employee.company', 'employee.department', 'assets']);
 
-        $pdf = Pdf::loadView('responsibilities.pdf', compact('responsibility'))
+        $company = $responsibility->employee->company;
+
+        $pdf = Pdf::loadView('responsibilities.pdf', compact('responsibility', 'company'))
             ->setPaper('a4', 'portrait');
 
         $nomeArquivo = "termo-responsabilidade-{$responsibility->id}.pdf";
