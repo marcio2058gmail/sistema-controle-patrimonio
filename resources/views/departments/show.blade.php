@@ -72,7 +72,8 @@
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                         @foreach($employeesWithAssets as $employee)
-                            @foreach($employee->responsabilidades as $resp)
+                            @foreach($employee->responsibilities as $resp)
+                                @foreach($resp->assets as $asset)
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-750">
                                 <td class="px-6 py-3 font-medium text-gray-800 dark:text-gray-200">
                                     <a href="{{ route('employees.show', $employee) }}" class="hover:underline text-indigo-600">
@@ -81,13 +82,14 @@
                                 </td>
                                 <td class="px-6 py-3 text-gray-500">{{ $employee->cargo ?? '—' }}</td>
                                 <td class="px-6 py-3 font-mono text-gray-700 dark:text-gray-300">
-                                    <a href="{{ route('assets.show', $resp->patrimonio) }}" class="hover:underline text-blue-600">
-                                        {{ $resp->patrimonio->codigo_patrimonio }}
+                                    <a href="{{ route('assets.show', $asset) }}" class="hover:underline text-blue-600">
+                                        {{ $asset->codigo_patrimonio }}
                                     </a>
                                 </td>
-                                <td class="px-6 py-3 text-gray-500 max-w-xs truncate">{{ $resp->patrimonio->descricao }}</td>
-                                <td class="px-6 py-3 text-gray-500">{{ $resp->data_entrega->format('d/m/Y') }}</td>
+                                <td class="px-6 py-3 text-gray-500 max-w-xs truncate">{{ $asset->descricao }}</td>
+                                <td class="px-6 py-3 text-gray-500">{{ $resp->data_entrega?->format('d/m/Y') ?? '—' }}</td>
                             </tr>
+                                @endforeach
                             @endforeach
                         @endforeach
                     </tbody>
@@ -101,7 +103,7 @@
                     <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Todos os Funcionários</h3>
                 </div>
 
-                @if($department->funcionarios->isEmpty())
+                @if($department->employees->isEmpty())
                     <p class="text-center text-gray-400 text-sm py-8">Nenhum funcionário neste departamento.</p>
                 @else
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
@@ -115,15 +117,15 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                        @foreach($department->funcionarios as $employee)
+                        @foreach($department->employees as $employee)
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-750">
                             <td class="px-6 py-3 font-medium text-gray-800 dark:text-gray-200">{{ $employee->nome }}</td>
                             <td class="px-6 py-3 text-gray-500">{{ $employee->email }}</td>
                             <td class="px-6 py-3 text-gray-500">{{ $employee->cargo ?? '—' }}</td>
                             <td class="px-6 py-3">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                    {{ $employee->responsabilidades->count() > 0 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-gray-100 text-gray-500' }}">
-                                    {{ $employee->responsabilidades->count() }}
+                                    {{ $employee->responsibilities->count() > 0 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-gray-100 text-gray-500' }}">
+                                    {{ $employee->responsibilities->count() }}
                                 </span>
                             </td>
                             <td class="px-6 py-3 text-right">

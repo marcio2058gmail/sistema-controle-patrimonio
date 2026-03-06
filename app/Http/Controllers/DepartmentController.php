@@ -44,7 +44,7 @@ class DepartmentController extends Controller
     public function show(Department $department): View
     {
         $department->load([
-            'employees.responsibilities' => fn ($q) => $q->whereNull('data_devolucao')->with('asset'),
+            'employees.responsibilities' => fn ($q) => $q->whereNull('data_devolucao')->with('assets'),
         ]);
 
         // Estatísticas do departamento
