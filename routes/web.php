@@ -84,6 +84,8 @@ Route::middleware(['auth', 'company.select'])->group(function () {
         ->name('responsibilities.pdf');
     Route::post('/responsibilities/{responsibility}/assinar', [ResponsibilityController::class, 'assinar'])
         ->name('responsibilities.assinar');
+    Route::post('/responsibilities/{responsibility}/devolver', [ResponsibilityController::class, 'devolver'])
+        ->name('responsibilities.devolver');
 });
 
 require __DIR__.'/auth.php';

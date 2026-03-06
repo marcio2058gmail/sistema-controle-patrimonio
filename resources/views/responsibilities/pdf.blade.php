@@ -215,6 +215,25 @@ A inobservância destas cláusulas poderá acarretar as sanções previstas na l
         <div class="declaration">{{ $textoTermo }}</div>
     </div>
 
+    {{-- ======================== DEVOLUÇÃO ======================== --}}
+    @if($responsibility->data_devolucao)
+    <div class="section">
+        <div class="section-title">Registro de Devolução</div>
+        <table class="info-table">
+            <tr>
+                <td style="width:30%">
+                    <span class="label">Data de Devolução</span>
+                    <span class="value">{{ $responsibility->data_devolucao->format('d/m/Y') }}</span>
+                </td>
+                <td style="width:70%">
+                    <span class="label">Observações</span>
+                    <span class="value" style="white-space:pre-line">{{ $responsibility->observacao_devolucao ?: '—' }}</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+    @endif
+
     {{-- ======================== LOCAL E DATA ======================== --}}
     <div class="sig-date-line">
         _____________________________, {{ now()->isoFormat('D [de] MMMM [de] Y') }}

@@ -9,7 +9,13 @@
                    class="bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium px-4 py-2 rounded-lg">
                     📄 Baixar PDF
                 </a>
-                @if(auth()->user()->role === 'admin')
+                @if(auth()->user()->isAdmin())
+                    @if(!$responsibility->data_devolucao)
+                    <button type="button" @click="modalDevolucao = true"
+                        class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+                        ↩ Registrar Devolução
+                    </button>
+                    @endif
                 <a href="{{ route('responsibilities.edit', $responsibility) }}"
                    class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg">
                     Editar
@@ -20,7 +26,7 @@
     </x-slot>
 
     <div class="py-8">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6" x-data="{ modalDevolucao: {{ $errors->hasAny(['data_devolucao','observacao_devolucao']) ? 'true' : 'false' }} }">
             <x-alert />
 
             {{-- Informações gerais --}}
@@ -115,6 +121,25 @@
                     @if($responsibility->assinado_ip) &mdash; IP: {{ $responsibility->assinado_ip }} @endif
                 </p>
                 @endif
+            </div>
+            @endif
+
+            {{-- Devolução registrada --}}
+            @if($responsibility->data_devolucao)
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-6 border-l-4 border-emerald-500">
+                <h3 class="text-sm font-semibold text-emerald-600 uppercase tracking-wide mb-3">✓ Devolução Registrada</h3>
+                <dl class="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                        <dt class="text-gray-500">Data de Devolução</dt>
+                        <dd class="font-medium text-gray-800 dark:text-gray-200">{{ $responsibility->data_devolucao->format('d/m/Y') }}</dd>
+                    </div>
+                    @if($responsibility->observacao_devolucao)
+                    <div class="col-span-2">
+                        <dt class="text-gray-500">Observações</dt>
+                        <dd class="text-gray-800 dark:text-gray-200 whitespace-pre-line mt-1">{{ $responsibility->observacao_devolucao }}</dd>
+                    </div>
+                    @endif
+                </dl>
             </div>
             @endif
 
@@ -215,4 +240,78 @@
             @endif
         </div>
     </div>
+
+    {{-- ==================== MODAL REGISTRAR DEVOLUÇÃO ==================== --}}
+    @if(auth()->user()->isAdmin() && !$responsibility->data_devolucao)
+    <div x-show="modalDevolucao"
+         x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60"
+         style="display:none">
+        <div class="absolute inset-0" @click="modalDevolucao = false"></div>
+        <div x-show="modalDevolucao"
+             x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+             class="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-2xl">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">Registrar Devolução</h3>
+                <button @click="modalDevolucao = false" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <form action="{{ route('responsibilities.devolver', $responsibility) }}" method="POST" class="px-6 py-5 space-y-4">
+                @csrf
+
+                {{-- Resumo --}}
+                <div class="bg-gray-50 dark:bg-gray-700 rounded-lg px-4 py-3 text-sm space-y-1">
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Funcionário</span>
+                        <span class="font-medium text-gray-800 dark:text-gray-200">{{ $responsibility->employee->nome }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Data de entrega</span>
+                        <span class="font-medium text-gray-800 dark:text-gray-200">{{ $responsibility->data_entrega->format('d/m/Y') }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Equipamentos</span>
+                        <span class="font-medium text-gray-800 dark:text-gray-200">{{ $responsibility->assets->count() }}</span>
+                    </div>
+                </div>
+
+                {{-- Data de devolução --}}
+                <div>
+                    <x-input-label for="data_devolucao" value="Data de Devolução *" />
+                    <x-text-input id="data_devolucao" name="data_devolucao" type="date" class="mt-1 block w-full"
+                        :value="old('data_devolucao', date('Y-m-d'))"
+                        min="{{ $responsibility->data_entrega->format('Y-m-d') }}"
+                        max="{{ date('Y-m-d') }}"
+                        required />
+                    <x-input-error :messages="$errors->get('data_devolucao')" class="mt-1" />
+                </div>
+
+                {{-- Observações --}}
+                <div>
+                    <x-input-label for="observacao_devolucao" value="Observações" />
+                    <textarea id="observacao_devolucao" name="observacao_devolucao" rows="3"
+                        placeholder="Estado do equipamento, avarias, notas da devolução..."
+                        class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300 resize-none">{{ old('observacao_devolucao') }}</textarea>
+                    <x-input-error :messages="$errors->get('observacao_devolucao')" class="mt-1" />
+                </div>
+
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" @click="modalDevolucao = false"
+                        class="px-4 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                        class="px-5 py-2 text-sm font-medium rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition-colors">
+                        Confirmar Devolução
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    @endif
+
 </x-app-layout>

@@ -14,6 +14,7 @@ class Responsibility extends Model
         'funcionario_id',
         'data_entrega',
         'data_devolucao',
+        'observacao_devolucao',
         'termo_responsabilidade',
         'assinado',
         'assinatura_base64',

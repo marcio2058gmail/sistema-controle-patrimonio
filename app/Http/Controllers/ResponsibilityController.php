@@ -75,7 +75,7 @@ class ResponsibilityController extends Controller
                 403
             );
         }
-        $responsibility->load(['employee', 'assets']);
+        $responsibility->load(['employee.company', 'employee.department', 'assets']);
         return view('responsibilities.show', compact('responsibility'));
     }
 
@@ -169,6 +169,42 @@ class ResponsibilityController extends Controller
 
         return redirect()->route('responsibilities.show', $responsibility)
             ->with('sucesso', 'Termo assinado com sucesso! Agora você pode baixar o PDF.');
+    }
+
+    public function devolver(\Illuminate\Http\Request $request, Responsibility $responsibility): RedirectResponse
+    {
+        abort_unless($request->user()->isAdmin(), 403);
+        abort_if($responsibility->data_devolucao !== null, 422, 'Este termo já possui devolução registrada.');
+
+        $request->validate([
+            'data_devolucao'      => ['required', 'date', 'after_or_equal:' . $responsibility->data_entrega->toDateString(), 'before_or_equal:today'],
+            'observacao_devolucao' => ['nullable', 'string', 'max:1000'],
+        ], [
+            'data_devolucao.required'          => 'A data de devolução é obrigatória.',
+            'data_devolucao.after_or_equal'    => 'A data de devolução deve ser igual ou posterior à data de entrega (' . $responsibility->data_entrega->format('d/m/Y') . ').',
+            'data_devolucao.before_or_equal'   => 'A data de devolução não pode ser futura.',
+        ]);
+
+        $responsibility->update([
+            'data_devolucao'       => $request->data_devolucao,
+            'observacao_devolucao' => $request->observacao_devolucao,
+        ]);
+
+        // Libera os equipamentos que não estão em outro termo ativo
+        $responsibility->load('assets');
+        foreach ($responsibility->assets as $asset) {
+            $outroAtivo = $asset->responsibilities()
+                ->where('termos.id', '!=', $responsibility->id)
+                ->whereNull('data_devolucao')
+                ->exists();
+
+            if (! $outroAtivo) {
+                $asset->update(['status' => Asset::STATUS_AVAILABLE]);
+            }
+        }
+
+        return redirect()->route('responsibilities.show', $responsibility)
+            ->with('sucesso', 'Devolução registrada com sucesso. Equipamento(s) liberado(s).');
     }
 
     public function gerarPdf(Responsibility $responsibility): Response
