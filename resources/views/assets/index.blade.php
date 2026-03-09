@@ -50,7 +50,30 @@
                         </thead>
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                             @forelse($assets as $asset)
-                            @php $ad = ['id'=>$asset->id,'code'=>$asset->codigo_patrimonio,'descricao'=>$asset->descricao,'modelo'=>$asset->modelo,'serie'=>$asset->numero_serie,'status'=>$asset->status,'created'=>$asset->created_at->format('d/m/Y'),'url_edit'=>auth()->user()->isAdmin()?route('assets.edit',$asset):'','url_update'=>auth()->user()->isAdmin()?route('assets.update',$asset):'','url_destroy'=>auth()->user()->isAdmin()?route('assets.destroy',$asset):'','is_admin'=>auth()->user()->isAdmin()]; @endphp
+                            @php $ad = [
+                                'id'           => $asset->id,
+                                'code'         => $asset->codigo_patrimonio,
+                                'descricao'    => $asset->descricao,
+                                'modelo'       => $asset->modelo,
+                                'serie'        => $asset->numero_serie,
+                                'status'       => $asset->status,
+                                'created'      => $asset->created_at->format('d/m/Y'),
+                                'valor_aquisicao'    => $asset->valor_aquisicao ? number_format($asset->valor_aquisicao, 2, ',', '.') : null,
+                                'data_aquisicao'     => $asset->data_aquisicao?->format('d/m/Y'),
+                                'data_aquisicao_raw' => $asset->data_aquisicao?->format('Y-m-d'),
+                                'fornecedor'         => $asset->fornecedor,
+                                'numero_nota_fiscal' => $asset->numero_nota_fiscal,
+                                'garantia_ate'       => $asset->garantia_ate?->format('d/m/Y'),
+                                'garantia_ate_raw'   => $asset->garantia_ate?->format('Y-m-d'),
+                                'garantia_vencida'   => $asset->garantia_ate?->isPast(),
+                                'valor_atual'        => $asset->valor_atual ? number_format($asset->valor_atual, 2, ',', '.') : null,
+                                'valor_aquisicao_raw'=> $asset->valor_aquisicao,
+                                'valor_atual_raw'    => $asset->valor_atual,
+                                'url_edit'     => auth()->user()->isAdmin() ? route('assets.edit', $asset) : '',
+                                'url_update'   => auth()->user()->isAdmin() ? route('assets.update', $asset) : '',
+                                'url_destroy'  => auth()->user()->isAdmin() ? route('assets.destroy', $asset) : '',
+                                'is_admin'     => auth()->user()->isAdmin(),
+                            ]; @endphp
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-750">
                                 <td class="px-6 py-3 font-mono text-gray-700 dark:text-gray-300">{{ $asset->codigo_patrimonio }}</td>
                                 <td class="px-6 py-3 text-gray-800 dark:text-gray-200">{{ $asset->descricao }}</td>
@@ -84,7 +107,7 @@
             <div x-show="showDetail"
                  x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
                  x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
-                 class="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-2xl flex flex-col max-h-[80vh]">
+                 class="relative w-full max-w-lg bg-white dark:bg-gray-800 rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
                 <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700 shrink-0">
                     <div class="flex items-center gap-3">
                         <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 font-mono" x-text="detail?.code"></h3>
@@ -101,6 +124,26 @@
                         <div><dt class="text-gray-500">Nº de Série</dt><dd class="mt-0.5 text-gray-800 dark:text-gray-200" x-text="detail?.serie || '—'"></dd></div>
                         <div><dt class="text-gray-500">Cadastrado em</dt><dd class="mt-0.5 text-gray-800 dark:text-gray-200" x-text="detail?.created"></dd></div>
                     </dl>
+
+                    {{-- Dados financeiros (apenas admin) --}}
+                    @if(auth()->user()->isAdmin())
+                    <div class="mt-5 pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Aquisição &amp; Valor</p>
+                        <dl class="grid grid-cols-2 gap-x-6 gap-y-4 text-sm">
+                            <div><dt class="text-gray-500">Valor de Aquisição</dt><dd class="mt-0.5 font-medium text-gray-800 dark:text-gray-200" x-text="detail?.valor_aquisicao ? 'R$ ' + detail.valor_aquisicao : '—'"></dd></div>
+                            <div><dt class="text-gray-500">Data de Aquisição</dt><dd class="mt-0.5 text-gray-800 dark:text-gray-200" x-text="detail?.data_aquisicao || '—'"></dd></div>
+                            <div><dt class="text-gray-500">Fornecedor</dt><dd class="mt-0.5 text-gray-800 dark:text-gray-200" x-text="detail?.fornecedor || '—'"></dd></div>
+                            <div><dt class="text-gray-500">Nota Fiscal</dt><dd class="mt-0.5 text-gray-800 dark:text-gray-200" x-text="detail?.numero_nota_fiscal || '—'"></dd></div>
+                            <div>
+                                <dt class="text-gray-500">Garantia Até</dt>
+                                <dd class="mt-0.5" :class="detail?.garantia_vencida ? 'text-red-500 font-medium' : 'text-gray-800 dark:text-gray-200'">
+                                    <span x-text="detail?.garantia_ate ? detail.garantia_ate + (detail.garantia_vencida ? ' (vencida)' : '') : '—'"></span>
+                                </dd>
+                            </div>
+                            <div><dt class="text-gray-500">Valor Atual</dt><dd class="mt-0.5 font-medium text-gray-800 dark:text-gray-200" x-text="detail?.valor_atual ? 'R$ ' + detail.valor_atual : '—'"></dd></div>
+                        </dl>
+                    </div>
+                    @endif
                 </div>
                 <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/60 rounded-b-2xl shrink-0">
                     <template x-if="detail?.is_admin">
@@ -120,7 +163,7 @@
             <div x-show="editTarget !== null"
                  x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
                  x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
-                 class="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-2xl flex flex-col max-h-[80vh]">
+                 class="relative w-full max-w-lg bg-white dark:bg-gray-800 rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
                 <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700 shrink-0">
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100" x-text="'Editar — ' + (editTarget?.code ?? '')"></h3>
                     <button @click="editTarget = null" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
@@ -156,6 +199,41 @@
                                     <option value="{{ $value }}">{{ $label }}</option>
                                     @endforeach
                                 </select>
+                            </div>
+
+                            {{-- Aquisição & Valor --}}
+                            <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Aquisição &amp; Valor</p>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Valor de Aquisição (R$)</label>
+                                        <input type="number" step="0.01" min="0" name="valor_aquisicao" :value="editTarget.valor_aquisicao_raw" placeholder="0,00" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Data de Aquisição</label>
+                                        <input type="date" name="data_aquisicao" :value="editTarget.data_aquisicao_raw" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-3 mt-3">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Fornecedor</label>
+                                        <input type="text" name="fornecedor" :value="editTarget.fornecedor" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nota Fiscal</label>
+                                        <input type="text" name="numero_nota_fiscal" :value="editTarget.numero_nota_fiscal" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-3 mt-3">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Garantia Até</label>
+                                        <input type="date" name="garantia_ate" :value="editTarget.garantia_ate_raw" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Valor Atual (R$)</label>
+                                        <input type="number" step="0.01" min="0" name="valor_atual" :value="editTarget.valor_atual_raw" placeholder="0,00" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/60 rounded-b-2xl shrink-0">
@@ -204,7 +282,7 @@
             <div x-show="modalOpen"
                  x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
                  x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
-                 class="relative w-full max-w-sm bg-white dark:bg-gray-800 rounded-2xl shadow-2xl flex flex-col max-h-[80vh]">
+                 class="relative w-full max-w-lg bg-white dark:bg-gray-800 rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
                 <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700 shrink-0">
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">Novo Patrimônio</h3>
                     <button @click="modalOpen = false" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
@@ -244,6 +322,47 @@
                                 @endforeach
                             </select>
                             <x-input-error :messages="$errors->get('status')" class="mt-1" />
+                        </div>
+
+                        {{-- Aquisição & Valor --}}
+                        <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Aquisição &amp; Valor</p>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <x-input-label for="valor_aquisicao" value="Valor de Aquisição (R$)" />
+                                    <x-text-input id="valor_aquisicao" name="valor_aquisicao" type="number" step="0.01" min="0" class="mt-1 block w-full" :value="old('valor_aquisicao')" placeholder="0,00" />
+                                    <x-input-error :messages="$errors->get('valor_aquisicao')" class="mt-1" />
+                                </div>
+                                <div>
+                                    <x-input-label for="data_aquisicao" value="Data de Aquisição" />
+                                    <x-text-input id="data_aquisicao" name="data_aquisicao" type="date" class="mt-1 block w-full" :value="old('data_aquisicao')" />
+                                    <x-input-error :messages="$errors->get('data_aquisicao')" class="mt-1" />
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 mt-3">
+                                <div>
+                                    <x-input-label for="fornecedor" value="Fornecedor" />
+                                    <x-text-input id="fornecedor" name="fornecedor" type="text" class="mt-1 block w-full" :value="old('fornecedor')" />
+                                    <x-input-error :messages="$errors->get('fornecedor')" class="mt-1" />
+                                </div>
+                                <div>
+                                    <x-input-label for="numero_nota_fiscal" value="Número da Nota Fiscal" />
+                                    <x-text-input id="numero_nota_fiscal" name="numero_nota_fiscal" type="text" class="mt-1 block w-full" :value="old('numero_nota_fiscal')" />
+                                    <x-input-error :messages="$errors->get('numero_nota_fiscal')" class="mt-1" />
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 mt-3">
+                                <div>
+                                    <x-input-label for="garantia_ate" value="Garantia Até" />
+                                    <x-text-input id="garantia_ate" name="garantia_ate" type="date" class="mt-1 block w-full" :value="old('garantia_ate')" />
+                                    <x-input-error :messages="$errors->get('garantia_ate')" class="mt-1" />
+                                </div>
+                                <div>
+                                    <x-input-label for="valor_atual" value="Valor Atual (R$)" />
+                                    <x-text-input id="valor_atual" name="valor_atual" type="number" step="0.01" min="0" class="mt-1 block w-full" :value="old('valor_atual')" placeholder="0,00" />
+                                    <x-input-error :messages="$errors->get('valor_atual')" class="mt-1" />
+                                </div>
+                            </div>
                         </div>
                     </form>
                 </div>
