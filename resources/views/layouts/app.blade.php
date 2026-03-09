@@ -49,7 +49,7 @@
     <body class="font-sans antialiased bg-gray-100 dark:bg-gray-900">
 
         {{-- Layout wrapper --}}
-        <div x-data="{ sidebarOpen: false, sidebarCollapsed: localStorage.getItem('sidebarCollapsed') === 'true' }"
+        <div x-data="{ sidebarOpen: false, sidebarCollapsed: localStorage.getItem('sidebarCollapsed') === 'true', sidebarHovered: false }"
              x-init="
                 $watch('sidebarCollapsed', v => localStorage.setItem('sidebarCollapsed', v));
                 $nextTick(() => {

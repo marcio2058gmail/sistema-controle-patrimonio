@@ -1,35 +1,38 @@
 {{-- Sidebar --}}
 <aside
     id="app-sidebar"
+    @mouseenter="if(sidebarCollapsed) sidebarHovered = true"
+    @mouseleave="sidebarHovered = false"
     :class="{
         'translate-x-0': sidebarOpen,
         '-translate-x-full': !sidebarOpen,
         'sm:translate-x-0': true,
-        'w-64': !sidebarCollapsed,
-        'w-16': sidebarCollapsed
+        'w-64': !sidebarCollapsed || sidebarHovered,
+        'w-16': sidebarCollapsed && !sidebarHovered,
+        'shadow-2xl': sidebarCollapsed && sidebarHovered
     }"
     class="fixed inset-y-0 left-0 z-30 bg-gray-900 flex flex-col w-64 duration-200 ease-in-out"
 >
     {{-- Logo + botão colapso --}}
     <div class="flex items-center justify-between h-16 border-b border-gray-700 shrink-0 overflow-hidden"
-         :class="sidebarCollapsed ? 'px-1' : 'px-3'">
+         :class="(sidebarCollapsed && !sidebarHovered) ? 'px-1' : 'px-3'">
         <a href="{{ auth()->user()->isAdmin() ? route('dashboard') : route('tickets.index') }}"
            class="flex items-center gap-2 overflow-hidden">
-            {{-- Ícone: visível apenas colapsado --}}
+            {{-- Ícone: visível apenas colapsado sem hover --}}
             <img src="{{ asset('images/logo-icon.png') }}" alt="LocarMais"
-                 x-show="sidebarCollapsed"
+                 x-show="sidebarCollapsed && !sidebarHovered"
                  class="h-8 w-auto shrink-0 duration-200">
-            {{-- Logo completa: visível apenas expandido --}}
+            {{-- Logo completa: visível expandido ou em hover --}}
             <img id="app-logo"
                  src="{{ asset('images/logo-full.png') }}" alt="LocarMais"
-                 x-show="!sidebarCollapsed"
+                 x-show="!sidebarCollapsed || sidebarHovered"
                  class="h-8 w-auto shrink-0 duration-200">
         </a>
 
         {{-- Botão colapso (desktop) --}}
         <button @click="sidebarCollapsed = !sidebarCollapsed"
                 class="hidden sm:flex shrink-0 p-1 rounded text-gray-500 hover:text-white hover:bg-gray-800 transition-colors duration-150">
-            <svg class="h-4 w-4 transition-transform duration-200" :class="sidebarCollapsed ? 'rotate-180' : ''"
+            <svg class="h-4 w-4 transition-transform duration-200" :class="(sidebarCollapsed && !sidebarHovered) ? 'rotate-180' : ''"
                  fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>
             </svg>
@@ -55,7 +58,7 @@
         {{-- Indicador de empresa ativa --}}
         @php $empresaAtiva = auth()->user()->activeCompany(); @endphp
         @if($empresaAtiva || auth()->user()->isSuperAdmin())
-        <div x-show="!sidebarCollapsed" x-transition.opacity
+        <div x-show="!sidebarCollapsed || sidebarHovered" x-transition.opacity
              class="mx-1 mb-2 px-3 py-2 rounded-lg bg-gray-800 border border-gray-700">
             <p class="text-xs text-gray-500 uppercase tracking-wider font-medium mb-0.5">Empresa</p>
             <p class="text-xs text-gray-200 font-semibold truncate">
@@ -76,34 +79,34 @@
         {{-- Dashboard (somente admin) --}}
         @if(auth()->user()->isAdmin())
         <a href="{{ route('dashboard') }}"
-            :title="sidebarCollapsed ? 'Dashboard' : ''"
+            :title="(sidebarCollapsed && !sidebarHovered) ? 'Dashboard' : ''"
             class="{{ $linkBase }} {{ request()->routeIs('dashboard') ? $active : $inactive }}">
             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
             </svg>
-            <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate nav-label">Dashboard</span>
+            <span x-show="!sidebarCollapsed || sidebarHovered" x-transition.opacity class="truncate nav-label">Dashboard</span>
         </a>
         @endif
 
         {{-- Chamados --}}
         <a href="{{ route('tickets.index') }}"
-            :title="sidebarCollapsed ? 'Chamados' : ''"
+            :title="(sidebarCollapsed && !sidebarHovered) ? 'Chamados' : ''"
             class="{{ $linkBase }} {{ request()->routeIs('tickets.*') ? $active : $inactive }}">
             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
             </svg>
-            <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate nav-label">Chamados</span>
+            <span x-show="!sidebarCollapsed || sidebarHovered" x-transition.opacity class="truncate nav-label">Chamados</span>
         </a>
 
         @if(auth()->user()->isEmployee() || auth()->user()->isManager())
         {{-- Meus Termos (funcionário ou gestor com equipamentos) --}}
         <a href="{{ route('responsibilities.index') }}"
-            :title="sidebarCollapsed ? 'Meus Termos' : ''"
+            :title="(sidebarCollapsed && !sidebarHovered) ? 'Meus Termos' : ''"
             class="{{ $linkBase }} {{ request()->routeIs('responsibilities.*') ? $active : $inactive }}">
             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
-            <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate nav-label">Meus Termos</span>
+            <span x-show="!sidebarCollapsed || sidebarHovered" x-transition.opacity class="truncate nav-label">Meus Termos</span>
         </a>
         @endif
 
@@ -111,70 +114,70 @@
 
         {{-- Patrimônios --}}
         <a href="{{ route('assets.index') }}"
-            :title="sidebarCollapsed ? 'Patrimônios' : ''"
+            :title="(sidebarCollapsed && !sidebarHovered) ? 'Patrimônios' : ''"
             class="{{ $linkBase }} {{ request()->routeIs('assets.*') ? $active : $inactive }}">
             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
             </svg>
-            <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate nav-label">Patrimônios</span>
+            <span x-show="!sidebarCollapsed || sidebarHovered" x-transition.opacity class="truncate nav-label">Patrimônios</span>
         </a>
         @endif
 
         @if(auth()->user()->isAdminOrManager())
 
         {{-- Separador --}}
-        <div class="pt-3 pb-1 nav-label" x-show="!sidebarCollapsed" x-transition.opacity>
+        <div class="pt-3 pb-1 nav-label" x-show="!sidebarCollapsed || sidebarHovered" x-transition.opacity>
             <p class="px-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Gestão</p>
         </div>
-        <div class="pt-3 nav-sep-collapsed" x-show="sidebarCollapsed" x-transition.opacity>
+        <div class="pt-3 nav-sep-collapsed" x-show="sidebarCollapsed && !sidebarHovered" x-transition.opacity>
             <hr class="border-gray-700">
         </div>
 
         {{-- Departamentos (somente admin) --}}
         @if(auth()->user()->isAdmin())
         <a href="{{ route('departments.index') }}"
-            :title="sidebarCollapsed ? 'Departamentos' : ''"
+            :title="(sidebarCollapsed && !sidebarHovered) ? 'Departamentos' : ''"
             class="{{ $linkBase }} {{ request()->routeIs('departments.*') ? $active : $inactive }}">
             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
             </svg>
-            <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate nav-label">Departamentos</span>
+            <span x-show="!sidebarCollapsed || sidebarHovered" x-transition.opacity class="truncate nav-label">Departamentos</span>
         </a>
         @endif
 
         {{-- Responsabilidades (somente admin) --}}
         @if(auth()->user()->isAdmin())
         <a href="{{ route('responsibilities.index') }}"
-            :title="sidebarCollapsed ? 'Responsabilidades' : ''"
+            :title="(sidebarCollapsed && !sidebarHovered) ? 'Responsabilidades' : ''"
             class="{{ $linkBase }} {{ request()->routeIs('responsibilities.*') ? $active : $inactive }}">
             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
-            <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate nav-label">Responsabilidades</span>
+            <span x-show="!sidebarCollapsed || sidebarHovered" x-transition.opacity class="truncate nav-label">Responsabilidades</span>
         </a>
         @endif
 
         @if(auth()->user()->isAdmin() || auth()->user()->isSuperAdmin())
         {{-- Usuários --}}
         <a href="{{ route('users.index') }}"
-            :title="sidebarCollapsed ? 'Usuários' : ''"
+            :title="(sidebarCollapsed && !sidebarHovered) ? 'Usuários' : ''"
             class="{{ $linkBase }} {{ request()->routeIs('users.*') ? $active : $inactive }}">
             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
-            <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate nav-label">Usuários</span>
+            <span x-show="!sidebarCollapsed || sidebarHovered" x-transition.opacity class="truncate nav-label">Usuários</span>
         </a>
         @endif
 
         {{-- Empresas (super_admin) --}}
         @if(auth()->user()->isSuperAdmin())
         <a href="{{ route('companies.index') }}"
-            :title="sidebarCollapsed ? 'Empresas' : ''"
+            :title="(sidebarCollapsed && !sidebarHovered) ? 'Empresas' : ''"
             class="{{ $linkBase }} {{ request()->routeIs('companies.*') ? $active : $inactive }}">
             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/>
             </svg>
-            <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate nav-label">Empresas</span>
+            <span x-show="!sidebarCollapsed || sidebarHovered" x-transition.opacity class="truncate nav-label">Empresas</span>
         </a>
         @endif
 
@@ -187,7 +190,7 @@
 
         {{-- Toggle dark mode --}}
         <button onclick="toggleTheme()"
-            :title="sidebarCollapsed ? 'Alternar tema' : ''"
+            :title="(sidebarCollapsed && !sidebarHovered) ? 'Alternar tema' : ''"
             class="w-full flex items-center gap-3 px-2 py-2 rounded-lg text-sm text-gray-400 hover:bg-gray-800 hover:text-white transition-colors duration-150">
             <svg id="icon-sun" class="hidden h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m8.66-9H21M3 12H2m15.36-6.36-.71.71M6.34 17.66l-.71.71M17.66 17.66l.71.71M6.34 6.34l-.71-.71M12 5a7 7 0 100 14A7 7 0 0012 5z"/>
@@ -195,17 +198,17 @@
             <svg id="icon-moon" class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
             </svg>
-            <span x-show="!sidebarCollapsed" x-transition.opacity id="theme-label-mobile" class="nav-label">Modo escuro</span>
+            <span x-show="!sidebarCollapsed || sidebarHovered" x-transition.opacity id="theme-label-mobile" class="nav-label">Modo escuro</span>
         </button>
 
         {{-- Perfil --}}
         <a href="{{ route('profile.edit') }}"
-            :title="sidebarCollapsed ? '{{ Auth::user()->name }}' : ''"
+            :title="(sidebarCollapsed && !sidebarHovered) ? '{{ Auth::user()->name }}' : ''"
             class="{{ $linkBase }} text-gray-400 hover:bg-gray-800 hover:text-white">
             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
             </svg>
-            <span x-show="!sidebarCollapsed" x-transition.opacity class="truncate min-w-0 nav-label">
+            <span x-show="!sidebarCollapsed || sidebarHovered" x-transition.opacity class="truncate min-w-0 nav-label">
                 <span class="block truncate">{{ Auth::user()->name }}</span>
                 <span class="block text-xs text-gray-500 capitalize">{{ Auth::user()->role }}</span>
             </span>
@@ -215,12 +218,12 @@
         <form method="POST" action="{{ route('logout') }}">
             @csrf
             <button type="submit"
-                :title="sidebarCollapsed ? 'Sair' : ''"
+                :title="(sidebarCollapsed && !sidebarHovered) ? 'Sair' : ''"
                 class="w-full flex items-center gap-3 px-2 py-2 rounded-lg text-sm text-gray-400 hover:bg-red-900/40 hover:text-red-400 transition-colors duration-150">
                 <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                 </svg>
-                <span x-show="!sidebarCollapsed" x-transition.opacity class="nav-label">Sair</span>
+                <span x-show="!sidebarCollapsed || sidebarHovered" x-transition.opacity class="nav-label">Sair</span>
             </button>
         </form>
 
