@@ -12,7 +12,7 @@
 
 body{
     font-family: Arial, Helvetica, sans-serif;
-    font-size:11pt;
+    font-size:08pt;
     color:#000;
     line-height:1.6;
 }
@@ -52,7 +52,7 @@ header{
 
 .title{
     text-align:center;
-    font-size:15pt;
+    font-size:10pt;
     font-weight:bold;
     margin-top:10px;
     margin-bottom:25px;
@@ -151,15 +151,18 @@ CNPJ: {{ $company->cnpj }}
 </header>
 
 @php
-    $nomeColaborador = $responsibility->employee->nome;
+    $nomeColaborador  = $responsibility->employee->nome;
     $cargoColaborador = $responsibility->employee->cargo ?? '—';
     $cpfColaborador   = $responsibility->employee->user?->cpf ?? '—';
+    $rgColaborador    = $responsibility->employee->rg_numero ?? '—';
+    $ctpsNumero       = $responsibility->employee->ctps_numero ?? '—';
+    $ctpsSerie        = $responsibility->employee->ctps_serie ?? '—';
     $nomeEmpresa      = $company?->nome ?? 'EMPRESA';
     $cnpjEmpresa      = $company?->cnpj ?? null;
 @endphp
 
 <div class="title">
-TERMO DE RESPONSABILIDADE POR UTILIZAÇÃO DE EQUIPAMENTO CORPORATIVO
+<u>TERMO DE RESPONSABILIDADE POR UTILIZAÇÃO DE EQUIPAMENTO CORPORATIVO</u>
 </div>
 
 
@@ -168,39 +171,37 @@ TERMO DE RESPONSABILIDADE POR UTILIZAÇÃO DE EQUIPAMENTO CORPORATIVO
 Pelo presente TERMO DE RESPONSABILIDADE POR UTILIZAÇÃO DE EQUIPAMENTO CORPORATIVO, de um lado
 
 <strong>{{ $nomeEmpresa }}</strong>@if($cnpjEmpresa), inscrita no CNPJ nº {{ $cnpjEmpresa }}@endif,
-doravante denominada EMPRESA, e de outro lado
+com sede à Av. Pioneiro Alício Arantes Campolina, nº 2527, Jardim Canadá, na cidade de Maringá no Estado
+do Paraná, CEP: 87083-020, doravante denominada "EMPRESA", e de outro lado
 
 <strong>{{ $nomeColaborador }}</strong>,
-exercendo a função de <strong>{{ $cargoColaborador }}</strong>,
-CPF {{ $cpfColaborador }},
-
-doravante denominado COLABORADOR.
+exercendo a função de <strong>{{ $cargoColaborador }}</strong>, portador(a) da CTPS nº {{ $ctpsNumero }} série {{ $ctpsSerie }},
+da Cédula de Identidade RG nº {{ $rgColaborador }} e inscrito(a) no 
+CPF/MF sob nº {{ $cpfColaborador }}, doravante denominado <strong>COLABORADOR</strong>, tem entre si,
+justo e contratado o que a seguir especificam:
 
 </p>
-
-
 
 <div class="section-title">
 1. CLÁUSULA PRIMEIRA – DO OBJETO
 </div>
+1.1 O presente Termo tem como objetivo regular o uso do(s) equipamento(s) de propriedade da EMPRESA, cedido(s) ao COLABORADOR, acima qualificado,
+sendo recebido(s) pelo COLABORADOR em perfeito estado de conservação e funcionamento.<br>
+1.1.1 Caso o COLABORADOR não concorde com a CLÁUSULA 1.1 deverá alertar seu superior imediato antes da assinatura
+do presente, sob pena de ser constatado que o defeito/dano foi ocasionado pelo COLABORADOR.<br>
+1.2 O COLABORADOR declara que recebeu o(s) seguinte(s) equipamento(s) sob sua responsabilidade:<br>
 
-<p>
-O presente Termo tem como objetivo regular o uso do(s) equipamento(s) de propriedade da EMPRESA, cedido(s) ao COLABORADOR.
-</p>
-
-
-<div class="section-title">
-Equipamentos sob responsabilidade
-</div>
 
 <table>
 
 <thead>
 <tr>
 <th>Equipamento</th>
+<th>Marca</th>
 <th>Modelo</th>
-<th>Patrimônio</th>
-<th>Nº Série</th>
+<th>Etiqueta de Indentificação</th>
+<th>Data de Devolução</th>
+<th>Visto</th>
 </tr>
 </thead>
 
@@ -210,9 +211,11 @@ Equipamentos sob responsabilidade
 
 <tr>
 <td>{{ $asset->descricao }}</td>
+<td>{{ $asset->marca ?? '—' }}</td>
 <td>{{ $asset->modelo ?? '—' }}</td>
 <td>{{ $asset->codigo_patrimonio }}</td>
-<td>{{ $asset->numero_serie ?? '—' }}</td>
+<td>{{ $asset->data_devolucao?->format('d/m/Y') ?? '—' }}</td>
+<td>{{ $asset->visto ?? '—' }}</td>
 </tr>
 
 @endforeach
@@ -227,8 +230,9 @@ Equipamentos sob responsabilidade
 </div>
 
 <p>
-A utilização do equipamento destina-se exclusivamente às atividades profissionais do COLABORADOR.
-É vedado utilizar o equipamento para fins particulares ou acessar conteúdos ilegais.
+<u><strong>2.1 A utilização do(s) equipamento(s) se destina exclusivamente para fins de exercícios das atividades inerentes à função do COLABORADOR nas dependências da EMPRESA.</u></strong>
+2.2 É expressamente vedado(a):
+
 </p>
 
 
@@ -276,7 +280,7 @@ Este termo permanecerá válido enquanto durar o vínculo entre EMPRESA e COLABO
 @endif
 
 <p style="margin-top:30px">
-________________, {{ now()->isoFormat('D [de] MMMM [de] Y') }}
+MARINGÁ-PR, {{ now()->isoFormat('D [de] MMMM [de] Y') }}
 </p>
 
 

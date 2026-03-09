@@ -77,6 +77,9 @@
                                     'cpf'          => $user->cpf ?? '',
                                     'role'         => $user->role,
                                     'cargo'        => $user->employee?->cargo ?? '',
+                                    'rg_numero'    => $user->employee?->rg_numero ?? '',
+                                    'ctps_numero'  => $user->employee?->ctps_numero ?? '',
+                                    'ctps_serie'   => $user->employee?->ctps_serie ?? '',
                                     'dept_id'      => $user->employee?->departamento_id,
                                     'dept'         => $user->employee?->department?->nome ?? '',
                                     'empresa_id'   => $user->empresas->first()?->id ?? session('empresa_ativa_id'),
@@ -203,6 +206,30 @@
                             <x-input-error :messages="$errors->get('cpf')" class="mt-1" />
                         </div>
 
+                        {{-- RG, CTPS (somente manager/employee) --}}
+                        <div x-show="createRole !== 'admin'" x-transition class="grid grid-cols-3 gap-3">
+                            <div>
+                                <x-input-label for="c_rg" value="RG" />
+                                <x-text-input id="c_rg" name="rg_numero" type="text" class="mt-1 block w-full"
+                                    :value="old('rg_numero')" placeholder="00.000.000-0" />
+                                <x-input-error :messages="$errors->get('rg_numero')" class="mt-1" />
+                            </div>
+                            <div>
+                                <x-input-label for="c_ctps" value="CTPS nº" />
+                                <x-text-input id="c_ctps" name="ctps_numero" type="text" class="mt-1 block w-full"
+                                    :value="old('ctps_numero')" placeholder="0000000"
+                                    x-mask="9999999" />
+                                <x-input-error :messages="$errors->get('ctps_numero')" class="mt-1" />
+                            </div>
+                            <div>
+                                <x-input-label for="c_ctps_serie" value="Série" />
+                                <x-text-input id="c_ctps_serie" name="ctps_serie" type="text" class="mt-1 block w-full"
+                                    :value="old('ctps_serie')" placeholder="000-0"
+                                    x-mask="999-9" />
+                                <x-input-error :messages="$errors->get('ctps_serie')" class="mt-1" />
+                            </div>
+                        </div>
+
                         {{-- Empresa (somente super_admin) --}}
                         @if(auth()->user()->isSuperAdmin())
                         <div>
@@ -306,6 +333,30 @@
                                     placeholder="000.000.000-00"
                                     x-mask="999.999.999-99"
                                     class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300">
+                            </div>
+
+                            {{-- RG, CTPS (somente manager/employee) --}}
+                            <div x-show="editRole !== 'admin'" x-transition class="grid grid-cols-3 gap-3">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">RG</label>
+                                    <input type="text" name="rg_numero" :value="editTarget.rg_numero"
+                                        placeholder="00.000.000-0"
+                                        class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">CTPS nº</label>
+                                    <input type="text" name="ctps_numero" :value="editTarget.ctps_numero"
+                                        placeholder="0000000"
+                                        x-mask="9999999"
+                                        class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Série</label>
+                                    <input type="text" name="ctps_serie" :value="editTarget.ctps_serie"
+                                        placeholder="000-0"
+                                        x-mask="999-9"
+                                        class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300">
+                                </div>
                             </div>
 
                             {{-- Perfil --}}

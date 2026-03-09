@@ -96,6 +96,9 @@ class UserManagementController extends Controller
                     'nome'            => $data['name'],
                     'email'           => $data['email'],
                     'cargo'           => $data['cargo'] ?? null,
+                    'rg_numero'       => $data['rg_numero'] ?? null,
+                    'ctps_numero'     => $data['ctps_numero'] ?? null,
+                    'ctps_serie'      => $data['ctps_serie'] ?? null,
                     'departamento_id' => $data['departamento_id'] ?? null,
                     'empresa_id'      => $empresaId,
                 ]);
@@ -149,6 +152,9 @@ class UserManagementController extends Controller
                     'nome'            => $data['name'],
                     'email'           => $data['email'],
                     'cargo'           => $data['cargo'] ?? null,
+                    'rg_numero'       => $data['rg_numero'] ?? null,
+                    'ctps_numero'     => $data['ctps_numero'] ?? null,
+                    'ctps_serie'      => $data['ctps_serie'] ?? null,
                     'departamento_id' => $data['departamento_id'] ?? null,
                     'empresa_id'      => $empresaId ?: $user->employee?->empresa_id,
                 ];
@@ -199,6 +205,9 @@ class UserManagementController extends Controller
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'role'     => ['required', Rule::in(['admin', 'manager', 'employee'])],
             'cargo'           => ['nullable', 'string', 'max:100'],
+            'rg_numero'       => ['nullable', 'string', 'max:20'],
+            'ctps_numero'     => ['nullable', 'string', 'max:20'],
+            'ctps_serie'      => ['nullable', 'string', 'max:10'],
             'departamento_id' => ['nullable', 'exists:departamentos,id'],
         ], $isSuperAdmin ? ['empresa_id' => ['required', 'exists:empresas,id']] : []);
     }
@@ -214,6 +223,9 @@ class UserManagementController extends Controller
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
             'role'     => ['required', Rule::in(['admin', 'manager', 'employee'])],
             'cargo'           => ['nullable', 'string', 'max:100'],
+            'rg_numero'       => ['nullable', 'string', 'max:20'],
+            'ctps_numero'     => ['nullable', 'string', 'max:20'],
+            'ctps_serie'      => ['nullable', 'string', 'max:10'],
             'departamento_id' => ['nullable', 'exists:departamentos,id'],
         ], $isSuperAdmin ? ['empresa_id' => ['required', 'exists:empresas,id']] : []);
     }
