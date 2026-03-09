@@ -17,7 +17,7 @@ class ManutencaoController extends Controller
 
         $manutencoes = Manutencao::query()
             ->with('patrimonio')
-            ->whereHas('patrimonio', fn ($q) => $q->where('empresa_id', $companyId))
+            ->when($companyId, fn ($q) => $q->whereHas('patrimonio', fn ($q2) => $q2->where('empresa_id', $companyId)))
             ->orderByDesc('data_abertura')
             ->orderByDesc('created_at')
             ->get();
