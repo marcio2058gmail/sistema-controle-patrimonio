@@ -1,6 +1,11 @@
 <?php
 
 use App\Http\Controllers\ManutencaoController;
+use App\Http\Controllers\Dashboard\DashboardGlobalController;
+use App\Http\Controllers\Dashboard\DashboardEmpresaController;
+use App\Http\Controllers\Dashboard\DashboardDistribuicaoController;
+use App\Http\Controllers\Dashboard\DashboardCicloVidaController;
+use App\Http\Controllers\Dashboard\DashboardManutencaoController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\UserManagementController;
@@ -88,6 +93,18 @@ Route::middleware(['auth', 'company.select'])->group(function () {
         ->name('responsibilities.assinar');
     Route::post('/responsibilities/{responsibility}/devolver', [ResponsibilityController::class, 'devolver'])
         ->name('responsibilities.devolver');
+});
+
+// Dashboards analíticos
+Route::middleware(['auth', 'role:super_admin'])->group(function () {
+    Route::get('/dashboards/global', [DashboardGlobalController::class, 'index'])->name('dashboards.global');
+});
+
+Route::middleware(['auth', 'company.select', 'role:admin,super_admin'])->group(function () {
+    Route::get('/dashboards/empresa', [DashboardEmpresaController::class, 'index'])->name('dashboards.empresa');
+    Route::get('/dashboards/distribuicao', [DashboardDistribuicaoController::class, 'index'])->name('dashboards.distribuicao');
+    Route::get('/dashboards/ciclovida', [DashboardCicloVidaController::class, 'index'])->name('dashboards.ciclovida');
+    Route::get('/dashboards/manutencao', [DashboardManutencaoController::class, 'index'])->name('dashboards.manutencao');
 });
 
 require __DIR__.'/auth.php';

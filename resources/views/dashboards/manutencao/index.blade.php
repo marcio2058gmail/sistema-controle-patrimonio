@@ -1,0 +1,154 @@
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">
+            Dashboard de Manutenções
+        </h2>
+    </x-slot>
+
+    {{-- KPI Cards --}}
+    <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-6">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4">
+            <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Agendadas</p>
+            <p class="text-3xl font-bold text-blue-600 mt-1">{{ number_format($kpis['agendada']) }}</p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4">
+            <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Em Andamento</p>
+            <p class="text-3xl font-bold text-yellow-600 mt-1">{{ number_format($kpis['em_andamento']) }}</p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4">
+            <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Concluídas</p>
+            <p class="text-3xl font-bold text-green-600 mt-1">{{ number_format($kpis['concluida']) }}</p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4">
+            <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Canceladas</p>
+            <p class="text-3xl font-bold text-red-500 mt-1">{{ number_format($kpis['cancelada']) }}</p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4">
+            <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Tempo Médio (dias)</p>
+            <p class="text-3xl font-bold text-indigo-600 mt-1">{{ number_format($kpis['tempo_medio'], 1) }}</p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4 xl:col-span-1 col-span-2">
+            <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Custo Total</p>
+            <p class="text-xl font-bold text-gray-800 dark:text-gray-100 mt-1">R$ {{ number_format($kpis['custo_total'], 2, ',', '.') }}</p>
+        </div>
+    </div>
+
+    {{-- Gráficos --}}
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Manutenções por Status</h3>
+            <canvas id="chartStatus" height="260"></canvas>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Manutenções por Mês (12 meses)</h3>
+            <canvas id="chartPorMes" height="260"></canvas>
+        </div>
+    </div>
+
+    {{-- Top equipamentos + recentes --}}
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Equipamentos com mais Manutenções</h3>
+            <canvas id="chartEquip" height="260"></canvas>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Manutenções Recentes</h3>
+            <div class="overflow-y-auto max-h-64">
+                <table class="min-w-full text-xs">
+                    <thead class="sticky top-0 bg-white dark:bg-gray-800">
+                        <tr class="border-b border-gray-200 dark:border-gray-700">
+                            <th class="py-2 px-2 text-left font-medium text-gray-600 dark:text-gray-400">Patrimônio</th>
+                            <th class="py-2 px-2 text-left font-medium text-gray-600 dark:text-gray-400">Tipo</th>
+                            <th class="py-2 px-2 text-left font-medium text-gray-600 dark:text-gray-400">Status</th>
+                            <th class="py-2 px-2 text-right font-medium text-gray-600 dark:text-gray-400">Custo</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                        @foreach($recentes as $m)
+                        @php
+                            $statusColors = [
+                                'agendada'     => 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200',
+                                'em_andamento' => 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-200',
+                                'concluida'    => 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200',
+                                'cancelada'    => 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200',
+                            ];
+                            $sc = $statusColors[$m->status] ?? 'bg-gray-100 text-gray-700';
+                        @endphp
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                            <td class="py-1.5 px-2 text-gray-800 dark:text-gray-200 font-mono">{{ $m->codigo_patrimonio ?? '-' }}</td>
+                            <td class="py-1.5 px-2 text-gray-600 dark:text-gray-400 capitalize">{{ $m->tipo }}</td>
+                            <td class="py-1.5 px-2">
+                                <span class="inline-flex px-1.5 py-0.5 rounded text-xs font-medium {{ $sc }}">
+                                    {{ str_replace('_', ' ', $m->status) }}
+                                </span>
+                            </td>
+                            <td class="py-1.5 px-2 text-right text-gray-700 dark:text-gray-300">
+                                {{ $m->custo ? 'R$ ' . number_format($m->custo, 2, ',', '.') : '-' }}
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    @push('scripts')
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const isDark = document.documentElement.classList.contains('dark');
+        const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
+        const labelColor = isDark ? '#9ca3af' : '#6b7280';
+
+        new Chart(document.getElementById('chartStatus'), {
+            type: 'doughnut',
+            data: {
+                labels: @json($porStatus['labels']),
+                datasets: [{ data: @json($porStatus['data']), backgroundColor: ['#3b82f6','#f59e0b','#22c55e','#ef4444'], hoverOffset: 8 }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'right', labels: { color: labelColor, padding: 12 } } }
+            }
+        });
+
+        new Chart(document.getElementById('chartPorMes'), {
+            type: 'bar',
+            data: {
+                labels: @json($porMes['labels']),
+                datasets: [{ label: 'Manutenções', data: @json($porMes['data']), backgroundColor: '#8b5cf6', borderRadius: 4 }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { ticks: { color: labelColor }, grid: { color: gridColor } },
+                    y: { ticks: { color: labelColor }, grid: { color: gridColor }, beginAtZero: true }
+                }
+            }
+        });
+
+        const equipLabels = @json(collect($porEquip)->pluck('descricao'));
+        const equipData   = @json(collect($porEquip)->pluck('total'));
+
+        new Chart(document.getElementById('chartEquip'), {
+            type: 'bar',
+            data: {
+                labels: equipLabels,
+                datasets: [{ label: 'Manutenções', data: equipData, backgroundColor: '#f97316', borderRadius: 4 }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { ticks: { color: labelColor }, grid: { color: gridColor } },
+                    y: { ticks: { color: labelColor }, grid: { color: gridColor } }
+                }
+            }
+        });
+    });
+    </script>
+    @endpush
+</x-app-layout>

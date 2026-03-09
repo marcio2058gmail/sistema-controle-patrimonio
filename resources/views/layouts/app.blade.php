@@ -102,6 +102,7 @@
                 </main>
             </div>
         </div>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
         @stack('scripts')
         <script>
             function toggleTheme() {
