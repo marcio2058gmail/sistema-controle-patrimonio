@@ -222,7 +222,13 @@ class ResponsibilityController extends Controller
 
         $company = $responsibility->employee->company;
 
-        $pdf = Pdf::loadView('responsibilities.pdf', compact('responsibility', 'company'))
+        $template = $company?->modelo_pdf ?? 'padrao';
+        $viewName = "responsibilities.templates.{$template}";
+        if (!view()->exists($viewName)) {
+            $viewName = 'responsibilities.templates.padrao';
+        }
+
+        $pdf = Pdf::loadView($viewName, compact('responsibility', 'company'))
             ->setPaper('a4', 'portrait');
 
         $nomeArquivo = "termo-responsabilidade-{$responsibility->id}.pdf";

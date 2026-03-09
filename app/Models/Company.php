@@ -16,6 +16,7 @@ class Company extends Model
         'telefone',
         'email',
         'ativa',
+        'modelo_pdf',
     ];
 
     protected $casts = [

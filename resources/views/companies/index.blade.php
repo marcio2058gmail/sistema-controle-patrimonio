@@ -45,6 +45,7 @@
                             'url_update'  => route('companies.update', $company),
                             'url_destroy' => route('companies.destroy', $company),
                             'url_users'   => route('companies.users', $company),
+                            'modelo_pdf'  => $company->modelo_pdf ?? 'padrao',
                         ];
                     @endphp
                     <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col overflow-hidden hover:shadow-md transition-shadow">
@@ -257,6 +258,17 @@
                                    @change="editTarget.ativa = $event.target.checked"
                                    class="rounded border-gray-300 dark:border-gray-600 text-indigo-600 dark:bg-gray-700">
                             <x-input-label value="Empresa ativa" class="mb-0" />
+                        </div>
+                        <div>
+                            <x-input-label value="Modelo de PDF" />
+                            <select name="modelo_pdf" class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg shadow-sm text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                @foreach($pdfTemplates as $slug => $label)
+                                <option value="{{ $slug }}" :selected="editTarget.modelo_pdf === '{{ $slug }}'">
+                                    {{ $label }}
+                                </option>
+                                @endforeach
+                            </select>
+                            <p class="mt-1 text-xs text-gray-400 dark:text-gray-500">Define qual template será usado ao gerar o PDF do termo de responsabilidade.</p>
                         </div>
                         <div class="flex justify-end gap-3 pt-1">
                             <button type="button" @click="editTarget = null"

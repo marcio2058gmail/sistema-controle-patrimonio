@@ -58,7 +58,13 @@ class CompanyController extends Controller
             ->orderBy('nome')
             ->paginate(15);
 
-        return view('companies.index', compact('companies'));
+        // Templates disponíveis: derivados dos arquivos em resources/views/responsibilities/templates/
+        $pdfTemplates = collect(glob(resource_path('views/responsibilities/templates/*.blade.php')))
+            ->mapWithKeys(fn($path) => [
+                pathinfo($path, PATHINFO_FILENAME) => ucfirst(str_replace(['.blade', '-', '_'], ['', ' ', ' '], pathinfo($path, PATHINFO_FILENAME)))
+            ]);
+
+        return view('companies.index', compact('companies', 'pdfTemplates'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -82,14 +88,16 @@ class CompanyController extends Controller
     public function update(Request $request, Company $company): RedirectResponse
     {
         $data = $request->validate([
-            'nome'     => ['required', 'string', 'max:255'],
-            'cnpj'     => ['nullable', 'string', 'max:18', "unique:empresas,cnpj,{$company->id}"],
-            'telefone' => ['nullable', 'string', 'max:20'],
-            'email'    => ['nullable', 'email', 'max:255'],
-            'ativa'    => ['boolean'],
+            'nome'       => ['required', 'string', 'max:255'],
+            'cnpj'       => ['nullable', 'string', 'max:18', "unique:empresas,cnpj,{$company->id}"],
+            'telefone'   => ['nullable', 'string', 'max:20'],
+            'email'      => ['nullable', 'email', 'max:255'],
+            'ativa'      => ['boolean'],
+            'modelo_pdf' => ['nullable', 'string', 'max:50'],
         ]);
 
         $data['ativa'] = $request->boolean('ativa', true);
+        $data['modelo_pdf'] = $request->input('modelo_pdf', 'padrao');
 
         $company->update($data);
 
