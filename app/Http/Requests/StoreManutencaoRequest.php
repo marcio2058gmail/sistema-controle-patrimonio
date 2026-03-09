@@ -8,7 +8,7 @@ class StoreManutencaoRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return auth()->user()?->isAdmin() ?? false;
+        return $this->user()->isAdmin();
     }
 
     public function rules(): array
