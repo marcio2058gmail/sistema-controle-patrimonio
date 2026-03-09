@@ -7,6 +7,11 @@ use App\Models\Department;
 use App\Models\Employee;
 use App\Models\Asset;
 use App\Models\Responsibility;
+use App\Services\Dashboard\DashboardGlobalService;
+use App\Services\Dashboard\DashboardEmpresaService;
+use App\Services\Dashboard\DashboardDistribuicaoService;
+use App\Services\Dashboard\DashboardCicloVidaService;
+use App\Services\Dashboard\DashboardManutencaoService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -202,6 +207,44 @@ class DashboardController extends Controller
 
         $latestTickets = $latestTicketsQuery->take(5)->get();
 
+        // -------------------------------------------------------
+        // Dados analíticos (admin e super_admin apenas)
+        // -------------------------------------------------------
+        $analytics = null;
+        if ($user->isAdmin() || $user->isSuperAdmin()) {
+            $companyId = (int) session('empresa_ativa_id');
+
+            $analytics = [
+                'empresa'      => (new DashboardEmpresaService)->kpis($companyId),
+                'empresa_status' => (new DashboardEmpresaService)->patrimoniosPorStatus($companyId),
+                'empresa_depto'  => (new DashboardEmpresaService)->patrimoniosPorDepartamento($companyId),
+                'empresa_crescimento' => (new DashboardEmpresaService)->crescimentoMensal($companyId),
+
+                'dist_kpis'       => (new DashboardDistribuicaoService)->kpis($companyId),
+                'dist_top10'      => (new DashboardDistribuicaoService)->top10Funcionarios($companyId),
+                'dist_depto'      => (new DashboardDistribuicaoService)->patrimoniosPorDepartamento($companyId),
+                'dist_func'       => (new DashboardDistribuicaoService)->patrimoniosPorFuncionario($companyId),
+
+                'ciclo_kpis'      => (new DashboardCicloVidaService)->kpis($companyId),
+                'ciclo_idade'     => (new DashboardCicloVidaService)->distribuicaoPorIdade($companyId),
+                'ciclo_aquis'     => (new DashboardCicloVidaService)->aquisicoesPorMes($companyId),
+                'ciclo_garantias' => (new DashboardCicloVidaService)->garantiasProximas($companyId, 90),
+
+                'man_kpis'        => (new DashboardManutencaoService)->kpis($companyId),
+                'man_status'      => (new DashboardManutencaoService)->porStatus($companyId),
+                'man_mes'         => (new DashboardManutencaoService)->porMes($companyId),
+                'man_equip'       => (new DashboardManutencaoService)->porEquipamento($companyId, 10),
+                'man_recentes'    => (new DashboardManutencaoService)->recentes($companyId, 8),
+            ];
+
+            if ($user->isSuperAdmin()) {
+                $analytics['global_kpis']      = (new DashboardGlobalService)->kpis();
+                $analytics['global_empresas']   = (new DashboardGlobalService)->patrimoniosPorEmpresa();
+                $analytics['global_crescimento']= (new DashboardGlobalService)->crescimentoMensal();
+                $analytics['global_top']        = (new DashboardGlobalService)->topEmpresasPorPatrimonio();
+            }
+        }
+
         return view('dashboard', compact(
             'totalAssets',
             'totalEmployees',
@@ -216,6 +259,7 @@ class DashboardController extends Controller
             'department',
             'departmentStats',
             'employeeStats',
+            'analytics',
         ));
     }
 }
