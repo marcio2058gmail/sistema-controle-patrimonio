@@ -107,7 +107,7 @@
             <div x-show="showDetail"
                  x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
                  x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
-                 class="relative w-full max-w-lg bg-white dark:bg-gray-800 rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
+                 class="relative w-full max-w-xs bg-white dark:bg-gray-800 rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
                 <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700 shrink-0">
                     <div class="flex items-center gap-3">
                         <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 font-mono" x-text="detail?.code"></h3>
@@ -118,7 +118,7 @@
                     </button>
                 </div>
                 <div class="overflow-y-auto flex-1 px-6 py-5">
-                    <dl class="grid grid-cols-2 gap-x-6 gap-y-4 text-sm">
+                    <dl class="grid grid-cols-1 gap-y-4 text-sm">
                         <div><dt class="text-gray-500">Descrição</dt><dd class="mt-0.5 font-medium text-gray-800 dark:text-gray-200" x-text="detail?.descricao"></dd></div>
                         <div><dt class="text-gray-500">Modelo</dt><dd class="mt-0.5 text-gray-800 dark:text-gray-200" x-text="detail?.modelo || '—'"></dd></div>
                         <div><dt class="text-gray-500">Nº de Série</dt><dd class="mt-0.5 text-gray-800 dark:text-gray-200" x-text="detail?.serie || '—'"></dd></div>
@@ -129,7 +129,7 @@
                     @if(auth()->user()->isAdmin())
                     <div class="mt-5 pt-4 border-t border-gray-200 dark:border-gray-700">
                         <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Aquisição &amp; Valor</p>
-                        <dl class="grid grid-cols-2 gap-x-6 gap-y-4 text-sm">
+                        <dl class="grid grid-cols-1 gap-y-4 text-sm">
                             <div><dt class="text-gray-500">Valor de Aquisição</dt><dd class="mt-0.5 font-medium text-gray-800 dark:text-gray-200" x-text="detail?.valor_aquisicao ? 'R$ ' + detail.valor_aquisicao : '—'"></dd></div>
                             <div><dt class="text-gray-500">Data de Aquisição</dt><dd class="mt-0.5 text-gray-800 dark:text-gray-200" x-text="detail?.data_aquisicao || '—'"></dd></div>
                             <div><dt class="text-gray-500">Fornecedor</dt><dd class="mt-0.5 text-gray-800 dark:text-gray-200" x-text="detail?.fornecedor || '—'"></dd></div>
@@ -163,7 +163,7 @@
             <div x-show="editTarget !== null"
                  x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
                  x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
-                 class="relative w-full max-w-lg bg-white dark:bg-gray-800 rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
+                 class="relative w-full max-w-xs bg-white dark:bg-gray-800 rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
                 <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700 shrink-0">
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100" x-text="'Editar — ' + (editTarget?.code ?? '')"></h3>
                     <button @click="editTarget = null" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
@@ -182,7 +182,7 @@
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Descrição *</label>
                                 <input type="text" name="descricao" :value="editTarget.descricao" required class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300">
                             </div>
-                            <div class="grid grid-cols-2 gap-3">
+                            <div class="grid grid-cols-1 gap-3">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Modelo</label>
                                     <input type="text" name="modelo" :value="editTarget.modelo" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300">
@@ -204,7 +204,7 @@
                             {{-- Aquisição & Valor --}}
                             <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
                                 <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Aquisição &amp; Valor</p>
-                                <div class="grid grid-cols-2 gap-3">
+                                <div class="grid grid-cols-1 gap-3">
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Valor de Aquisição (R$)</label>
                                         <input type="number" step="0.01" min="0" name="valor_aquisicao" :value="editTarget.valor_aquisicao_raw" placeholder="0,00" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300">
@@ -214,7 +214,7 @@
                                         <input type="date" name="data_aquisicao" :value="editTarget.data_aquisicao_raw" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300">
                                     </div>
                                 </div>
-                                <div class="grid grid-cols-2 gap-3 mt-3">
+                                <div class="grid grid-cols-1 gap-3 mt-3">
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Fornecedor</label>
                                         <input type="text" name="fornecedor" :value="editTarget.fornecedor" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300">
@@ -224,7 +224,7 @@
                                         <input type="text" name="numero_nota_fiscal" :value="editTarget.numero_nota_fiscal" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300">
                                     </div>
                                 </div>
-                                <div class="grid grid-cols-2 gap-3 mt-3">
+                                <div class="grid grid-cols-1 gap-3 mt-3">
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Garantia Até</label>
                                         <input type="date" name="garantia_ate" :value="editTarget.garantia_ate_raw" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300">
@@ -282,7 +282,7 @@
             <div x-show="modalOpen"
                  x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
                  x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
-                 class="relative w-full max-w-lg bg-white dark:bg-gray-800 rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
+                 class="relative w-full max-w-xs bg-white dark:bg-gray-800 rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
                 <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700 shrink-0">
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">Novo Patrimônio</h3>
                     <button @click="modalOpen = false" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
@@ -302,7 +302,7 @@
                             <x-text-input id="descricao" name="descricao" type="text" class="mt-1 block w-full" :value="old('descricao')" required />
                             <x-input-error :messages="$errors->get('descricao')" class="mt-1" />
                         </div>
-                        <div class="grid grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 gap-4">
                             <div>
                                 <x-input-label for="modelo" value="Modelo" />
                                 <x-text-input id="modelo" name="modelo" type="text" class="mt-1 block w-full" :value="old('modelo')" />
@@ -327,7 +327,7 @@
                         {{-- Aquisição & Valor --}}
                         <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
                             <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Aquisição &amp; Valor</p>
-                            <div class="grid grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 gap-4">
                                 <div>
                                     <x-input-label for="valor_aquisicao" value="Valor de Aquisição (R$)" />
                                     <x-text-input id="valor_aquisicao" name="valor_aquisicao" type="number" step="0.01" min="0" class="mt-1 block w-full" :value="old('valor_aquisicao')" placeholder="0,00" />
@@ -339,7 +339,7 @@
                                     <x-input-error :messages="$errors->get('data_aquisicao')" class="mt-1" />
                                 </div>
                             </div>
-                            <div class="grid grid-cols-2 gap-4 mt-3">
+                            <div class="grid grid-cols-1 gap-4 mt-3">
                                 <div>
                                     <x-input-label for="fornecedor" value="Fornecedor" />
                                     <x-text-input id="fornecedor" name="fornecedor" type="text" class="mt-1 block w-full" :value="old('fornecedor')" />
@@ -351,7 +351,7 @@
                                     <x-input-error :messages="$errors->get('numero_nota_fiscal')" class="mt-1" />
                                 </div>
                             </div>
-                            <div class="grid grid-cols-2 gap-4 mt-3">
+                            <div class="grid grid-cols-1 gap-4 mt-3">
                                 <div>
                                     <x-input-label for="garantia_ate" value="Garantia Até" />
                                     <x-text-input id="garantia_ate" name="garantia_ate" type="date" class="mt-1 block w-full" :value="old('garantia_ate')" />
