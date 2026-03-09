@@ -9,40 +9,40 @@
     </x-slot>
 
     {{-- KPI Cards --}}
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
             <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Empresas</p>
-            <p class="text-3xl font-bold text-indigo-600 mt-1">{{ $kpis['total_empresas'] }}</p>
+            <p class="text-xl font-bold text-indigo-600 mt-0.5">{{ $kpis['total_empresas'] }}</p>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
             <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Usuários</p>
-            <p class="text-3xl font-bold text-blue-600 mt-1">{{ $kpis['total_usuarios'] }}</p>
+            <p class="text-xl font-bold text-blue-600 mt-0.5">{{ $kpis['total_usuarios'] }}</p>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
             <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Patrimônios</p>
-            <p class="text-3xl font-bold text-green-600 mt-1">{{ number_format($kpis['total_patrimonios']) }}</p>
+            <p class="text-xl font-bold text-green-600 mt-0.5">{{ number_format($kpis['total_patrimonios']) }}</p>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
             <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Valor Total</p>
-            <p class="text-2xl font-bold text-yellow-600 mt-1">R$ {{ number_format($kpis['valor_total'], 2, ',', '.') }}</p>
+            <p class="text-lg font-bold text-yellow-600 mt-0.5">R$ {{ number_format($kpis['valor_total'], 2, ',', '.') }}</p>
         </div>
     </div>
 
     {{-- Gráficos linha 1 --}}
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
-            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Patrimônios por Empresa (Top 10)</h3>
-            <canvas id="chartPorEmpresa" height="250"></canvas>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-3">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
+            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Patrimônios por Empresa (Top 10)</h3>
+            <canvas id="chartPorEmpresa" height="160"></canvas>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
-            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Crescimento Mensal (12 meses)</h3>
-            <canvas id="chartCrescimento" height="250"></canvas>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
+            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Crescimento Mensal (12 meses)</h3>
+            <canvas id="chartCrescimento" height="160"></canvas>
         </div>
     </div>
 
     {{-- Tabela top empresas --}}
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
-        <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Top Empresas por Patrimônio</h3>
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
+        <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Top Empresas por Patrimônio</h3>
         <div class="overflow-x-auto">
             <table class="min-w-full text-sm">
                 <thead>

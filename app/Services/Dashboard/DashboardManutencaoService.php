@@ -80,19 +80,18 @@ class DashboardManutencaoService
     public function porEquipamento(int $companyId, int $limit = 10): array
     {
         return $this->baseQuery($companyId)
-            ->join('patrimonios', 'patrimonios.id', '=', 'manutencoes.patrimonio_id')
             ->select('patrimonios.codigo_patrimonio', 'patrimonios.descricao', DB::raw('count(*) as total'), DB::raw('SUM(COALESCE(manutencoes.custo, 0)) as custo'))
             ->groupBy('patrimonios.id', 'patrimonios.codigo_patrimonio', 'patrimonios.descricao')
             ->orderByDesc('total')
             ->limit($limit)
             ->get()
+            ->map(fn($r) => ['codigo_patrimonio' => $r->codigo_patrimonio, 'descricao' => $r->descricao, 'total' => $r->total, 'custo' => $r->custo])
             ->toArray();
     }
 
     public function recentes(int $companyId, int $limit = 10): array
     {
         return $this->baseQuery($companyId)
-            ->join('patrimonios', 'patrimonios.id', '=', 'manutencoes.patrimonio_id')
             ->select('manutencoes.*', 'patrimonios.codigo_patrimonio', 'patrimonios.descricao as patrimonio_descricao')
             ->orderByDesc('manutencoes.data_abertura')
             ->limit($limit)

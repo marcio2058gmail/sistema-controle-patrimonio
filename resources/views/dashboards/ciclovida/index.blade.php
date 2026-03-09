@@ -6,41 +6,41 @@
     </x-slot>
 
     {{-- KPI Cards --}}
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
             <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Idade Média (anos)</p>
-            <p class="text-3xl font-bold text-indigo-600 mt-1">{{ number_format($kpis['idade_media'], 1) }}</p>
+            <p class="text-xl font-bold text-indigo-600 mt-0.5">{{ number_format($kpis['idade_media'], 1) }}</p>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
             <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Com Garantia</p>
-            <p class="text-3xl font-bold text-green-600 mt-1">{{ number_format($kpis['com_garantia']) }}</p>
+            <p class="text-xl font-bold text-green-600 mt-0.5">{{ number_format($kpis['com_garantia']) }}</p>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
             <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Garantias (30d)</p>
-            <p class="text-3xl font-bold text-yellow-600 mt-1">{{ number_format($kpis['garantias_vencendo']) }}</p>
+            <p class="text-xl font-bold text-yellow-600 mt-0.5">{{ number_format($kpis['garantias_vencendo']) }}</p>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
             <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Garantias Vencidas</p>
-            <p class="text-3xl font-bold text-red-500 mt-1">{{ number_format($kpis['garantias_vencidas']) }}</p>
+            <p class="text-xl font-bold text-red-500 mt-0.5">{{ number_format($kpis['garantias_vencidas']) }}</p>
         </div>
     </div>
 
     {{-- Gráficos --}}
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
-            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Distribuição por Faixa de Idade</h3>
-            <canvas id="chartIdade" height="260"></canvas>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-3">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
+            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Distribuição por Faixa de Idade</h3>
+            <canvas id="chartIdade" height="160"></canvas>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
-            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Aquisições por Mês (24 meses)</h3>
-            <canvas id="chartAquisicoes" height="260"></canvas>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
+            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Aquisições por Mês (24 meses)</h3>
+            <canvas id="chartAquisicoes" height="160"></canvas>
         </div>
     </div>
 
     {{-- Tabela garantias próximas --}}
     @if(count($garantiasProximas))
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
-        <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
+        <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
             Garantias vencendo em 90 dias
             <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
                 {{ count($garantiasProximas) }}

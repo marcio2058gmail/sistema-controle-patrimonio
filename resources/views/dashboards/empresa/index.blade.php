@@ -6,48 +6,48 @@
     </x-slot>
 
     {{-- KPI Cards --}}
-    <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-6">
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4">
+    <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 mb-3">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
             <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Total</p>
-            <p class="text-3xl font-bold text-indigo-600 mt-1">{{ number_format($kpis['total']) }}</p>
+            <p class="text-xl font-bold text-indigo-600 mt-0.5">{{ number_format($kpis['total']) }}</p>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
             <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Disponível</p>
-            <p class="text-3xl font-bold text-green-600 mt-1">{{ number_format($kpis['disponivel']) }}</p>
+            <p class="text-xl font-bold text-green-600 mt-0.5">{{ number_format($kpis['disponivel']) }}</p>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
             <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Em Uso</p>
-            <p class="text-3xl font-bold text-blue-600 mt-1">{{ number_format($kpis['em_uso']) }}</p>
+            <p class="text-xl font-bold text-blue-600 mt-0.5">{{ number_format($kpis['em_uso']) }}</p>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
             <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Manutenção</p>
-            <p class="text-3xl font-bold text-yellow-600 mt-1">{{ number_format($kpis['manutencao']) }}</p>
+            <p class="text-xl font-bold text-yellow-600 mt-0.5">{{ number_format($kpis['manutencao']) }}</p>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
             <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Descartado</p>
-            <p class="text-3xl font-bold text-red-500 mt-1">{{ number_format($kpis['descartado']) }}</p>
+            <p class="text-xl font-bold text-red-500 mt-0.5">{{ number_format($kpis['descartado']) }}</p>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4 xl:col-span-1 col-span-2">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3 xl:col-span-1 col-span-2">
             <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Valor Total</p>
-            <p class="text-xl font-bold text-gray-800 dark:text-gray-100 mt-1">R$ {{ number_format($kpis['valor_total'], 2, ',', '.') }}</p>
+            <p class="text-base font-bold text-gray-800 dark:text-gray-100 mt-0.5">R$ {{ number_format($kpis['valor_total'], 2, ',', '.') }}</p>
         </div>
     </div>
 
     {{-- Gráficos --}}
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
-            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Patrimônios por Status</h3>
-            <canvas id="chartStatus" height="260"></canvas>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-3">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
+            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Patrimônios por Status</h3>
+            <canvas id="chartStatus" height="160"></canvas>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
-            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Patrimônios por Departamento</h3>
-            <canvas id="chartDepto" height="260"></canvas>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
+            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Patrimônios por Departamento</h3>
+            <canvas id="chartDepto" height="160"></canvas>
         </div>
     </div>
 
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
-        <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Crescimento Mensal (12 meses)</h3>
-        <canvas id="chartCrescimento" height="180"></canvas>
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
+        <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Crescimento Mensal (12 meses)</h3>
+        <canvas id="chartCrescimento" height="110"></canvas>
     </div>
 
     @push('scripts')

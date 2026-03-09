@@ -69,6 +69,7 @@ class DashboardGlobalService
             ->orderByDesc('total')
             ->limit($limit)
             ->get()
+            ->map(fn($r) => ['nome' => $r->nome, 'total' => $r->total, 'valor' => $r->valor])
             ->toArray();
     }
 }

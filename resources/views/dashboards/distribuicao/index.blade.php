@@ -6,48 +6,48 @@
     </x-slot>
 
     {{-- KPI Cards --}}
-    <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+    <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-3">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
             <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Ativos Totais</p>
-            <p class="text-3xl font-bold text-indigo-600 mt-1">{{ number_format($kpis['totalAtivos']) }}</p>
+            <p class="text-xl font-bold text-indigo-600 mt-0.5">{{ number_format($kpis['totalAtivos']) }}</p>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
             <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Em Uso</p>
-            <p class="text-3xl font-bold text-blue-600 mt-1">{{ number_format($kpis['emUso']) }}</p>
+            <p class="text-xl font-bold text-blue-600 mt-0.5">{{ number_format($kpis['emUso']) }}</p>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
             <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Sem Atribuição</p>
-            <p class="text-3xl font-bold text-yellow-600 mt-1">{{ number_format($kpis['semAtribuicao']) }}</p>
+            <p class="text-xl font-bold text-yellow-600 mt-0.5">{{ number_format($kpis['semAtribuicao']) }}</p>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
             <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Funcionários Total</p>
-            <p class="text-3xl font-bold text-gray-700 dark:text-gray-200 mt-1">{{ number_format($kpis['totalFuncionarios']) }}</p>
+            <p class="text-xl font-bold text-gray-700 dark:text-gray-200 mt-0.5">{{ number_format($kpis['totalFuncionarios']) }}</p>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
             <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Com Patrimônio</p>
-            <p class="text-3xl font-bold text-green-600 mt-1">{{ number_format($kpis['funcionariosComPatrimonio']) }}</p>
+            <p class="text-xl font-bold text-green-600 mt-0.5">{{ number_format($kpis['funcionariosComPatrimonio']) }}</p>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
             <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Sem Patrimônio</p>
-            <p class="text-3xl font-bold text-red-500 mt-1">{{ number_format($kpis['funcionariosSemPatrimonio']) }}</p>
+            <p class="text-xl font-bold text-red-500 mt-0.5">{{ number_format($kpis['funcionariosSemPatrimonio']) }}</p>
         </div>
     </div>
 
     {{-- Charts --}}
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
-            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Top 10 Funcionários com mais Patrimônios</h3>
-            <canvas id="chartTop10" height="270"></canvas>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-3">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
+            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Top 10 Funcionários com mais Patrimônios</h3>
+            <canvas id="chartTop10" height="160"></canvas>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
-            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Patrimônios por Departamento</h3>
-            <canvas id="chartDepto" height="270"></canvas>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
+            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Patrimônios por Departamento</h3>
+            <canvas id="chartDepto" height="160"></canvas>
         </div>
     </div>
 
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
-        <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Patrimônios por Funcionário (Top 10)</h3>
-        <canvas id="chartPorFunc" height="160"></canvas>
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
+        <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Patrimônios por Funcionário (Top 10)</h3>
+        <canvas id="chartPorFunc" height="110"></canvas>
     </div>
 
     @push('scripts')

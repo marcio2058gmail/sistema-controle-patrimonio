@@ -6,54 +6,54 @@
     </x-slot>
 
     {{-- KPI Cards --}}
-    <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-6">
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4">
+    <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 mb-3">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
             <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Agendadas</p>
-            <p class="text-3xl font-bold text-blue-600 mt-1">{{ number_format($kpis['agendada']) }}</p>
+            <p class="text-xl font-bold text-blue-600 mt-0.5">{{ number_format($kpis['agendada']) }}</p>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
             <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Em Andamento</p>
-            <p class="text-3xl font-bold text-yellow-600 mt-1">{{ number_format($kpis['em_andamento']) }}</p>
+            <p class="text-xl font-bold text-yellow-600 mt-0.5">{{ number_format($kpis['em_andamento']) }}</p>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
             <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Concluídas</p>
-            <p class="text-3xl font-bold text-green-600 mt-1">{{ number_format($kpis['concluida']) }}</p>
+            <p class="text-xl font-bold text-green-600 mt-0.5">{{ number_format($kpis['concluida']) }}</p>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
             <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Canceladas</p>
-            <p class="text-3xl font-bold text-red-500 mt-1">{{ number_format($kpis['cancelada']) }}</p>
+            <p class="text-xl font-bold text-red-500 mt-0.5">{{ number_format($kpis['cancelada']) }}</p>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
             <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Tempo Médio (dias)</p>
-            <p class="text-3xl font-bold text-indigo-600 mt-1">{{ number_format($kpis['tempo_medio'], 1) }}</p>
+            <p class="text-xl font-bold text-indigo-600 mt-0.5">{{ number_format($kpis['tempo_medio'], 1) }}</p>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4 xl:col-span-1 col-span-2">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3 xl:col-span-1 col-span-2">
             <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Custo Total</p>
-            <p class="text-xl font-bold text-gray-800 dark:text-gray-100 mt-1">R$ {{ number_format($kpis['custo_total'], 2, ',', '.') }}</p>
+            <p class="text-base font-bold text-gray-800 dark:text-gray-100 mt-0.5">R$ {{ number_format($kpis['custo_total'], 2, ',', '.') }}</p>
         </div>
     </div>
 
     {{-- Gráficos --}}
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
-            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Manutenções por Status</h3>
-            <canvas id="chartStatus" height="260"></canvas>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-3">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
+            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Manutenções por Status</h3>
+            <canvas id="chartStatus" height="160"></canvas>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
-            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Manutenções por Mês (12 meses)</h3>
-            <canvas id="chartPorMes" height="260"></canvas>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
+            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Manutenções por Mês (12 meses)</h3>
+            <canvas id="chartPorMes" height="160"></canvas>
         </div>
     </div>
 
     {{-- Top equipamentos + recentes --}}
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
-            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Equipamentos com mais Manutenções</h3>
-            <canvas id="chartEquip" height="260"></canvas>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-3">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
+            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Equipamentos com mais Manutenções</h3>
+            <canvas id="chartEquip" height="160"></canvas>
         </div>
 
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
-            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Manutenções Recentes</h3>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
+            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Manutenções Recentes</h3>
             <div class="overflow-y-auto max-h-64">
                 <table class="min-w-full text-xs">
                     <thead class="sticky top-0 bg-white dark:bg-gray-800">
