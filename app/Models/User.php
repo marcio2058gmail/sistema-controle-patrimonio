@@ -55,6 +55,9 @@ class User extends Authenticatable
     {
         $id = session('empresa_ativa_id');
         if (! $id) return null;
+        if ($this->isSuperAdmin()) {
+            return Company::find($id);
+        }
         return $this->empresas()->find($id);
     }
 

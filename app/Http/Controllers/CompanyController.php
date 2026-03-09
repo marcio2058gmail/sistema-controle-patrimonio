@@ -32,18 +32,22 @@ class CompanyController extends Controller
      */
     public function switch(Request $request): RedirectResponse
     {
-        $request->validate(['empresa_id' => ['required', 'integer', 'exists:empresas,id']]);
-
         $user      = $request->user();
         $empresaId = (int) $request->empresa_id;
 
-        // Verifica acesso (super_admin tem acesso a qualquer empresa)
-        if (!$user->isSuperAdmin()) {
+        // Super admin pode selecionar 0 = Todas as empresas
+        if ($user->isSuperAdmin()) {
+            $request->validate(['empresa_id' => ['required', 'integer']]);
+            if ($empresaId !== 0) {
+                abort_unless(Company::where('id', $empresaId)->exists(), 422, 'Empresa não encontrada.');
+            }
+        } else {
+            $request->validate(['empresa_id' => ['required', 'integer', 'exists:empresas,id']]);
             $permitida = $user->empresas()->where('empresa_id', $empresaId)->exists();
             abort_unless($permitida, 403, 'Acesso não permitido a esta empresa.');
         }
 
-        session(['empresa_ativa_id' => $empresaId]);
+        session(['empresa_ativa_id' => $empresaId ?: null]);
 
         return redirect()->intended(route('dashboard'));
     }

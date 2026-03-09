@@ -64,13 +64,13 @@
             <p class="text-xs text-gray-200 font-semibold truncate">
                 {{ $empresaAtiva?->nome ?? 'Todas as empresas' }}
             </p>
-            @if(!auth()->user()->isSuperAdmin() && auth()->user()->empresas()->where('ativa', true)->count() > 1)
-            <a href="{{ route('companies.select') }}" class="text-xs text-indigo-400 hover:text-indigo-300 transition mt-0.5 inline-block">
+            @if(auth()->user()->isSuperAdmin())
+            <a href="{{ route('companies.select') }}" class="text-xs text-purple-400 hover:text-purple-300 transition mt-0.5 inline-block">
                 Trocar empresa →
             </a>
-            @elseif(auth()->user()->isSuperAdmin())
-            <a href="{{ route('companies.select') }}" class="text-xs text-purple-400 hover:text-purple-300 transition mt-0.5 inline-block">
-                Trocar contexto →
+            @elseif(auth()->user()->empresas()->where('ativa', true)->count() > 1)
+            <a href="{{ route('companies.select') }}" class="text-xs text-indigo-400 hover:text-indigo-300 transition mt-0.5 inline-block">
+                Trocar empresa →
             </a>
             @endif
         </div>

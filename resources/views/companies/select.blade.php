@@ -22,6 +22,29 @@
                 </div>
             @else
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    @if(auth()->user()->isSuperAdmin())
+                    <form method="POST" action="{{ route('companies.switch') }}">
+                        @csrf
+                        <input type="hidden" name="empresa_id" value="0">
+                        <button type="submit"
+                            class="w-full text-left p-5 rounded-xl bg-white dark:bg-gray-800 border-2 {{ session('empresa_ativa_id') ? 'border-gray-200 dark:border-gray-700' : 'border-purple-500' }} shadow-sm hover:border-purple-500 hover:shadow-md transition-all duration-150 group">
+                            <div class="flex items-start justify-between">
+                                <div class="min-w-0">
+                                    <p class="font-semibold text-gray-800 dark:text-gray-100 group-hover:text-purple-600 dark:group-hover:text-purple-400">
+                                        Todas as empresas
+                                    </p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Visualizar dados de todas as empresas</p>
+                                </div>
+                                <svg class="h-5 w-5 text-gray-300 group-hover:text-purple-500 shrink-0 ml-2 transition-colors" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </div>
+                            <span class="mt-3 inline-block text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300">
+                                Super Admin
+                            </span>
+                        </button>
+                    </form>
+                    @endif
                     @foreach($empresas as $empresa)
                         <form method="POST" action="{{ route('companies.switch') }}">
                             @csrf
