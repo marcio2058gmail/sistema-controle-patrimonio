@@ -8,7 +8,7 @@
         <title>{{ config('app.name', 'Controle Patrimonial') }}</title>
 
         <!-- Favicon -->
-        <link rel="icon" type="image/x-icon" href="/favicon.ico">
+        <link rel="icon" type="image/png" href="{{ asset('images/logo-full.png') }}">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
