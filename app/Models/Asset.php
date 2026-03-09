@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Asset extends Model
 {
@@ -100,5 +101,10 @@ class Asset extends Model
     {
         return $this->belongsToMany(Ticket::class, 'chamado_patrimonio', 'patrimonio_id', 'chamado_id')
             ->withTimestamps();
+    }
+
+    public function manutencoes(): HasMany
+    {
+        return $this->hasMany(Manutencao::class, 'patrimonio_id');
     }
 }

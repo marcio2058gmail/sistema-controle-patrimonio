@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ManutencaoController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\UserManagementController;
@@ -72,6 +73,7 @@ Route::middleware(['auth', 'company.select', 'role:admin,manager'])->group(funct
         Route::patch('/tickets/{ticket}/aprovar', [TicketController::class, 'aprovar'])->name('tickets.aprovar');
         Route::patch('/tickets/{ticket}/negar', [TicketController::class, 'negar'])->name('tickets.negar');
         Route::patch('/tickets/{ticket}/entregar', [TicketController::class, 'entregar'])->name('tickets.entregar');
+        Route::resource('manutencoes', ManutencaoController::class)->only(['index', 'store', 'update', 'destroy']);
     });
 });
 

@@ -121,6 +121,19 @@
             </svg>
             <span x-show="!sidebarCollapsed || sidebarHovered" x-transition.opacity class="truncate nav-label">Patrimônios</span>
         </a>
+
+        {{-- Manutenções (apenas admin) --}}
+        @if(auth()->user()->isAdmin())
+        <a href="{{ route('manutencoes.index') }}"
+            :title="(sidebarCollapsed && !sidebarHovered) ? 'Manutenções' : ''"
+            class="{{ $linkBase }} {{ request()->routeIs('manutencoes.*') ? $active : $inactive }}">
+            <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11 4a7 7 0 100 14A7 7 0 0011 4zM21 21l-4.35-4.35M15.5 9.5a4 4 0 11-8 0 4 4 0 018 0z"/>
+            </svg>
+            <span x-show="!sidebarCollapsed || sidebarHovered" x-transition.opacity class="truncate nav-label">Manutenções</span>
+        </a>
+        @endif
+
         @endif
 
         @if(auth()->user()->isAdminOrManager())
