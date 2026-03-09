@@ -11,17 +11,20 @@
     class="fixed inset-y-0 left-0 z-30 bg-gray-900 flex flex-col w-64 duration-200 ease-in-out"
 >
     {{-- Logo + botão colapso --}}
-    <div class="flex items-center h-16 px-3 border-b border-gray-700 shrink-0 overflow-hidden">
-        <a href="{{ auth()->user()->isAdmin() ? route('dashboard') : route('tickets.index') }}" class="flex items-center gap-2 min-w-0">
+    <div class="flex items-center justify-between h-16 border-b border-gray-700 shrink-0 overflow-hidden"
+         :class="sidebarCollapsed ? 'px-1' : 'px-3'">
+        <a href="{{ auth()->user()->isAdmin() ? route('dashboard') : route('tickets.index') }}"
+           class="flex items-center gap-2 overflow-hidden">
             <img id="app-logo"
                  src="https://app.locarmais.com/consImages/escuro.png" alt="LocarMais"
                  :class="sidebarCollapsed ? 'h-7' : 'h-8'"
+                 :style="sidebarCollapsed ? 'max-width:36px; object-fit:contain' : 'max-width:none'"
                  class="w-auto shrink-0 h-8 duration-200">
         </a>
 
         {{-- Botão colapso (desktop) --}}
         <button @click="sidebarCollapsed = !sidebarCollapsed"
-                class="hidden sm:flex ml-auto shrink-0 p-1 rounded text-gray-500 hover:text-white hover:bg-gray-800 transition-colors duration-150">
+                class="hidden sm:flex shrink-0 p-1 rounded text-gray-500 hover:text-white hover:bg-gray-800 transition-colors duration-150">
             <svg class="h-4 w-4 transition-transform duration-200" :class="sidebarCollapsed ? 'rotate-180' : ''"
                  fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>
