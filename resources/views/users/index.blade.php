@@ -170,19 +170,19 @@
                         <div>
                             <x-input-label for="c_email" value="E-mail *" />
                             <x-text-input id="c_email" name="email" type="email" class="mt-1 block w-full"
-                                :value="old('email')" required />
+                                :value="old('email')" required autocomplete="off" />
                             <x-input-error :messages="$errors->get('email')" class="mt-1" />
                         </div>
 
                         {{-- Senha --}}
                         <div>
                             <x-input-label for="c_password" value="Senha *" />
-                            <x-text-input id="c_password" name="password" type="password" class="mt-1 block w-full" required />
+                            <x-text-input id="c_password" name="password" type="password" class="mt-1 block w-full" required autocomplete="new-password" />
                             <x-input-error :messages="$errors->get('password')" class="mt-1" />
                         </div>
                         <div>
                             <x-input-label for="c_password_confirmation" value="Confirmar Senha *" />
-                            <x-text-input id="c_password_confirmation" name="password_confirmation" type="password" class="mt-1 block w-full" required />
+                            <x-text-input id="c_password_confirmation" name="password_confirmation" type="password" class="mt-1 block w-full" required autocomplete="new-password" />
                         </div>
 
                         {{-- Perfil --}}
@@ -311,6 +311,7 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">E-mail *</label>
                                 <input type="email" name="email" :value="editTarget.email" required
+                                    autocomplete="off"
                                     class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300">
                             </div>
 
@@ -318,11 +319,13 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nova Senha <span class="text-gray-400 font-normal">(deixe em branco para manter)</span></label>
                                 <input type="password" name="password"
+                                    autocomplete="new-password"
                                     class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Confirmar Nova Senha</label>
                                 <input type="password" name="password_confirmation"
+                                    autocomplete="new-password"
                                     class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300">
                             </div>
 
