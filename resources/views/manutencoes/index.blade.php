@@ -1,10 +1,9 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Manutenções</h2>
-            <button @click="modalOpen = true"
-                    class="inline-flex items-center gap-2 px-4 py-2 bg-pink-700 hover:bg-pink-800 text-white text-sm font-medium rounded-lg shadow transition-colors">
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Manutenções</h2>
+            <button type="button" @click="$dispatch('open-nova-manutencao')"
+                    class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
                 + Nova Manutenção
             </button>
         </div>
@@ -29,7 +28,8 @@
             },
             statusLabel(s) { const m = { agendada: 'Agendada', em_andamento: 'Em Andamento', concluida: 'Concluída', cancelada: 'Cancelada' }; return m[s] ?? s; }
          }"
-         @keydown.escape.window="modalOpen ? modalOpen = false : deleteTarget ? deleteTarget = null : editTarget ? editTarget = null : showDetail = false">
+         @keydown.escape.window="modalOpen ? modalOpen = false : deleteTarget ? deleteTarget = null : editTarget ? editTarget = null : showDetail = false"
+         @open-nova-manutencao.window="modalOpen = true">
 
         <div class="py-8">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -368,7 +368,7 @@
                 </div>
                 <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/60 rounded-b-2xl shrink-0">
                     <button type="button" @click="modalOpen = false" class="px-4 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">Cancelar</button>
-                    <button type="submit" form="form-nova-manutencao" class="px-4 py-2 text-sm font-medium rounded-lg bg-pink-700 hover:bg-pink-800 text-white transition-colors">Registrar</button>
+                    <button type="submit" form="form-nova-manutencao" class="px-4 py-2 text-sm font-medium rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white transition-colors">Registrar</button>
                 </div>
             </div>
         </div>
