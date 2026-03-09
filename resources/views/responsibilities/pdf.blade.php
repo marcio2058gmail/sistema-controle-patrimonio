@@ -12,9 +12,9 @@
 
 body{
     font-family: Arial, Helvetica, sans-serif;
-    font-size:08pt;
+    font-size:8pt;
     color:#000;
-    line-height:1.6;
+    line-height:1.2;
 }
 
 header{
@@ -26,28 +26,12 @@ header{
 }
 
 .company{
-    display:table;
-    width:100%;
+    text-align:center;
 }
 
 .company-logo{
-    display:table-cell;
-    width:100px;
-    vertical-align:middle;
-}
-
-.company-info{
-    display:table-cell;
-    vertical-align:middle;
-}
-
-.company-name{
-    font-size:15pt;
-    font-weight:bold;
-}
-
-.company-meta{
-    font-size:9pt;
+    max-height:60px;
+    max-width:220px;
 }
 
 .title{
@@ -58,29 +42,45 @@ header{
     margin-bottom:25px;
 }
 
-p{
-    text-align:justify;
-}
-
 .section-title{
     font-weight:bold;
-    margin-top:18px;
+    margin-top:12px;
+    margin-bottom:2px;
+}
+p{
+    text-align:left;
+    margin:1px 0;
 }
 
 table{
     width:100%;
     border-collapse:collapse;
-    margin-top:10px;
+    margin-top:6px;
+    text-align:center;
 }
 
 th,td{
     border:1px solid #000;
-    padding:6px;
-    font-size:10pt;
+    padding:5px;
+    font-size:8pt;
 }
 
 th{
     background:#eee;
+}
+
+.clause-title{
+    font-weight:bold;
+    margin-top:6px;
+    margin-bottom:0;
+}
+
+.clause{
+    margin:0;
+}
+
+.clause + .clause-title{
+    margin-top:0;
 }
 
 /* evita quebrar assinatura */
@@ -121,31 +121,12 @@ th{
 <header>
 
 <div class="company">
-
-<div class="company-info">
-
-<div class="company-name">
-{{ $company?->nome ?? 'Empresa' }}
-</div>
-
-<div class="company-meta">
-
-@if($company?->cnpj)
-CNPJ: {{ $company->cnpj }}
+@php $logoPath = public_path('images/logo-locarmais.png'); @endphp
+@if(file_exists($logoPath))
+    <img src="{{ $logoPath }}" class="company-logo">
+@else
+    <span style="font-size:15pt;font-weight:bold;">{{ $company?->nome ?? 'Empresa' }}</span>
 @endif
-
-@if($company?->telefone)
-| Tel: {{ $company->telefone }}
-@endif
-
-@if($company?->email)
-| {{ $company->email }}
-@endif
-
-</div>
-
-</div>
-
 </div>
 
 </header>
@@ -182,14 +163,13 @@ justo e contratado o que a seguir especificam:
 
 </p>
 
-<div class="section-title">
-1. CLÁUSULA PRIMEIRA – DO OBJETO
-</div>
-1.1 O presente Termo tem como objetivo regular o uso do(s) equipamento(s) de propriedade da EMPRESA, cedido(s) ao COLABORADOR, acima qualificado,
-sendo recebido(s) pelo COLABORADOR em perfeito estado de conservação e funcionamento.<br>
-1.1.1 Caso o COLABORADOR não concorde com a CLÁUSULA 1.1 deverá alertar seu superior imediato antes da assinatura
-do presente, sob pena de ser constatado que o defeito/dano foi ocasionado pelo COLABORADOR.<br>
-1.2 O COLABORADOR declara que recebeu o(s) seguinte(s) equipamento(s) sob sua responsabilidade:<br>
+
+<p class="clause-title">1. CLÁUSULA PRIMEIRA – DO OBJETO</p>  
+<p class="clause">1.1 O presente Termo tem como objetivo regular o uso do(s) equipamento(s) de propriedade da EMPRESA, cedido(s) ao COLABORADOR, acima qualificado,
+sendo recebido(s) pelo COLABORADOR em perfeito estado de conservação e funcionamento.</p>
+<p class="clause">1.1.1 Caso o COLABORADOR não concorde com a CLÁUSULA 1.1 deverá alertar seu superior imediato antes da assinatura
+do presente, sob pena de ser constatado que o defeito/dano foi ocasionado pelo COLABORADOR.</p>
+<p class="clause">1.2 O COLABORADOR declara que recebeu o(s) seguinte(s) equipamento(s) sob sua responsabilidade:</p>
 
 
 <table>
@@ -199,8 +179,8 @@ do presente, sob pena de ser constatado que o defeito/dano foi ocasionado pelo C
 <th>Equipamento</th>
 <th>Marca</th>
 <th>Modelo</th>
-<th>Etiqueta de Indentificação</th>
-<th>Data de Devolução</th>
+<th>Etiqueta de<br>Identificação</th>
+<th>Data de<br>Devolução</th>
 <th>Visto</th>
 </tr>
 </thead>
@@ -215,7 +195,7 @@ do presente, sob pena de ser constatado que o defeito/dano foi ocasionado pelo C
 <td>{{ $asset->modelo ?? '—' }}</td>
 <td>{{ $asset->codigo_patrimonio }}</td>
 <td>{{ $asset->data_devolucao?->format('d/m/Y') ?? '—' }}</td>
-<td>{{ $asset->visto ?? '—' }}</td>
+<td>{{ $asset->visto ?? '  ' }}</td>
 </tr>
 
 @endforeach
@@ -225,43 +205,17 @@ do presente, sob pena de ser constatado que o defeito/dano foi ocasionado pelo C
 </table>
 
 
-<div class="section-title">
-2. CLÁUSULA SEGUNDA – DAS FORMAS DE UTILIZAÇÃO
-</div>
+<p class="clause-title">2. CLÁUSULA SEGUNDA – DAS FORMAS DE UTILIZAÇÃO</p>
 
-<p>
-<u><strong>2.1 A utilização do(s) equipamento(s) se destina exclusivamente para fins de exercícios das atividades inerentes à função do COLABORADOR nas dependências da EMPRESA.</u></strong>
-2.2 É expressamente vedado(a):
+<p class="clause"><u><strong>2.1 A utilização do(s) equipamento(s) se destina exclusivamente para fins de exercícios das atividades inerentes à função do COLABORADOR nas dependências da EMPRESA.</u></strong></p>
 
-</p>
-
-
-<div class="section-title">
-3. CLÁUSULA TERCEIRA – DA RESPONSABILIDADE
-</div>
-
-<p>
-O COLABORADOR compromete-se a manter o equipamento em perfeito estado de conservação e devolvê-lo nas mesmas condições em caso de troca ou desligamento.
-</p>
-
-
-<div class="section-title">
-4. CLÁUSULA QUARTA – DOS DEVERES
-</div>
-
-<p>
-O COLABORADOR compromete-se a zelar pela conservação do equipamento, comunicar problemas técnicos e informar imediatamente qualquer ocorrência de dano, roubo ou extravio.
-</p>
-
-
-<div class="section-title">
-5. CLÁUSULA QUINTA – DISPOSIÇÕES GERAIS
-</div>
-
-<p>
-Este termo permanecerá válido enquanto durar o vínculo entre EMPRESA e COLABORADOR.
-</p>
-
+<p class="clause">2.2 É expressamente vedado(a):</p>
+<p class="clause-title">3. CLÁUSULA TERCEIRA – DA RESPONSABILIDADE</p>
+<p class="clause">O COLABORADOR compromete-se a manter o equipamento em perfeito estado de conservação e devolvê-lo nas mesmas condições em caso de troca ou desligamento.</p>
+<p class="clause-title">4. CLÁUSULA QUARTA – DOS DEVERES</p>
+<p class="clause">O COLABORADOR compromete-se a zelar pela conservação do equipamento, comunicar problemas técnicos e informar imediatamente qualquer ocorrência de dano, roubo ou extravio.</p>
+<p class="clause-title">5. CLÁUSULA QUINTA – DISPOSIÇÕES GERAIS</p>
+<p class="clause">Este termo permanecerá válido enquanto durar o vínculo entre EMPRESA e COLABORADOR.</p>
 
 @if($responsibility->data_devolucao)
 <div class="section-title">Registro de Devolução</div>
