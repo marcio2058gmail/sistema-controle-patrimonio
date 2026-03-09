@@ -67,7 +67,57 @@
                     </div>
                     @endif
 
-                    <div class="flex justify-end gap-3 pt-2">
+                    {{-- Dados de Aquisição --}}
+                    <div class="border-t border-gray-200 dark:border-gray-700 pt-5">
+                        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Aquisição &amp; Valor</h3>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <x-input-label for="valor_aquisicao" value="Valor de Aquisição (R$)" />
+                                <x-text-input id="valor_aquisicao" name="valor_aquisicao" type="number" step="0.01" min="0"
+                                    class="mt-1 block w-full" :value="old('valor_aquisicao')" placeholder="0,00" />
+                                <x-input-error :messages="$errors->get('valor_aquisicao')" class="mt-1" />
+                            </div>
+                            <div>
+                                <x-input-label for="data_aquisicao" value="Data de Aquisição" />
+                                <x-text-input id="data_aquisicao" name="data_aquisicao" type="date"
+                                    class="mt-1 block w-full" :value="old('data_aquisicao')" />
+                                <x-input-error :messages="$errors->get('data_aquisicao')" class="mt-1" />
+                            </div>
+                        </div>
+
+                        <div class="mt-4 grid grid-cols-2 gap-4">
+                            <div>
+                                <x-input-label for="fornecedor" value="Fornecedor" />
+                                <x-text-input id="fornecedor" name="fornecedor" type="text"
+                                    class="mt-1 block w-full" :value="old('fornecedor')" />
+                                <x-input-error :messages="$errors->get('fornecedor')" class="mt-1" />
+                            </div>
+                            <div>
+                                <x-input-label for="numero_nota_fiscal" value="Número da Nota Fiscal" />
+                                <x-text-input id="numero_nota_fiscal" name="numero_nota_fiscal" type="text"
+                                    class="mt-1 block w-full" :value="old('numero_nota_fiscal')" />
+                                <x-input-error :messages="$errors->get('numero_nota_fiscal')" class="mt-1" />
+                            </div>
+                        </div>
+
+                        <div class="mt-4 grid grid-cols-2 gap-4">
+                            <div>
+                                <x-input-label for="garantia_ate" value="Garantia Até" />
+                                <x-text-input id="garantia_ate" name="garantia_ate" type="date"
+                                    class="mt-1 block w-full" :value="old('garantia_ate')" />
+                                <x-input-error :messages="$errors->get('garantia_ate')" class="mt-1" />
+                            </div>
+                            <div>
+                                <x-input-label for="valor_atual" value="Valor Atual / Depreciado (R$)" />
+                                <x-text-input id="valor_atual" name="valor_atual" type="number" step="0.01" min="0"
+                                    class="mt-1 block w-full" :value="old('valor_atual')" placeholder="0,00" />
+                                <x-input-error :messages="$errors->get('valor_atual')" class="mt-1" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end gap-3 pt-4">
                         <a href="{{ route('assets.index') }}"
                            class="px-4 py-2 text-sm rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50">Cancelar</a>
                         <x-primary-button>Cadastrar</x-primary-button>

@@ -18,6 +18,12 @@ class Asset extends Model
         'numero_serie',
         'status',
         'empresa_id',
+        'valor_aquisicao',
+        'data_aquisicao',
+        'fornecedor',
+        'numero_nota_fiscal',
+        'garantia_ate',
+        'valor_atual',
     ];
 
     // ---------- Scope de empresa ----------
@@ -32,7 +38,11 @@ class Asset extends Model
     }
 
     protected $casts = [
-        'status' => 'string',
+        'status'           => 'string',
+        'valor_aquisicao'  => 'decimal:2',
+        'valor_atual'      => 'decimal:2',
+        'data_aquisicao'   => 'date',
+        'garantia_ate'     => 'date',
     ];
 
     public const STATUS_AVAILABLE = 'disponivel';
