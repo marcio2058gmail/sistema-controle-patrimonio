@@ -29,7 +29,7 @@
         <style>
             html[data-sidebar=collapsed] #app-sidebar,
             html[data-sidebar=collapsed] #app-spacer  { width: 4rem !important; }
-            html[data-sidebar=collapsed] #app-logo    { height: 1.75rem !important; max-width: 36px !important; object-fit: contain !important; }
+            html[data-sidebar=collapsed] #app-logo    { display: none !important; }
             /* Pré-oculta labels quando sidebar está colapsada */
             html[data-sidebar=collapsed] .nav-label   { display: none !important; }
             /* Pré-oculta separador HR quando sidebar está expandida */
@@ -84,7 +84,7 @@
                         </svg>
                     </button>
                     <a href="{{ route('dashboard') }}">
-                        <img src="https://app.locarmais.com/consImages/escuro.png" alt="LocarMais" class="h-7 w-auto">
+                        <img src="{{ asset('images/logo-full.png') }}" alt="LocarMais" class="h-7 w-auto">
                     </a>
                 </div>
                 <!-- Page Heading -->

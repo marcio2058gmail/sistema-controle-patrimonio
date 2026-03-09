@@ -15,11 +15,15 @@
          :class="sidebarCollapsed ? 'px-1' : 'px-3'">
         <a href="{{ auth()->user()->isAdmin() ? route('dashboard') : route('tickets.index') }}"
            class="flex items-center gap-2 overflow-hidden">
+            {{-- Ícone: visível apenas colapsado --}}
+            <img src="{{ asset('images/logo-icon.png') }}" alt="LocarMais"
+                 x-show="sidebarCollapsed"
+                 class="h-8 w-auto shrink-0 duration-200">
+            {{-- Logo completa: visível apenas expandido --}}
             <img id="app-logo"
-                 src="https://app.locarmais.com/consImages/escuro.png" alt="LocarMais"
-                 :class="sidebarCollapsed ? 'h-7' : 'h-8'"
-                 :style="sidebarCollapsed ? 'max-width:36px; object-fit:contain' : 'max-width:none'"
-                 class="w-auto shrink-0 h-8 duration-200">
+                 src="{{ asset('images/logo-full.png') }}" alt="LocarMais"
+                 x-show="!sidebarCollapsed"
+                 class="h-8 w-auto shrink-0 duration-200">
         </a>
 
         {{-- Botão colapso (desktop) --}}
