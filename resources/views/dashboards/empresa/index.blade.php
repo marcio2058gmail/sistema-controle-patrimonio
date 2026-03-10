@@ -34,25 +34,43 @@
     </div>
 
     {{-- Gráficos --}}
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-3">
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
-            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Patrimônios por Status</h3>
-            <canvas id="chartStatus" height="160"></canvas>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3 items-start">
+        <div x-data="{ exp: false }" :class="exp && 'md:col-span-2'" class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Patrimônios por Status</h3>
+                <button @click="exp=!exp; $nextTick(()=>window.dispatchEvent(new Event('resize')))" :title="exp?'Reduzir':'Expandir'" class="p-0.5 rounded text-gray-400 hover:text-indigo-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <svg x-show="!exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5"/></svg>
+                    <svg x-show="exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9L4 4m0 0v4m0-4h4m6-1l5 5m0 0v-4m0 4h-4M9 15l-5 5m0 0v-4m0 4h4m6 1l5-5m0 0v4m0-4h-4"/></svg>
+                </button>
+            </div>
+            <div class="relative transition-all duration-300" :style="exp ? 'height:400px' : 'height:220px'"><canvas id="chartStatus"></canvas></div>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
-            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Patrimônios por Departamento</h3>
-            <canvas id="chartDepto" height="160"></canvas>
+        <div x-data="{ exp: false }" :class="exp && 'md:col-span-2'" class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Patrimônios por Departamento</h3>
+                <button @click="exp=!exp; $nextTick(()=>window.dispatchEvent(new Event('resize')))" :title="exp?'Reduzir':'Expandir'" class="p-0.5 rounded text-gray-400 hover:text-indigo-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <svg x-show="!exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5"/></svg>
+                    <svg x-show="exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9L4 4m0 0v4m0-4h4m6-1l5 5m0 0v-4m0 4h-4M9 15l-5 5m0 0v-4m0 4h4m6 1l5-5m0 0v4m0-4h-4"/></svg>
+                </button>
+            </div>
+            <div class="relative transition-all duration-300" :style="exp ? 'height:400px' : 'height:220px'"><canvas id="chartDepto"></canvas></div>
         </div>
-    </div>
-
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
-        <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Crescimento Mensal (12 meses)</h3>
-        <canvas id="chartCrescimento" height="110"></canvas>
+        <div x-data="{ exp: false }" :class="exp && 'md:col-span-2'" class="bg-white dark:bg-gray-800 rounded-xl shadow p-3 md:col-span-2">
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Crescimento Mensal (12 meses)</h3>
+                <button @click="exp=!exp; $nextTick(()=>window.dispatchEvent(new Event('resize')))" :title="exp?'Reduzir':'Expandir'" class="p-0.5 rounded text-gray-400 hover:text-indigo-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <svg x-show="!exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5"/></svg>
+                    <svg x-show="exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9L4 4m0 0v4m0-4h4m6-1l5 5m0 0v-4m0 4h-4M9 15l-5 5m0 0v-4m0 4h4m6 1l5-5m0 0v4m0-4h-4"/></svg>
+                </button>
+            </div>
+            <div class="relative transition-all duration-300" :style="exp ? 'height:400px' : 'height:180px'"><canvas id="chartCrescimento"></canvas></div>
+        </div>
     </div>
 
     @push('scripts')
     <script>
     document.addEventListener('DOMContentLoaded', function () {
+        Chart.defaults.maintainAspectRatio = false;
         const isDark = document.documentElement.classList.contains('dark');
         const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
         const labelColor = isDark ? '#9ca3af' : '#6b7280';

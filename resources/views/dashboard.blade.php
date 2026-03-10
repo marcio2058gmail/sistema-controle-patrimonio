@@ -79,14 +79,26 @@
                     <p class="text-lg font-bold text-yellow-600">R$ {{ number_format($analytics['global_kpis']['valor_total'], 2, ',', '.') }}</p>
                 </div>
             </div>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-3">
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
-                    <p class="text-xs font-semibold text-gray-600 dark:text-gray-300 mb-2">Patrimônios por Empresa (Top 10)</p>
-                    <canvas id="g_porEmpresa" height="160"></canvas>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3 items-start">
+                <div x-data="{ exp: false }" :class="exp && 'md:col-span-2'" class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
+                    <div class="flex items-center justify-between mb-2">
+                        <p class="text-xs font-semibold text-gray-600 dark:text-gray-300">Patrimônios por Empresa (Top 10)</p>
+                        <button @click="exp=!exp; $nextTick(()=>window.dispatchEvent(new Event('resize')))" :title="exp?'Reduzir':'Expandir'" class="p-0.5 rounded text-gray-400 hover:text-indigo-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <svg x-show="!exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5"/></svg>
+                            <svg x-show="exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9L4 4m0 0v4m0-4h4m6-1l5 5m0 0v-4m0 4h-4M9 15l-5 5m0 0v-4m0 4h4m6 1l5-5m0 0v4m0-4h-4"/></svg>
+                        </button>
+                    </div>
+                    <div class="relative transition-all duration-300" :style="exp ? 'height:400px' : 'height:220px'"><canvas id="g_porEmpresa"></canvas></div>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
-                    <p class="text-xs font-semibold text-gray-600 dark:text-gray-300 mb-2">Crescimento Mensal (12 meses)</p>
-                    <canvas id="g_crescimento" height="160"></canvas>
+                <div x-data="{ exp: false }" :class="exp && 'md:col-span-2'" class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
+                    <div class="flex items-center justify-between mb-2">
+                        <p class="text-xs font-semibold text-gray-600 dark:text-gray-300">Crescimento Mensal (12 meses)</p>
+                        <button @click="exp=!exp; $nextTick(()=>window.dispatchEvent(new Event('resize')))" :title="exp?'Reduzir':'Expandir'" class="p-0.5 rounded text-gray-400 hover:text-indigo-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <svg x-show="!exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5"/></svg>
+                            <svg x-show="exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9L4 4m0 0v4m0-4h4m6-1l5 5m0 0v-4m0 4h-4M9 15l-5 5m0 0v-4m0 4h4m6 1l5-5m0 0v4m0-4h-4"/></svg>
+                        </button>
+                    </div>
+                    <div class="relative transition-all duration-300" :style="exp ? 'height:400px' : 'height:220px'"><canvas id="g_crescimento"></canvas></div>
                 </div>
             </div>
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
@@ -136,14 +148,26 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4">
-                        <h3 class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-3">Patrimônios por Status</h3>
-                        <canvas id="chartPatrimonios" height="160"></canvas>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 items-start">
+                    <div x-data="{ exp: false }" :class="exp && 'md:col-span-2'" class="bg-white dark:bg-gray-800 rounded-xl shadow p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-xs font-semibold text-gray-700 dark:text-gray-300">Patrimônios por Status</h3>
+                            <button @click="exp=!exp; $nextTick(()=>window.dispatchEvent(new Event('resize')))" :title="exp?'Reduzir':'Expandir'" class="p-0.5 rounded text-gray-400 hover:text-indigo-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                <svg x-show="!exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5"/></svg>
+                                <svg x-show="exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9L4 4m0 0v4m0-4h4m6-1l5 5m0 0v-4m0 4h-4M9 15l-5 5m0 0v-4m0 4h4m6 1l5-5m0 0v4m0-4h-4"/></svg>
+                            </button>
+                        </div>
+                        <div class="relative transition-all duration-300" :style="exp ? 'height:400px' : 'height:220px'"><canvas id="chartPatrimonios"></canvas></div>
                     </div>
-                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4">
-                        <h3 class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-3">Chamados — Últimos 6 Meses</h3>
-                        <canvas id="chartChamados" height="160"></canvas>
+                    <div x-data="{ exp: false }" :class="exp && 'md:col-span-2'" class="bg-white dark:bg-gray-800 rounded-xl shadow p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-xs font-semibold text-gray-700 dark:text-gray-300">Chamados — Últimos 6 Meses</h3>
+                            <button @click="exp=!exp; $nextTick(()=>window.dispatchEvent(new Event('resize')))" :title="exp?'Reduzir':'Expandir'" class="p-0.5 rounded text-gray-400 hover:text-indigo-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                <svg x-show="!exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5"/></svg>
+                                <svg x-show="exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9L4 4m0 0v4m0-4h4m6-1l5 5m0 0v-4m0 4h-4M9 15l-5 5m0 0v-4m0 4h4m6 1l5-5m0 0v4m0-4h-4"/></svg>
+                            </button>
+                        </div>
+                        <div class="relative transition-all duration-300" :style="exp ? 'height:400px' : 'height:220px'"><canvas id="chartChamados"></canvas></div>
                     </div>
                 </div>
 
@@ -223,19 +247,37 @@
                     <p class="text-base font-bold text-gray-800 dark:text-gray-100">R$ {{ number_format($analytics['empresa']['valor_total'], 2, ',', '.') }}</p>
                 </div>
             </div>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-3">
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
-                    <p class="text-xs font-semibold text-gray-600 dark:text-gray-300 mb-2">Por Status</p>
-                    <canvas id="e_status" height="160"></canvas>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3 items-start">
+                <div x-data="{ exp: false }" :class="exp && 'md:col-span-2'" class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
+                    <div class="flex items-center justify-between mb-2">
+                        <p class="text-xs font-semibold text-gray-600 dark:text-gray-300">Por Status</p>
+                        <button @click="exp=!exp; $nextTick(()=>window.dispatchEvent(new Event('resize')))" :title="exp?'Reduzir':'Expandir'" class="p-0.5 rounded text-gray-400 hover:text-indigo-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <svg x-show="!exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5"/></svg>
+                            <svg x-show="exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9L4 4m0 0v4m0-4h4m6-1l5 5m0 0v-4m0 4h-4M9 15l-5 5m0 0v-4m0 4h4m6 1l5-5m0 0v4m0-4h-4"/></svg>
+                        </button>
+                    </div>
+                    <div class="relative transition-all duration-300" :style="exp ? 'height:400px' : 'height:220px'"><canvas id="e_status"></canvas></div>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
-                    <p class="text-xs font-semibold text-gray-600 dark:text-gray-300 mb-2">Por Departamento</p>
-                    <canvas id="e_depto" height="160"></canvas>
+                <div x-data="{ exp: false }" :class="exp && 'md:col-span-2'" class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
+                    <div class="flex items-center justify-between mb-2">
+                        <p class="text-xs font-semibold text-gray-600 dark:text-gray-300">Por Departamento</p>
+                        <button @click="exp=!exp; $nextTick(()=>window.dispatchEvent(new Event('resize')))" :title="exp?'Reduzir':'Expandir'" class="p-0.5 rounded text-gray-400 hover:text-indigo-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <svg x-show="!exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5"/></svg>
+                            <svg x-show="exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9L4 4m0 0v4m0-4h4m6-1l5 5m0 0v-4m0 4h-4M9 15l-5 5m0 0v-4m0 4h4m6 1l5-5m0 0v4m0-4h-4"/></svg>
+                        </button>
+                    </div>
+                    <div class="relative transition-all duration-300" :style="exp ? 'height:400px' : 'height:220px'"><canvas id="e_depto"></canvas></div>
                 </div>
-            </div>
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
-                <p class="text-xs font-semibold text-gray-600 dark:text-gray-300 mb-2">Crescimento Mensal</p>
-                <canvas id="e_crescimento" height="110"></canvas>
+                <div x-data="{ exp: false }" :class="exp && 'md:col-span-2'" class="bg-white dark:bg-gray-800 rounded-xl shadow p-3 md:col-span-2">
+                    <div class="flex items-center justify-between mb-2">
+                        <p class="text-xs font-semibold text-gray-600 dark:text-gray-300">Crescimento Mensal</p>
+                        <button @click="exp=!exp; $nextTick(()=>window.dispatchEvent(new Event('resize')))" :title="exp?'Reduzir':'Expandir'" class="p-0.5 rounded text-gray-400 hover:text-indigo-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <svg x-show="!exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5"/></svg>
+                            <svg x-show="exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9L4 4m0 0v4m0-4h4m6-1l5 5m0 0v-4m0 4h-4M9 15l-5 5m0 0v-4m0 4h4m6 1l5-5m0 0v4m0-4h-4"/></svg>
+                        </button>
+                    </div>
+                    <div class="relative transition-all duration-300" :style="exp ? 'height:400px' : 'height:180px'"><canvas id="e_crescimento"></canvas></div>
+                </div>
             </div>
         </div>
 
@@ -256,19 +298,37 @@
                 </div>
                 @endforeach
             </div>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-3">
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
-                    <p class="text-xs font-semibold text-gray-600 dark:text-gray-300 mb-2">Top 10 Funcionários</p>
-                    <canvas id="d_top10" height="160"></canvas>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3 items-start">
+                <div x-data="{ exp: false }" :class="exp && 'md:col-span-2'" class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
+                    <div class="flex items-center justify-between mb-2">
+                        <p class="text-xs font-semibold text-gray-600 dark:text-gray-300">Top 10 Funcionários</p>
+                        <button @click="exp=!exp; $nextTick(()=>window.dispatchEvent(new Event('resize')))" :title="exp?'Reduzir':'Expandir'" class="p-0.5 rounded text-gray-400 hover:text-indigo-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <svg x-show="!exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5"/></svg>
+                            <svg x-show="exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9L4 4m0 0v4m0-4h4m6-1l5 5m0 0v-4m0 4h-4M9 15l-5 5m0 0v-4m0 4h4m6 1l5-5m0 0v4m0-4h-4"/></svg>
+                        </button>
+                    </div>
+                    <div class="relative transition-all duration-300" :style="exp ? 'height:400px' : 'height:220px'"><canvas id="d_top10"></canvas></div>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
-                    <p class="text-xs font-semibold text-gray-600 dark:text-gray-300 mb-2">Por Departamento</p>
-                    <canvas id="d_depto" height="160"></canvas>
+                <div x-data="{ exp: false }" :class="exp && 'md:col-span-2'" class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
+                    <div class="flex items-center justify-between mb-2">
+                        <p class="text-xs font-semibold text-gray-600 dark:text-gray-300">Por Departamento</p>
+                        <button @click="exp=!exp; $nextTick(()=>window.dispatchEvent(new Event('resize')))" :title="exp?'Reduzir':'Expandir'" class="p-0.5 rounded text-gray-400 hover:text-indigo-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <svg x-show="!exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5"/></svg>
+                            <svg x-show="exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9L4 4m0 0v4m0-4h4m6-1l5 5m0 0v-4m0 4h-4M9 15l-5 5m0 0v-4m0 4h4m6 1l5-5m0 0v4m0-4h-4"/></svg>
+                        </button>
+                    </div>
+                    <div class="relative transition-all duration-300" :style="exp ? 'height:400px' : 'height:220px'"><canvas id="d_depto"></canvas></div>
                 </div>
-            </div>
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
-                <p class="text-xs font-semibold text-gray-600 dark:text-gray-300 mb-2">Por Funcionário (Top 10)</p>
-                <canvas id="d_func" height="110"></canvas>
+                <div x-data="{ exp: false }" :class="exp && 'md:col-span-2'" class="bg-white dark:bg-gray-800 rounded-xl shadow p-3 md:col-span-2">
+                    <div class="flex items-center justify-between mb-2">
+                        <p class="text-xs font-semibold text-gray-600 dark:text-gray-300">Por Funcionário (Top 10)</p>
+                        <button @click="exp=!exp; $nextTick(()=>window.dispatchEvent(new Event('resize')))" :title="exp?'Reduzir':'Expandir'" class="p-0.5 rounded text-gray-400 hover:text-indigo-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <svg x-show="!exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5"/></svg>
+                            <svg x-show="exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9L4 4m0 0v4m0-4h4m6-1l5 5m0 0v-4m0 4h-4M9 15l-5 5m0 0v-4m0 4h4m6 1l5-5m0 0v4m0-4h-4"/></svg>
+                        </button>
+                    </div>
+                    <div class="relative transition-all duration-300" :style="exp ? 'height:400px' : 'height:180px'"><canvas id="d_func"></canvas></div>
+                </div>
             </div>
         </div>
 
@@ -287,14 +347,26 @@
                 </div>
                 @endforeach
             </div>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-3">
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
-                    <p class="text-xs font-semibold text-gray-600 dark:text-gray-300 mb-2">Faixa de Idade</p>
-                    <canvas id="c_idade" height="160"></canvas>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3 items-start">
+                <div x-data="{ exp: false }" :class="exp && 'md:col-span-2'" class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
+                    <div class="flex items-center justify-between mb-2">
+                        <p class="text-xs font-semibold text-gray-600 dark:text-gray-300">Faixa de Idade</p>
+                        <button @click="exp=!exp; $nextTick(()=>window.dispatchEvent(new Event('resize')))" :title="exp?'Reduzir':'Expandir'" class="p-0.5 rounded text-gray-400 hover:text-indigo-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <svg x-show="!exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5"/></svg>
+                            <svg x-show="exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9L4 4m0 0v4m0-4h4m6-1l5 5m0 0v-4m0 4h-4M9 15l-5 5m0 0v-4m0 4h4m6 1l5-5m0 0v4m0-4h-4"/></svg>
+                        </button>
+                    </div>
+                    <div class="relative transition-all duration-300" :style="exp ? 'height:400px' : 'height:220px'"><canvas id="c_idade"></canvas></div>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
-                    <p class="text-xs font-semibold text-gray-600 dark:text-gray-300 mb-2">Aquisições por Mês</p>
-                    <canvas id="c_aquis" height="160"></canvas>
+                <div x-data="{ exp: false }" :class="exp && 'md:col-span-2'" class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
+                    <div class="flex items-center justify-between mb-2">
+                        <p class="text-xs font-semibold text-gray-600 dark:text-gray-300">Aquisições por Mês</p>
+                        <button @click="exp=!exp; $nextTick(()=>window.dispatchEvent(new Event('resize')))" :title="exp?'Reduzir':'Expandir'" class="p-0.5 rounded text-gray-400 hover:text-indigo-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <svg x-show="!exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5"/></svg>
+                            <svg x-show="exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9L4 4m0 0v4m0-4h4m6-1l5 5m0 0v-4m0 4h-4M9 15l-5 5m0 0v-4m0 4h4m6 1l5-5m0 0v4m0-4h-4"/></svg>
+                        </button>
+                    </div>
+                    <div class="relative transition-all duration-300" :style="exp ? 'height:400px' : 'height:220px'"><canvas id="c_aquis"></canvas></div>
                 </div>
             </div>
             @if(count($analytics['ciclo_garantias']))
@@ -352,20 +424,38 @@
                     <p class="text-base font-bold text-gray-800 dark:text-gray-100">R$ {{ number_format($analytics['man_kpis']['custo_total'], 2, ',', '.') }}</p>
                 </div>
             </div>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-3">
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
-                    <p class="text-xs font-semibold text-gray-600 dark:text-gray-300 mb-2">Por Status</p>
-                    <canvas id="m_status" height="160"></canvas>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3 items-start">
+                <div x-data="{ exp: false }" :class="exp && 'md:col-span-2'" class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
+                    <div class="flex items-center justify-between mb-2">
+                        <p class="text-xs font-semibold text-gray-600 dark:text-gray-300">Por Status</p>
+                        <button @click="exp=!exp; $nextTick(()=>window.dispatchEvent(new Event('resize')))" :title="exp?'Reduzir':'Expandir'" class="p-0.5 rounded text-gray-400 hover:text-indigo-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <svg x-show="!exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5"/></svg>
+                            <svg x-show="exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9L4 4m0 0v4m0-4h4m6-1l5 5m0 0v-4m0 4h-4M9 15l-5 5m0 0v-4m0 4h4m6 1l5-5m0 0v4m0-4h-4"/></svg>
+                        </button>
+                    </div>
+                    <div class="relative transition-all duration-300" :style="exp ? 'height:400px' : 'height:220px'"><canvas id="m_status"></canvas></div>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
-                    <p class="text-xs font-semibold text-gray-600 dark:text-gray-300 mb-2">Por Mês (12 meses)</p>
-                    <canvas id="m_mes" height="160"></canvas>
+                <div x-data="{ exp: false }" :class="exp && 'md:col-span-2'" class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
+                    <div class="flex items-center justify-between mb-2">
+                        <p class="text-xs font-semibold text-gray-600 dark:text-gray-300">Por Mês (12 meses)</p>
+                        <button @click="exp=!exp; $nextTick(()=>window.dispatchEvent(new Event('resize')))" :title="exp?'Reduzir':'Expandir'" class="p-0.5 rounded text-gray-400 hover:text-indigo-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <svg x-show="!exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5"/></svg>
+                            <svg x-show="exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9L4 4m0 0v4m0-4h4m6-1l5 5m0 0v-4m0 4h-4M9 15l-5 5m0 0v-4m0 4h4m6 1l5-5m0 0v4m0-4h-4"/></svg>
+                        </button>
+                    </div>
+                    <div class="relative transition-all duration-300" :style="exp ? 'height:400px' : 'height:220px'"><canvas id="m_mes"></canvas></div>
                 </div>
             </div>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
-                    <p class="text-xs font-semibold text-gray-600 dark:text-gray-300 mb-2">Equipamentos Mais Manutenidos (Top 10)</p>
-                    <canvas id="m_equip" height="160"></canvas>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3 items-start">
+                <div x-data="{ exp: false }" :class="exp && 'md:col-span-2'" class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
+                    <div class="flex items-center justify-between mb-2">
+                        <p class="text-xs font-semibold text-gray-600 dark:text-gray-300">Equipamentos Mais Manutenidos (Top 10)</p>
+                        <button @click="exp=!exp; $nextTick(()=>window.dispatchEvent(new Event('resize')))" :title="exp?'Reduzir':'Expandir'" class="p-0.5 rounded text-gray-400 hover:text-indigo-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <svg x-show="!exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5"/></svg>
+                            <svg x-show="exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9L4 4m0 0v4m0-4h4m6-1l5 5m0 0v-4m0 4h-4M9 15l-5 5m0 0v-4m0 4h4m6 1l5-5m0 0v4m0-4h-4"/></svg>
+                        </button>
+                    </div>
+                    <div class="relative transition-all duration-300" :style="exp ? 'height:400px' : 'height:220px'"><canvas id="m_equip"></canvas></div>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-3">
                     <p class="text-xs font-semibold text-gray-600 dark:text-gray-300 mb-2">Manutenções Recentes</p>
@@ -424,16 +514,28 @@
                 @endif
             </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4">
-                <h3 class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-3">
-                    @if(auth()->user()->isManager()) Cobertura — {{ $department?->nome }} @else Patrimônios em Uso @endif
-                </h3>
-                <canvas id="chartPatrimonios" height="160"></canvas>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 items-start">
+            <div x-data="{ exp: false }" :class="exp && 'md:col-span-2'" class="bg-white dark:bg-gray-800 rounded-xl shadow p-4">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-xs font-semibold text-gray-700 dark:text-gray-300">
+                        @if(auth()->user()->isManager()) Cobertura — {{ $department?->nome }} @else Patrimônios em Uso @endif
+                    </h3>
+                    <button @click="exp=!exp; $nextTick(()=>window.dispatchEvent(new Event('resize')))" :title="exp?'Reduzir':'Expandir'" class="p-0.5 rounded text-gray-400 hover:text-indigo-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        <svg x-show="!exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5"/></svg>
+                        <svg x-show="exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9L4 4m0 0v4m0-4h4m6-1l5 5m0 0v-4m0 4h-4M9 15l-5 5m0 0v-4m0 4h4m6 1l5-5m0 0v4m0-4h-4"/></svg>
+                    </button>
+                </div>
+                <div class="relative transition-all duration-300" :style="exp ? 'height:400px' : 'height:220px'"><canvas id="chartPatrimonios"></canvas></div>
             </div>
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-4">
-                <h3 class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-3">Chamados — Últimos 6 Meses</h3>
-                <canvas id="chartChamados" height="160"></canvas>
+            <div x-data="{ exp: false }" :class="exp && 'md:col-span-2'" class="bg-white dark:bg-gray-800 rounded-xl shadow p-4">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-xs font-semibold text-gray-700 dark:text-gray-300">Chamados — Últimos 6 Meses</h3>
+                    <button @click="exp=!exp; $nextTick(()=>window.dispatchEvent(new Event('resize')))" :title="exp?'Reduzir':'Expandir'" class="p-0.5 rounded text-gray-400 hover:text-indigo-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        <svg x-show="!exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5"/></svg>
+                        <svg x-show="exp" xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9L4 4m0 0v4m0-4h4m6-1l5 5m0 0v-4m0 4h-4M9 15l-5 5m0 0v-4m0 4h4m6 1l5-5m0 0v4m0-4h-4"/></svg>
+                    </button>
+                </div>
+                <div class="relative transition-all duration-300" :style="exp ? 'height:400px' : 'height:220px'"><canvas id="chartChamados"></canvas></div>
             </div>
         </div>
         @if(auth()->user()->isManager() && $employeeStats->isNotEmpty())
@@ -496,6 +598,9 @@
         const gc = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
         const lc = isDark ? '#9ca3af' : '#6b7280';
         const pal = ['#6366f1','#22c55e','#f59e0b','#ef4444','#3b82f6','#8b5cf6','#f97316','#06b6d4','#ec4899','#10b981'];
+
+        // Fixar altura dos gráficos (o canvas fica dentro de div com height definido)
+        Chart.defaults.maintainAspectRatio = false;
 
         // ── Operacional ──────────────────────────────
         if (document.getElementById('chartPatrimonios')) {
