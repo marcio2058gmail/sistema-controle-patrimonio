@@ -2,15 +2,19 @@
 
 namespace App\Models;
 
+use App\Models\Traits\BelongsToCompany;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Ticket extends Model
 {
+    use BelongsToCompany;
+
     protected $table = 'chamados';
 
     protected $fillable = [
+        'empresa_id',
         'funcionario_id',
         'descricao',
         'status',
@@ -38,17 +42,6 @@ class Ticket extends Model
     public function getStatusLabelAttribute(): string
     {
         return self::statusLabels()[$this->status] ?? $this->status;
-    }
-
-    // ---------- Scope de empresa ----------
-
-    public function scopeForCompany($query, ?int $companyId = null)
-    {
-        $companyId = $companyId ?? (int) session('empresa_ativa_id');
-        if ($companyId) {
-            $query->whereHas('employee', fn ($q) => $q->where('empresa_id', $companyId));
-        }
-        return $query;
     }
 
     // ---------- Relationships ----------

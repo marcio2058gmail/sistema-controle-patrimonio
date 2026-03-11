@@ -6,12 +6,16 @@ use App\Http\Requests\StoreAssetRequest;
 use App\Http\Requests\UpdateAssetRequest;
 use App\Models\Asset;
 use App\Models\Company;
+use App\Services\SubscriptionService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class AssetController extends Controller
 {
+    public function __construct(
+        private readonly SubscriptionService $subscriptionService,
+    ) {}
     public function index(Request $request): View
     {
         $query = Asset::forCompany()->latest();
@@ -39,9 +43,20 @@ class AssetController extends Controller
     public function store(StoreAssetRequest $request): RedirectResponse
     {
         abort_unless($request->user()->isAdmin(), 403);
+
         $empresaId = $request->user()->isSuperAdmin() && $request->filled('empresa_id')
             ? $request->integer('empresa_id')
             : (int) session('empresa_ativa_id');
+
+        // Verifica limite do plano antes de cadastrar
+        $company = Company::find($empresaId);
+        if ($company && $this->subscriptionService->hasReachedAssetLimit($company)) {
+            $sub   = $this->subscriptionService->activeSubscription($company);
+            $limit = $sub?->plan->limite_patrimonios ?? 0;
+            return redirect()->back()
+                ->withInput()
+                ->with('erro', "Limite de {$limit} patrimônios do plano \"{$sub?->plan->nome}\" atingido. Faça upgrade para continuar.");
+        }
 
         Asset::create(array_merge($request->validated(), [
             'empresa_id' => $empresaId,

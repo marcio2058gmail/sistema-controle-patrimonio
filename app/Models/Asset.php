@@ -2,23 +2,24 @@
 
 namespace App\Models;
 
+use App\Models\Traits\BelongsToCompany;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Asset extends Model
 {
+    use BelongsToCompany;
     protected $table = 'patrimonios';
 
     protected $fillable = [
+        'empresa_id',
         'codigo_patrimonio',
         'descricao',
         'modelo',
         'numero_serie',
         'status',
-        'empresa_id',
         'valor_aquisicao',
         'data_aquisicao',
         'fornecedor',
@@ -26,17 +27,6 @@ class Asset extends Model
         'garantia_ate',
         'valor_atual',
     ];
-
-    // ---------- Scope de empresa ----------
-
-    public function scopeForCompany($query, ?int $companyId = null)
-    {
-        $companyId = $companyId ?? (int) session('empresa_ativa_id');
-        if ($companyId) {
-            $query->where('empresa_id', $companyId);
-        }
-        return $query;
-    }
 
     protected $casts = [
         'status'           => 'string',
@@ -77,11 +67,6 @@ class Asset extends Model
     }
 
     // ---------- Relationships ----------
-
-    public function company(): BelongsTo
-    {
-        return $this->belongsTo(Company::class, 'empresa_id');
-    }
 
     public function responsibilities(): BelongsToMany
     {

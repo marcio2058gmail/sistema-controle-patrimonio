@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Database\Seeders\UserSeeder;
 use Database\Seeders\EmpresaSeeder;
+use Database\Seeders\PlanoSeeder;
 use Database\Seeders\DepartamentoSeeder;
 use Database\Seeders\FuncionarioSeeder;
 use Database\Seeders\PatrimonioSeeder;
@@ -18,21 +19,25 @@ class DatabaseSeeder extends Seeder
      *
      * Ordem obrigatória:
      * 1. Users (define roles)
-     * 2. Funcionarios (vincula ao user)
-     * 3. Patrimonios
-     * 4. Chamados (depende de funcionario + patrimônio)
-     * 5. Responsabilidades (depende de funcionario + patrimônio)
+     * 2. Empresas (vincula usuários)
+     * 3. Planos + Assinaturas
+     * 4. Departamentos
+     * 5. Funcionários
+     * 6. Patrimônios
+     * 7. Chamados
+     * 8. Responsabilidades
      */
     public function run(): void
     {
         $this->call([
-            UserSeeder::class,        // 1. Cria usuários (admin, manager, employees)
-            EmpresaSeeder::class,     // 2. Cria empresa + super_admin + vincula usuários
-            DepartamentoSeeder::class,// 3. Departamentos (usa Company::first())
-            FuncionarioSeeder::class, // 4. Funcionários (usa Company::first())
-            PatrimonioSeeder::class,  // 5. Patrimônios (usa Company::first())
-            ChamadoSeeder::class,
-            ResponsabilidadeSeeder::class,
+            UserSeeder::class,         // 1. Cria usuários (admin, manager, employees)
+            EmpresaSeeder::class,      // 2. Cria empresa + super_admin + vincula usuários
+            PlanoSeeder::class,        // 3. Planos SaaS + assinatura inicial por empresa
+            DepartamentoSeeder::class, // 4. Departamentos
+            FuncionarioSeeder::class,  // 5. Funcionários
+            PatrimonioSeeder::class,   // 6. Patrimônios
+            ChamadoSeeder::class,      // 7. Chamados
+            ResponsabilidadeSeeder::class, // 8. Termos de responsabilidade
         ]);
     }
 }

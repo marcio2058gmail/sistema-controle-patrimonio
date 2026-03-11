@@ -2,14 +2,18 @@
 
 namespace App\Models;
 
+use App\Models\Traits\BelongsToCompany;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Manutencao extends Model
 {
+    use BelongsToCompany;
+
     protected $table = 'manutencoes';
 
     protected $fillable = [
+        'empresa_id',
         'patrimonio_id',
         'tipo',
         'status',

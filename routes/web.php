@@ -10,6 +10,11 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\AssetController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ResponsibilityController;
+use App\Http\Controllers\PlanController;
+use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\Admin\SubscriptionController as AdminSubscriptionController;
+use App\Http\Controllers\Admin\InvoiceController as AdminInvoiceController;
+use App\Http\Controllers\InventoryController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -40,6 +45,40 @@ Route::middleware(['auth', 'role:super_admin'])->prefix('companies')->name('comp
     Route::post('/{company}/users', [CompanyController::class, 'addUser'])->name('addUser');
     Route::delete('/{company}/users', [CompanyController::class, 'removeUser'])->name('removeUser');
 });
+
+// Planos SaaS — super_admin apenas
+Route::middleware(['auth', 'role:super_admin'])->group(function () {
+    Route::resource('plans', PlanController::class)->except(['show']);
+
+    // Compatibilidade retroativa — redireciona para o novo módulo admin
+    Route::resource('subscriptions', SubscriptionController::class)->only(['index', 'create', 'store']);
+    Route::post('/subscriptions/{company}/cancel', [SubscriptionController::class, 'cancel'])
+        ->name('subscriptions.cancel');
+});
+
+// -------------------------------------------------------
+// Módulo Admin — Gestão de Assinaturas (SuperAdmin)
+// -------------------------------------------------------
+Route::middleware(['auth', 'role:super_admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+
+        // Assinaturas
+        Route::get('/subscriptions',                           [AdminSubscriptionController::class, 'index'])   ->name('subscriptions.index');
+        Route::get('/subscriptions/create',                    [AdminSubscriptionController::class, 'create'])  ->name('subscriptions.create');
+        Route::post('/subscriptions',                          [AdminSubscriptionController::class, 'store'])   ->name('subscriptions.store');
+        Route::get('/subscriptions/{subscription}',            [AdminSubscriptionController::class, 'show'])    ->name('subscriptions.show');
+        Route::patch('/subscriptions/{subscription}/plan',     [AdminSubscriptionController::class, 'changePlan'])   ->name('subscriptions.changePlan');
+        Route::patch('/subscriptions/{subscription}/status',   [AdminSubscriptionController::class, 'changeStatus']) ->name('subscriptions.changeStatus');
+        Route::post('/subscriptions/{company}/cancel',         [AdminSubscriptionController::class, 'cancel'])  ->name('subscriptions.cancel');
+
+        // Faturas por empresa
+        Route::get('/companies/{company}/invoices',            [AdminInvoiceController::class, 'index'])        ->name('subscriptions.invoices.index');
+        Route::post('/companies/{company}/invoices',           [AdminInvoiceController::class, 'store'])        ->name('subscriptions.invoices.store');
+        Route::patch('/invoices/{invoice}/mark-paid',          [AdminInvoiceController::class, 'markPaid'])     ->name('subscriptions.invoices.markPaid');
+        Route::patch('/invoices/{invoice}/cancel',             [AdminInvoiceController::class, 'cancel'])       ->name('subscriptions.invoices.cancel');
+    });
 
 // -------------------------------------------------------
 // Profile (sem company.select — usuário pode editar perfil a qualquer momento)
@@ -75,6 +114,13 @@ Route::middleware(['auth', 'company.select', 'role:admin,manager'])->group(funct
         Route::patch('/tickets/{ticket}/entregar', [TicketController::class, 'entregar'])->name('tickets.entregar');
         Route::resource('manutencoes', ManutencaoController::class)->only(['index', 'store', 'update', 'destroy']);
     });
+
+    // Inventários — admin e manager
+    Route::resource('inventories', InventoryController::class)->only(['index', 'store', 'show']);
+    Route::post('/inventories/{inventory}/close', [InventoryController::class, 'close'])
+        ->name('inventories.close');
+    Route::patch('/inventories/items/{item}', [InventoryController::class, 'updateItem'])
+        ->name('inventories.items.update');
 });
 
 // Chamados e termos — todos os autenticados com empresa

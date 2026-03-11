@@ -146,6 +146,15 @@
             <hr class="border-gray-700">
         </div>
 
+        {{-- Inventários --}}
+        <a href="{{ route('inventories.index') }}"
+            :title="(sidebarCollapsed && !sidebarHovered) ? 'Inventários' : ''"
+            class="{{ $linkBase }} {{ request()->routeIs('inventories.*') ? $active : $inactive }}">
+            <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+            </svg>
+            <span x-show="!sidebarCollapsed || sidebarHovered" x-transition.opacity class="truncate nav-label">Inventários</span>
+        </a>
         {{-- Departamentos (somente admin) --}}
         @if(auth()->user()->isAdmin())
         <a href="{{ route('departments.index') }}"
@@ -186,11 +195,39 @@
         @if(auth()->user()->isSuperAdmin())
         <a href="{{ route('companies.index') }}"
             :title="(sidebarCollapsed && !sidebarHovered) ? 'Empresas' : ''"
-            class="{{ $linkBase }} {{ request()->routeIs('companies.*') ? $active : $inactive }}">
+            class="{{ $linkBase }} {{ request()->routeIs('companies.index','companies.users','companies.store','companies.update','companies.destroy','companies.addUser','companies.removeUser') ? $active : $inactive }}">
             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/>
             </svg>
             <span x-show="!sidebarCollapsed || sidebarHovered" x-transition.opacity class="truncate nav-label">Empresas</span>
+        </a>
+
+        {{-- Separador SaaS --}}
+        <div class="pt-3 pb-1 nav-label" x-show="!sidebarCollapsed || sidebarHovered" x-transition.opacity>
+            <p class="px-2 text-xs font-semibold text-indigo-500/80 dark:text-indigo-400/70 uppercase tracking-wider">SaaS</p>
+        </div>
+        <div class="pt-3 nav-sep-collapsed" x-show="sidebarCollapsed && !sidebarHovered" x-transition.opacity>
+            <hr class="border-gray-700">
+        </div>
+
+        {{-- Planos --}}
+        <a href="{{ route('plans.index') }}"
+            :title="(sidebarCollapsed && !sidebarHovered) ? 'Planos' : ''"
+            class="{{ $linkBase }} {{ request()->routeIs('plans.*') ? $active : $inactive }}">
+            <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            <span x-show="!sidebarCollapsed || sidebarHovered" x-transition.opacity class="truncate nav-label">Planos</span>
+        </a>
+
+        {{-- Assinaturas --}}
+        <a href="{{ route('admin.subscriptions.index') }}"
+            :title="(sidebarCollapsed && !sidebarHovered) ? 'Assinaturas' : ''"
+            class="{{ $linkBase }} {{ request()->routeIs('admin.subscriptions.*') ? $active : $inactive }}">
+            <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+            </svg>
+            <span x-show="!sidebarCollapsed || sidebarHovered" x-transition.opacity class="truncate nav-label">Assinaturas</span>
         </a>
         @endif
 

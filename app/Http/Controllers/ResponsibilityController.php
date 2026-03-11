@@ -19,24 +19,20 @@ class ResponsibilityController extends Controller
     {
         /** @var \App\Models\User $user */
         $user  = Auth::user();
+
+        // Global Scope (BelongsToCompany) já filtra por empresa_id automaticamente.
+        // Para não-admins, filtra apenas os próprios termos do funcionário.
         $query = Responsibility::with(['employee', 'assets'])->latest();
 
         if (! $user->isAdmin()) {
             $employeeId = $user->employee?->id;
             abort_unless($employeeId, 403);
             $query->where('funcionario_id', $employeeId);
-        } else {
-            // Scope por empresa
-            $companyId = (int) session('empresa_ativa_id');
-            if ($companyId) {
-                $empleadosIds = \App\Models\Employee::forCompany($companyId)->pluck('id');
-                $query->whereIn('funcionario_id', $empleadosIds);
-            }
         }
 
         $responsibilities = $query->paginate(15);
-        $employees        = \App\Models\Employee::forCompany()->orderBy('nome')->get();
-        $availableAssets  = \App\Models\Asset::forCompany()->disponivel()->orderBy('descricao')->get();
+        $employees        = \App\Models\Employee::orderBy('nome')->get();
+        $availableAssets  = \App\Models\Asset::disponivel()->orderBy('descricao')->get();
 
         return view('responsibilities.index', compact('responsibilities', 'employees', 'availableAssets'));
     }

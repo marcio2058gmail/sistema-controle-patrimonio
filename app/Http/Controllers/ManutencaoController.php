@@ -13,18 +13,13 @@ class ManutencaoController extends Controller
 {
     public function index(): View
     {
-        $companyId = (int) session('empresa_ativa_id');
-
-        $manutencoes = Manutencao::query()
-            ->with('patrimonio')
-            ->when($companyId, fn ($q) => $q->whereHas('patrimonio', fn ($q2) => $q2->where('empresa_id', $companyId)))
+        // O Global Scope (BelongsToCompany) filtra automaticamente por empresa_id
+        $manutencoes = Manutencao::with('patrimonio')
             ->orderByDesc('data_abertura')
             ->orderByDesc('created_at')
             ->get();
 
-        $assets = Asset::query()
-            ->forCompany($companyId)
-            ->orderBy('codigo_patrimonio')
+        $assets = Asset::orderBy('codigo_patrimonio')
             ->get(['id', 'codigo_patrimonio', 'descricao']);
 
         return view('manutencoes.index', [
