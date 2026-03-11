@@ -47,7 +47,7 @@
     </div>
 
     {{-- Nav links --}}
-    <nav class="flex-1 overflow-y-auto overflow-x-hidden px-2 py-3 space-y-0.5">
+    <nav class="sidebar-nav flex-1 overflow-y-auto overflow-x-hidden px-2 py-3 space-y-0.5">
 
         @php
         $linkBase = 'group flex items-center gap-3 px-2 py-2 rounded-lg text-sm font-medium transition-colors duration-150';

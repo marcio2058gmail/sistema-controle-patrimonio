@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 class Asset extends Model
 {
@@ -80,6 +81,18 @@ class Asset extends Model
             ->whereNull('data_devolucao')
             ->latest('termos.created_at')
             ->first();
+    }
+
+    /**
+     * Relacionamento para eager loading do termo ativo (sem data_devolucao).
+     * Retorna o termo mais recente não devolvido.
+     */
+    public function currentResponsibility(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Responsibility::class, 'termo_patrimonios', 'patrimonio_id', 'termo_id')
+                    ->whereNull('termos.data_devolucao')
+                    ->withTimestamps()
+                    ->with('employee');
     }
 
     public function tickets(): BelongsToMany

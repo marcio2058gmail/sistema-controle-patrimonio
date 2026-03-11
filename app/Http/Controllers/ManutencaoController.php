@@ -7,19 +7,47 @@ use App\Http\Requests\UpdateManutencaoRequest;
 use App\Models\Asset;
 use App\Models\Manutencao;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ManutencaoController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        // O Global Scope (BelongsToCompany) filtra automaticamente por empresa_id
-        $manutencoes = Manutencao::with('patrimonio')
+        $query = Manutencao::with('patrimonio')
             ->orderByDesc('data_abertura')
-            ->orderByDesc('created_at')
-            ->get();
+            ->orderByDesc('created_at');
 
-        $assets = Asset::orderBy('codigo_patrimonio')
+        if ($request->filled('busca')) {
+            $term = '%' . $request->string('busca') . '%';
+            $query->where(function ($q) use ($term) {
+                $q->where('descricao', 'like', $term)
+                  ->orWhere('tecnico_fornecedor', 'like', $term)
+                  ->orWhere('observacoes', 'like', $term)
+                  ->orWhereHas('patrimonio', fn ($p) => $p->where('codigo_patrimonio', 'like', $term)
+                      ->orWhere('descricao', 'like', $term));
+            });
+        }
+
+        if ($request->filled('tipo')) {
+            $query->where('tipo', $request->tipo);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('data_inicio')) {
+            $query->whereDate('data_abertura', '>=', $request->date('data_inicio'));
+        }
+
+        if ($request->filled('data_fim')) {
+            $query->whereDate('data_abertura', '<=', $request->date('data_fim'));
+        }
+
+        $manutencoes = $query->paginate(15)->withQueryString();
+
+        $assets = Asset::forCompany()->orderBy('codigo_patrimonio')
             ->get(['id', 'codigo_patrimonio', 'descricao']);
 
         return view('manutencoes.index', [

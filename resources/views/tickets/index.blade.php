@@ -53,19 +53,77 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
                 <x-alert />
 
-                {{-- Filtro de status --}}
-                <div class="flex gap-2 items-center flex-wrap">
-                    <span class="text-sm text-gray-500 font-medium">Filtrar:</span>
-                    @foreach($statusLabels as $value => $label)
-                        <a href="{{ request()->fullUrlWithQuery(['status' => $value]) }}"
-                           class="px-3 py-1 text-xs rounded-full border {{ request('status') === $value ? 'bg-indigo-600 border-indigo-600 text-white' : 'border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700' }}">
-                            {{ $label }}
-                        </a>
-                    @endforeach
-                    @if(request('status'))
-                        <a href="{{ route('tickets.index') }}" class="text-xs text-gray-400 hover:underline">Limpar</a>
-                    @endif
-                </div>
+                {{-- Painel de filtros --}}
+                <form method="GET" action="{{ route('tickets.index') }}"
+                      class="bg-white dark:bg-gray-800 rounded-xl shadow px-4 py-4 space-y-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+
+                        {{-- Busca geral --}}
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Busca</label>
+                            <input type="text" name="busca" value="{{ request('busca') }}"
+                                   placeholder="Funcionário, descrição ou patrimônio…"
+                                   class="w-full text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md shadow-sm focus:ring focus:ring-indigo-300">
+                        </div>
+
+                        {{-- Status --}}
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Status</label>
+                            <select name="status"
+                                    class="w-full text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md shadow-sm focus:ring focus:ring-indigo-300">
+                                <option value="">Todos</option>
+                                @foreach($statusLabels as $value => $label)
+                                    <option value="{{ $value }}" {{ request('status') === $value ? 'selected' : '' }}>
+                                        {{ $label }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        {{-- Funcionário (apenas admin/manager) --}}
+                        @if(auth()->user()->isAdminOrManager())
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Funcionário</label>
+                            <select name="funcionario_id"
+                                    class="w-full text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md shadow-sm focus:ring focus:ring-indigo-300">
+                                <option value="">Todos</option>
+                                @foreach($employees as $emp)
+                                    <option value="{{ $emp->id }}" {{ (string) request('funcionario_id') === (string) $emp->id ? 'selected' : '' }}>
+                                        {{ $emp->nome }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        @endif
+
+                        {{-- Período --}}
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Período</label>
+                            <div class="grid grid-cols-2 gap-1.5">
+                                <input type="date" name="data_inicio" value="{{ request('data_inicio') }}"
+                                       title="De"
+                                       class="w-full min-w-0 text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md shadow-sm focus:ring focus:ring-indigo-300">
+                                <input type="date" name="data_fim" value="{{ request('data_fim') }}"
+                                       title="Até"
+                                       class="w-full min-w-0 text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md shadow-sm focus:ring focus:ring-indigo-300">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="flex items-center gap-3 pt-1">
+                        <button type="submit"
+                                class="px-4 py-1.5 text-sm bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-colors">
+                            Filtrar
+                        </button>
+                        @if(request()->hasAny(['busca','status','funcionario_id','data_inicio','data_fim']))
+                            <a href="{{ route('tickets.index') }}"
+                               class="text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:underline">
+                                Limpar filtros
+                            </a>
+                        @endif
+                    </div>
+                </form>
 
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow overflow-hidden">
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">

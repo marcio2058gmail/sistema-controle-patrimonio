@@ -69,13 +69,15 @@ class UserManagementController extends Controller
 
         $data = $request->validate($this->storeRules($request));
 
-        $empresaId = $authUser->isSuperAdmin()
-            ? (int) $data['empresa_id']
-            : (int) session('empresa_ativa_id');
+        if ($authUser->isSuperAdmin()) {
+            $empresaIds = array_map('intval', $data['empresa_ids']);
+        } else {
+            $empresaId = (int) session('empresa_ativa_id');
+            abort_unless($empresaId, 422, 'Nenhuma empresa selecionada.');
+            $empresaIds = [$empresaId];
+        }
 
-        abort_unless($empresaId, 422, 'Nenhuma empresa selecionada.');
-
-        DB::transaction(function () use ($data, $empresaId, $authUser) {
+        DB::transaction(function () use ($data, $empresaIds) {
             // Cria o usuário
             $user = User::create([
                 'name'              => $data['name'],
@@ -86,10 +88,14 @@ class UserManagementController extends Controller
                 'role'              => $data['role'],
             ]);
 
-            // Vincula à empresa com o papel correto
-            $user->empresas()->attach($empresaId, ['role' => $data['role']]);
+            // Vincula a todas as empresas selecionadas
+            $pivots = [];
+            foreach ($empresaIds as $id) {
+                $pivots[$id] = ['role' => $data['role']];
+            }
+            $user->empresas()->attach($pivots);
 
-            // Para manager e employee: cria registro de funcionário
+            // Para manager e employee: cria registro de funcionário na empresa principal
             if (in_array($data['role'], ['manager', 'employee'])) {
                 Employee::create([
                     'user_id'         => $user->id,
@@ -100,7 +106,7 @@ class UserManagementController extends Controller
                     'ctps_numero'     => $data['ctps_numero'] ?? null,
                     'ctps_serie'      => $data['ctps_serie'] ?? null,
                     'departamento_id' => $data['departamento_id'] ?? null,
-                    'empresa_id'      => $empresaId,
+                    'empresa_id'      => $empresaIds[0],
                 ]);
             }
         });
@@ -121,11 +127,14 @@ class UserManagementController extends Controller
 
         $data = $request->validate($this->updateRules($request, $user));
 
-        $empresaId = $authUser->isSuperAdmin()
-            ? (int) $data['empresa_id']
-            : (int) session('empresa_ativa_id');
+        if ($authUser->isSuperAdmin()) {
+            $empresaIds = array_map('intval', $data['empresa_ids']);
+        } else {
+            $empresaId = (int) session('empresa_ativa_id');
+            $empresaIds = $empresaId ? [$empresaId] : [];
+        }
 
-        DB::transaction(function () use ($data, $user, $empresaId) {
+        DB::transaction(function () use ($data, $user, $empresaIds, $authUser) {
             $userData = [
                 'name'  => $data['name'],
                 'email' => $data['email'],
@@ -139,15 +148,23 @@ class UserManagementController extends Controller
 
             $user->update($userData);
 
-            // Atualiza vinculo com empresa (role no pivot)
-            if ($empresaId) {
-                $user->empresas()->syncWithoutDetaching([
-                    $empresaId => ['role' => $data['role']],
-                ]);
+            // Atualiza vínculo com empresa(s)
+            if (!empty($empresaIds)) {
+                $pivots = [];
+                foreach ($empresaIds as $id) {
+                    $pivots[$id] = ['role' => $data['role']];
+                }
+                if ($authUser->isSuperAdmin()) {
+                    // Substitui completamente as empresas vinculadas
+                    $user->empresas()->sync($pivots);
+                } else {
+                    $user->empresas()->syncWithoutDetaching($pivots);
+                }
             }
 
             // Atualiza ou cria registro de funcionário
             if (in_array($data['role'], ['manager', 'employee'])) {
+                $primaryId = $empresaIds[0] ?? $user->employee?->empresa_id;
                 $empData = [
                     'nome'            => $data['name'],
                     'email'           => $data['email'],
@@ -156,7 +173,7 @@ class UserManagementController extends Controller
                     'ctps_numero'     => $data['ctps_numero'] ?? null,
                     'ctps_serie'      => $data['ctps_serie'] ?? null,
                     'departamento_id' => $data['departamento_id'] ?? null,
-                    'empresa_id'      => $empresaId ?: $user->employee?->empresa_id,
+                    'empresa_id'      => $primaryId,
                 ];
 
                 if ($user->employee) {
@@ -209,7 +226,10 @@ class UserManagementController extends Controller
             'ctps_numero'     => ['nullable', 'string', 'max:20'],
             'ctps_serie'      => ['nullable', 'string', 'max:10'],
             'departamento_id' => ['nullable', 'exists:departamentos,id'],
-        ], $isSuperAdmin ? ['empresa_id' => ['required', 'exists:empresas,id']] : []);
+        ], $isSuperAdmin ? [
+            'empresa_ids'   => ['required', 'array', 'min:1'],
+            'empresa_ids.*' => ['integer', 'exists:empresas,id'],
+        ] : []);
     }
 
     private function updateRules(Request $request, User $user): array
@@ -227,6 +247,9 @@ class UserManagementController extends Controller
             'ctps_numero'     => ['nullable', 'string', 'max:20'],
             'ctps_serie'      => ['nullable', 'string', 'max:10'],
             'departamento_id' => ['nullable', 'exists:departamentos,id'],
-        ], $isSuperAdmin ? ['empresa_id' => ['required', 'exists:empresas,id']] : []);
+        ], $isSuperAdmin ? [
+            'empresa_ids'   => ['required', 'array', 'min:1'],
+            'empresa_ids.*' => ['integer', 'exists:empresas,id'],
+        ] : []);
     }
 }

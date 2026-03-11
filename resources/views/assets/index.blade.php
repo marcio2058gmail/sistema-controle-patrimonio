@@ -36,6 +36,60 @@
                 </div>
                 @endif
 
+                {{-- FILTROS --}}
+                <form method="GET" action="{{ route('assets.index') }}" class="mb-4 bg-white dark:bg-gray-800 rounded-xl shadow p-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Buscar (código / descrição / modelo)</label>
+                            <input type="text" name="busca" value="{{ $filters['busca'] ?? '' }}"
+                                   placeholder="Ex: NB-001, Notebook..."
+                                   class="w-full text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-lg shadow-sm focus:ring focus:ring-indigo-300">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Colaborador em uso</label>
+                            <input type="text" name="colaborador" value="{{ $filters['colaborador'] ?? '' }}"
+                                   placeholder="Nome do colaborador..."
+                                   class="w-full text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-lg shadow-sm focus:ring focus:ring-indigo-300">
+                        </div>
+                        @if(!$apenasDisponiveis)
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Status</label>
+                            <select name="status" class="w-full text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-lg shadow-sm focus:ring focus:ring-indigo-300">
+                                <option value="">Todos</option>
+                                @foreach($statusLabels as $val => $lbl)
+                                <option value="{{ $val }}" {{ ($filters['status'] ?? '') === $val ? 'selected' : '' }}>{{ $lbl }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Departamento</label>
+                            <select name="departamento_id" class="w-full text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-lg shadow-sm focus:ring focus:ring-indigo-300">
+                                <option value="">Todos</option>
+                                @foreach($departments as $dept)
+                                <option value="{{ $dept->id }}" {{ ($filters['departamento_id'] ?? '') == $dept->id ? 'selected' : '' }}>{{ $dept->nome }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Garantia</label>
+                            <select name="garantia" class="w-full text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-lg shadow-sm focus:ring focus:ring-indigo-300">
+                                <option value="">Todas</option>
+                                <option value="vigente" {{ ($filters['garantia'] ?? '') === 'vigente' ? 'selected' : '' }}>Vigente</option>
+                                <option value="vencida" {{ ($filters['garantia'] ?? '') === 'vencida' ? 'selected' : '' }}>Vencida</option>
+                            </select>
+                        </div>
+                        @else
+                        <div class="lg:col-span-3"></div>
+                        @endif
+                    </div>
+                    <div class="flex items-center gap-2 mt-3">
+                        <button type="submit" class="px-4 py-2 text-sm font-medium bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors">Filtrar</button>
+                        @if(array_filter($filters))
+                        <a href="{{ route('assets.index') }}" class="px-4 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">Limpar filtros</a>
+                        @endif
+                    </div>
+                </form>
+
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow overflow-hidden">
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
                         <thead class="bg-gray-50 dark:bg-gray-700">
@@ -45,12 +99,16 @@
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Modelo</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nº Série</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Colaborador</th>
                                 <th class="px-6 py-3"></th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                             @forelse($assets as $asset)
-                            @php $ad = [
+                            @php
+                                $activeResp = $asset->currentResponsibility->first();
+                                $activeEmployee = $activeResp?->employee;
+                                $ad = [
                                 'id'           => $asset->id,
                                 'code'         => $asset->codigo_patrimonio,
                                 'descricao'    => $asset->descricao,
@@ -58,6 +116,8 @@
                                 'serie'        => $asset->numero_serie,
                                 'status'       => $asset->status,
                                 'created'      => $asset->created_at->format('d/m/Y'),
+                                'colaborador'        => $activeEmployee?->nome,
+                                'colaborador_cargo'  => $activeEmployee?->cargo,
                                 'valor_aquisicao'    => $asset->valor_aquisicao ? number_format($asset->valor_aquisicao, 2, ',', '.') : null,
                                 'data_aquisicao'     => $asset->data_aquisicao?->format('d/m/Y'),
                                 'data_aquisicao_raw' => $asset->data_aquisicao?->format('Y-m-d'),
@@ -80,6 +140,16 @@
                                 <td class="px-6 py-3 text-gray-500">{{ $asset->modelo ?? '—' }}</td>
                                 <td class="px-6 py-3 text-gray-500">{{ $asset->numero_serie ?? '—' }}</td>
                                 <td class="px-6 py-3"><x-status-badge :status="$asset->status" type="patrimonio" /></td>
+                                <td class="px-6 py-3">
+                                    @if($activeEmployee)
+                                        <span class="text-gray-800 dark:text-gray-200 text-sm">{{ $activeEmployee->nome }}</span>
+                                        @if($activeEmployee->cargo)
+                                        <span class="block text-xs text-gray-400">{{ $activeEmployee->cargo }}</span>
+                                        @endif
+                                    @else
+                                        <span class="text-gray-400 text-sm">—</span>
+                                    @endif
+                                </td>
                                 <td class="px-6 py-3 text-right space-x-3">
                                     <button type="button" @click="openDetail({{ Js::from($ad) }})" class="text-indigo-600 hover:text-indigo-800 dark:hover:text-indigo-400 text-xs font-medium transition-colors">Ver detalhes</button>
                                     @if(auth()->user()->isAdmin())
@@ -89,7 +159,7 @@
                                 </td>
                             </tr>
                             @empty
-                            <tr><td colspan="6" class="px-6 py-10 text-center text-gray-400">Nenhum patrimônio cadastrado.</td></tr>
+                            <tr><td colspan="7" class="px-6 py-10 text-center text-gray-400">Nenhum patrimônio encontrado.</td></tr>
                             @endforelse
                         </tbody>
                     </table>
@@ -118,6 +188,17 @@
                     </button>
                 </div>
                 <div class="overflow-y-auto flex-1 px-6 py-5">
+                    {{-- Colaborador em uso --}}
+                    <template x-if="detail?.colaborador">
+                        <div class="mb-4 flex items-center gap-3 px-4 py-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
+                            <svg class="h-5 w-5 text-blue-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                            <div>
+                                <p class="text-xs text-blue-600 dark:text-blue-400 font-medium">Em uso por</p>
+                                <p class="text-sm font-semibold text-blue-800 dark:text-blue-200" x-text="detail.colaborador"></p>
+                                <p class="text-xs text-blue-500 dark:text-blue-400" x-show="detail?.colaborador_cargo" x-text="detail.colaborador_cargo"></p>
+                            </div>
+                        </div>
+                    </template>
                     <dl class="grid grid-cols-2 gap-x-4 gap-y-4 text-sm">
                         <div><dt class="text-gray-500">Descrição</dt><dd class="mt-0.5 font-medium text-gray-800 dark:text-gray-200" x-text="detail?.descricao"></dd></div>
                         <div><dt class="text-gray-500">Modelo</dt><dd class="mt-0.5 text-gray-800 dark:text-gray-200" x-text="detail?.modelo || '—'"></dd></div>

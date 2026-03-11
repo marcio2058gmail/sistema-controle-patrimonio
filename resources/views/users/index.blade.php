@@ -82,8 +82,8 @@
                                     'ctps_serie'   => $user->employee?->ctps_serie ?? '',
                                     'dept_id'      => $user->employee?->departamento_id,
                                     'dept'         => $user->employee?->department?->nome ?? '',
-                                    'empresa_id'   => $user->empresas->first()?->id ?? session('empresa_ativa_id'),
-                                    'empresa_nome' => $user->empresas->first()?->nome ?? '—',
+                                    'empresa_ids'  => $user->empresas->pluck('id')->values()->toArray(),
+                                    'empresa_nome' => $user->empresas->pluck('nome')->implode(', ') ?: '—',
                                     'is_self'      => $user->id === auth()->id(),
                                     'url_update'   => route('users.update', $user),
                                     'url_destroy'  => route('users.destroy', $user),
@@ -232,16 +232,31 @@
 
                         {{-- Empresa (somente super_admin) --}}
                         @if(auth()->user()->isSuperAdmin())
-                        <div>
+                        {{-- Multi-select: Administrador pode pertencer a várias empresas --}}
+                        <div x-show="createRole === 'admin'" x-transition>
+                            <x-input-label for="c_empresa_ids" value="Empresas *" />
+                            <select id="c_empresa_ids" name="empresa_ids[]" multiple
+                                :disabled="createRole !== 'admin'"
+                                class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300 h-28">
+                                @foreach($companiesForForm as $co)
+                                    <option value="{{ $co->id }}" {{ in_array($co->id, (array) old('empresa_ids')) ? 'selected' : '' }}>{{ $co->nome }}</option>
+                                @endforeach
+                            </select>
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Segure Ctrl/⌘ para selecionar mais de uma empresa.</p>
+                            <x-input-error :messages="$errors->get('empresa_ids')" class="mt-1" />
+                        </div>
+                        {{-- Single-select: Gestor / Funcionário pertence a uma única empresa --}}
+                        <div x-show="createRole !== 'admin'" x-transition>
                             <x-input-label for="c_empresa_id" value="Empresa *" />
-                            <select id="c_empresa_id" name="empresa_id" required
+                            <select id="c_empresa_id" name="empresa_ids[]"
+                                :disabled="createRole === 'admin'"
                                 class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300">
                                 <option value="">— selecione —</option>
                                 @foreach($companiesForForm as $co)
-                                    <option value="{{ $co->id }}" {{ old('empresa_id') == $co->id ? 'selected' : '' }}>{{ $co->nome }}</option>
+                                    <option value="{{ $co->id }}" {{ (old('empresa_ids.0') ?? '') == $co->id ? 'selected' : '' }}>{{ $co->nome }}</option>
                                 @endforeach
                             </select>
-                            <x-input-error :messages="$errors->get('empresa_id')" class="mt-1" />
+                            <x-input-error :messages="$errors->get('empresa_ids')" class="mt-1" />
                         </div>
                         @endif
 
@@ -376,10 +391,25 @@
 
                             {{-- Empresa (somente super_admin) --}}
                             @if(auth()->user()->isSuperAdmin())
-                            <div>
+                            {{-- Multi-select: Administrador pode pertencer a várias empresas --}}
+                            <div x-show="editRole === 'admin'" x-transition>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Empresas *</label>
+                                <select name="empresa_ids[]" multiple
+                                    :disabled="editRole !== 'admin'"
+                                    class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300 h-28">
+                                    @foreach($companiesForForm as $co)
+                                        <option value="{{ $co->id }}"
+                                            :selected="editTarget && editTarget.empresa_ids.includes({{ $co->id }})">{{ $co->nome }}</option>
+                                    @endforeach
+                                </select>
+                                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Segure Ctrl/⌘ para selecionar mais de uma empresa.</p>
+                            </div>
+                            {{-- Single-select: Gestor / Funcionário pertence a uma única empresa --}}
+                            <div x-show="editRole !== 'admin'" x-transition>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Empresa *</label>
-                                <select name="empresa_id"
-                                    x-init="$nextTick(() => { $el.value = editTarget.empresa_id ?? '' })"
+                                <select name="empresa_ids[]"
+                                    :disabled="editRole === 'admin'"
+                                    x-init="$nextTick(() => { $el.value = editTarget.empresa_ids[0] ?? '' })"
                                     class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300">
                                     <option value="">— selecione —</option>
                                     @foreach($companiesForForm as $co)

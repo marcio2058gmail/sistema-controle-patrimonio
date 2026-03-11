@@ -1,3 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Scrollbar elegante para o menu lateral */
+nav.sidebar-nav::-webkit-scrollbar {
+    width: 4px;
+}
+nav.sidebar-nav::-webkit-scrollbar-track {
+    background: transparent;
+}
+nav.sidebar-nav::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 99px;
+}
+nav.sidebar-nav::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.30);
+}
+/* Firefox */
+nav.sidebar-nav {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}

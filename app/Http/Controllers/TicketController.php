@@ -45,10 +45,32 @@ class TicketController extends Controller
             $query->where('status', $request->status);
         }
 
+        if ($request->filled('funcionario_id')) {
+            $query->where('funcionario_id', $request->integer('funcionario_id'));
+        }
+
+        if ($request->filled('busca')) {
+            $term = '%' . $request->string('busca') . '%';
+            $query->where(function ($q) use ($term) {
+                $q->where('descricao', 'like', $term)
+                  ->orWhereHas('employee', fn ($e) => $e->where('nome', 'like', $term))
+                  ->orWhereHas('assets', fn ($a) => $a->where('codigo_patrimonio', 'like', $term)
+                      ->orWhere('descricao', 'like', $term));
+            });
+        }
+
+        if ($request->filled('data_inicio')) {
+            $query->whereDate('created_at', '>=', $request->date('data_inicio'));
+        }
+
+        if ($request->filled('data_fim')) {
+            $query->whereDate('created_at', '<=', $request->date('data_fim'));
+        }
+
         $tickets      = $query->paginate(15)->withQueryString();
         $statusLabels = Ticket::statusLabels();
 
-        // Dados para o modal "Abrir Chamado"
+        // Dados para o modal "Abrir Chamado" e filtro de funcionário
         $assets = Asset::forCompany()->disponivel()->orderBy('descricao')->get();
         if ($user->isAdmin()) {
             $employees = Employee::forCompany()->orderBy('nome')->get();

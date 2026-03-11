@@ -6,6 +6,8 @@ use App\Http\Requests\StoreAssetRequest;
 use App\Http\Requests\UpdateAssetRequest;
 use App\Models\Asset;
 use App\Models\Company;
+use App\Models\Department;
+use App\Models\Employee;
 use App\Services\SubscriptionService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,18 +20,61 @@ class AssetController extends Controller
     ) {}
     public function index(Request $request): View
     {
-        $query = Asset::forCompany()->latest();
+        $query = Asset::forCompany()->with('currentResponsibility')->latest();
 
         // Gestor e Funcionário veem apenas os disponíveis
         if ($request->user()->isManager() || $request->user()->isEmployee()) {
             $query->where('status', Asset::STATUS_AVAILABLE);
         }
 
-        $assets   = $query->paginate(15);
-        $apenasDisponiveis = ! $request->user()->isAdmin();
-        $statusLabels = Asset::statusLabels();
+        // Filtro: busca por código ou descrição
+        if ($request->filled('busca')) {
+            $term = trim($request->input('busca'));
+            $query->where(function ($q) use ($term) {
+                $q->where('codigo_patrimonio', 'like', "%{$term}%")
+                  ->orWhere('descricao', 'like', "%{$term}%")
+                  ->orWhere('modelo', 'like', "%{$term}%")
+                  ->orWhere('numero_serie', 'like', "%{$term}%");
+            });
+        }
 
-        return view('assets.index', compact('assets', 'apenasDisponiveis', 'statusLabels'));
+        // Filtro: status
+        if ($request->filled('status')) {
+            $query->where('status', $request->input('status'));
+        }
+
+        // Filtro: colaborador (busca pelo nome no termo ativo)
+        if ($request->filled('colaborador')) {
+            $term = trim($request->input('colaborador'));
+            $query->whereHas('currentResponsibility.employee', function ($q) use ($term) {
+                $q->where('nome', 'like', "%{$term}%");
+            });
+        }
+
+        // Filtro: departamento
+        if ($request->filled('departamento_id')) {
+            $deptId = $request->integer('departamento_id');
+            $query->whereHas('currentResponsibility.employee', function ($q) use ($deptId) {
+                $q->where('departamento_id', $deptId);
+            });
+        }
+
+        // Filtro: garantia vencida
+        if ($request->filled('garantia')) {
+            if ($request->input('garantia') === 'vencida') {
+                $query->whereNotNull('garantia_ate')->where('garantia_ate', '<', now());
+            } elseif ($request->input('garantia') === 'vigente') {
+                $query->whereNotNull('garantia_ate')->where('garantia_ate', '>=', now());
+            }
+        }
+
+        $assets            = $query->paginate(15)->withQueryString();
+        $apenasDisponiveis = ! $request->user()->isAdmin();
+        $statusLabels      = Asset::statusLabels();
+        $departments       = Department::forCompany()->orderBy('nome')->get();
+        $filters           = $request->only(['busca', 'status', 'colaborador', 'departamento_id', 'garantia']);
+
+        return view('assets.index', compact('assets', 'apenasDisponiveis', 'statusLabels', 'departments', 'filters'));
     }
 
     public function create(Request $request): View

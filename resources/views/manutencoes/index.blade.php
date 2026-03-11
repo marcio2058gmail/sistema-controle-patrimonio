@@ -40,17 +40,84 @@
                 </div>
                 @endif
 
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow overflow-hidden">
+                {{-- Painel de filtros --}}
+                <form method="GET" action="{{ route('manutencoes.index') }}"
+                      class="bg-white dark:bg-gray-800 rounded-xl shadow px-4 py-4 space-y-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+
+                        {{-- Busca geral --}}
+                        <div class="lg:col-span-2">
+                            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Busca</label>
+                            <input type="text" name="busca" value="{{ request('busca') }}"
+                                   placeholder="Patrimônio, descrição, técnico…"
+                                   class="w-full text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md shadow-sm focus:ring focus:ring-indigo-300">
+                        </div>
+
+                        {{-- Tipo --}}
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Tipo</label>
+                            <select name="tipo"
+                                    class="w-full text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md shadow-sm focus:ring focus:ring-indigo-300">
+                                <option value="">Todos</option>
+                                @foreach($tipos as $value => $label)
+                                    <option value="{{ $value }}" {{ request('tipo') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        {{-- Status --}}
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Status</label>
+                            <select name="status"
+                                    class="w-full text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md shadow-sm focus:ring focus:ring-indigo-300">
+                                <option value="">Todos</option>
+                                @foreach($statusList as $value => $label)
+                                    <option value="{{ $value }}" {{ request('status') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        {{-- Período de abertura --}}
+                        <div class="sm:col-span-2">
+                            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Período de Abertura</label>
+                            <div class="flex gap-1 items-center">
+                                <input type="date" name="data_inicio" value="{{ request('data_inicio') }}"
+                                       class="w-full text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md shadow-sm focus:ring focus:ring-indigo-300">
+                                <span class="text-gray-400 text-xs shrink-0">até</span>
+                                <input type="date" name="data_fim" value="{{ request('data_fim') }}"
+                                       class="w-full text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md shadow-sm focus:ring focus:ring-indigo-300">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="flex items-center gap-3 pt-1">
+                        <button type="submit"
+                                class="px-4 py-1.5 text-sm bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-colors">
+                            Filtrar
+                        </button>
+                        @if(request()->hasAny(['busca','tipo','status','data_inicio','data_fim']))
+                            <a href="{{ route('manutencoes.index') }}"
+                               class="text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:underline">
+                                Limpar filtros
+                            </a>
+                        @endif
+                    </div>
+                </form>
+
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow">
+                    <div class="overflow-x-auto rounded-xl">
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
                         <thead class="bg-gray-50 dark:bg-gray-700/50">
                             <tr>
-                                <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 uppercase text-xs tracking-wider">Patrimônio</th>
-                                <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 uppercase text-xs tracking-wider">Tipo</th>
-                                <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 uppercase text-xs tracking-wider">Status</th>
-                                <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 uppercase text-xs tracking-wider">Abertura</th>
-                                <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 uppercase text-xs tracking-wider">Conclusão</th>
-                                <th class="px-4 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 uppercase text-xs tracking-wider">Custo</th>
-                                <th class="px-4 py-3 text-right font-semibold text-gray-600 dark:text-gray-300 uppercase text-xs tracking-wider">Ações</th>
+                                <th class="px-3 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 uppercase text-xs tracking-wider w-36">Patrimônio</th>
+                                <th class="px-3 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 uppercase text-xs tracking-wider w-24">Tipo</th>
+                                <th class="px-3 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 uppercase text-xs tracking-wider w-28">Status</th>
+                                <th class="px-3 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 uppercase text-xs tracking-wider">Descrição / Observações</th>
+                                <th class="px-3 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 uppercase text-xs tracking-wider w-24">Abertura</th>
+                                <th class="px-3 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 uppercase text-xs tracking-wider w-24">Conclusão</th>
+                                <th class="px-3 py-3 text-left font-semibold text-gray-600 dark:text-gray-300 uppercase text-xs tracking-wider w-24">Custo</th>
+                                <th class="px-3 py-3 text-right font-semibold text-gray-600 dark:text-gray-300 uppercase text-xs tracking-wider w-32">Ações</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
@@ -76,17 +143,17 @@
                                 ];
                             @endphp
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
-                                <td class="px-4 py-3 font-mono text-gray-800 dark:text-gray-200">
+                                <td class="px-3 py-3 font-mono text-gray-800 dark:text-gray-200">
                                     {{ $m->patrimonio?->codigo_patrimonio ?? '—' }}
-                                    <span class="block text-xs text-gray-400 font-sans truncate max-w-[160px]">{{ $m->patrimonio?->descricao }}</span>
+                                    <span class="block text-xs text-gray-400 font-sans truncate max-w-[130px]">{{ $m->patrimonio?->descricao }}</span>
                                 </td>
-                                <td class="px-4 py-3">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                <td class="px-3 py-3">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium
                                         {{ $m->tipo === 'preventiva' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300' : 'bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300' }}">
                                         {{ \App\Models\Manutencao::TIPOS[$m->tipo] ?? $m->tipo }}
                                     </span>
                                 </td>
-                                <td class="px-4 py-3">
+                                <td class="px-3 py-3">
                                     @php
                                         $sBadge = match($m->status) {
                                             'agendada'     => 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300',
@@ -96,25 +163,34 @@
                                             default        => 'bg-gray-100 text-gray-600',
                                         };
                                     @endphp
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $sBadge }}">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium {{ $sBadge }}">
                                         {{ \App\Models\Manutencao::STATUS[$m->status] ?? $m->status }}
                                     </span>
                                 </td>
-                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $m->data_abertura?->format('d/m/Y') ?? '—' }}</td>
-                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $m->data_conclusao?->format('d/m/Y') ?? '—' }}</td>
-                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $m->custo ? 'R$ ' . number_format($m->custo, 2, ',', '.') : '—' }}</td>
-                                <td class="px-4 py-3 text-right">
-                                    <div class="flex items-center justify-end gap-2">
+                                <td class="px-3 py-3 text-gray-600 dark:text-gray-400">
+                                    @if($m->descricao)
+                                        <span class="block truncate max-w-[220px]" title="{{ $m->descricao }}">{{ Str::limit($m->descricao, 60) }}</span>
+                                    @endif
+                                    @if($m->observacoes)
+                                        <span class="block truncate max-w-[220px] text-xs text-gray-400 mt-0.5" title="{{ $m->observacoes }}">{{ Str::limit($m->observacoes, 60) }}</span>
+                                    @endif
+                                    @if(!$m->descricao && !$m->observacoes)<span class="text-gray-400">—</span>@endif
+                                </td>
+                                <td class="px-3 py-3 text-gray-700 dark:text-gray-300 whitespace-nowrap">{{ $m->data_abertura?->format('d/m/Y') ?? '—' }}</td>
+                                <td class="px-3 py-3 text-gray-700 dark:text-gray-300 whitespace-nowrap">{{ $m->data_conclusao?->format('d/m/Y') ?? '—' }}</td>
+                                <td class="px-3 py-3 text-gray-700 dark:text-gray-300 whitespace-nowrap">{{ $m->custo ? 'R$ ' . number_format($m->custo, 2, ',', '.') : '—' }}</td>
+                                <td class="px-3 py-3 text-right whitespace-nowrap">
+                                    <div class="flex items-center justify-end gap-1.5">
                                         <button type="button" @click="openDetail({{ json_encode($md) }})"
-                                                class="text-xs px-2.5 py-1 rounded-md border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                                class="text-xs px-2 py-1 rounded-md border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                                             Ver
                                         </button>
                                         <button type="button" @click="openEdit({{ json_encode($md) }})"
-                                                class="text-xs px-2.5 py-1 rounded-md border border-indigo-400 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors">
+                                                class="text-xs px-2 py-1 rounded-md border border-indigo-400 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors">
                                             Editar
                                         </button>
                                         <button type="button" @click="deleteTarget = {{ json_encode(['id' => $m->id, 'label' => ($m->patrimonio?->codigo_patrimonio ?? '—') . ' — ' . \App\Models\Manutencao::TIPOS[$m->tipo], 'url' => route('manutencoes.destroy', $m)]) }}"
-                                                class="text-xs px-2.5 py-1 rounded-md border border-red-400 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors">
+                                                class="text-xs px-2 py-1 rounded-md border border-red-400 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors">
                                             Excluir
                                         </button>
                                     </div>
@@ -122,13 +198,15 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="7" class="px-4 py-12 text-center text-gray-400 dark:text-gray-500">
+                                <td colspan="8" class="px-4 py-12 text-center text-gray-400 dark:text-gray-500">
                                     Nenhuma manutenção registrada.
                                 </td>
                             </tr>
                             @endforelse
                         </tbody>
                     </table>
+                    </div>{{-- /overflow-x-auto --}}
+                    <div class="px-4 py-4 border-t border-gray-100 dark:border-gray-700">{{ $manutencoes->links() }}</div>
                 </div>
             </div>
         </div>
@@ -198,13 +276,13 @@
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tipo *</label>
-                                    <select name="tipo" x-init="$el.value = editTarget.tipo" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300">
+                                    <select name="tipo" x-model="editTarget.tipo" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300">
                                         @foreach($tipos as $v => $l)<option value="{{ $v }}">{{ $l }}</option>@endforeach
                                     </select>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status *</label>
-                                    <select name="status" x-init="$el.value = editTarget.status" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300">
+                                    <select name="status" x-model="editTarget.status" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm text-sm focus:ring focus:ring-indigo-300">
                                         @foreach($statusList as $v => $l)<option value="{{ $v }}">{{ $l }}</option>@endforeach
                                     </select>
                                 </div>
